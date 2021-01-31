@@ -69,8 +69,8 @@ export default class FurniJsonMapper {
                     furniAsset.source = SpriteSheetConverter.imageSource.get(asset.name) as string;
                 }
 
-                furniAsset.x = parseFloat(asset.x.toString());
-                furniAsset.y = parseFloat(asset.y.toString());
+                furniAsset.x = parseInt(asset.x.toString());
+                furniAsset.y = parseInt(asset.y.toString());
                 furniAsset.flipH = asset.flipH as any;
                 assets[asset.name] = furniAsset;
             }
@@ -89,9 +89,9 @@ export default class FurniJsonMapper {
 
     private static mapLogicXML(logicXML: LogicXML, output: FurniJson) {
         output.dimensions = {
-            x: parseFloat(logicXML.model.dimensions.x.toString()),
-            y: parseFloat(logicXML.model.dimensions.y.toString()),
-            z: parseFloat(logicXML.model.dimensions.z.toString())
+            x: parseInt(logicXML.model.dimensions.x.toString()),
+            y: parseInt(logicXML.model.dimensions.y.toString()),
+            z: parseInt(logicXML.model.dimensions.z.toString())
         }
 
         const directions: Array<number> = [];
@@ -99,7 +99,7 @@ export default class FurniJsonMapper {
             directions.push(0);
         } else {
             for (const direction of logicXML.model.directions) {
-                directions.push(parseFloat(direction.id.toString()));
+                directions.push(parseInt(direction.id.toString()));
             }
         }
 
@@ -128,9 +128,9 @@ export default class FurniJsonMapper {
         for (const visualization of visualizationData.visualizations) {
             if (visualization.size == FurniJsonMapper.VISUALIZATION_DEFAULT_SIZE || visualization.size == FurniJsonMapper.VISUALIZATION_ICON_SIZE) {
                 const visualizationJson: Visualization = {} as any;
-                visualizationJson.angle = parseFloat(visualization.angle.toString());
-                visualizationJson.layerCount = parseFloat(visualization.layerCount.toString());
-                visualizationJson.size = parseFloat(visualization.size.toString());
+                visualizationJson.angle = parseInt(visualization.angle.toString());
+                visualizationJson.layerCount = parseInt(visualization.layerCount.toString());
+                visualizationJson.size = parseInt(visualization.size.toString());
 
                 FurniJsonMapper.mapVisualizationLayerXML(visualization, visualizationJson);
                 FurniJsonMapper.mapVisualizationDirectionXML(visualization, visualizationJson);
@@ -159,9 +159,13 @@ export default class FurniJsonMapper {
             layer.alpha = layerXML.alpha;
             layer.ink = layerXML.ink;
             layer.tag = layerXML.tag;
-            layer.x = parseFloat(layerXML.x.toString());
-            layer.y = parseFloat(layerXML.y.toString());
-            layer.z = parseFloat(layerXML.z.toString());
+
+            if (layerXML.x !== undefined)
+                layer.x = parseInt(layerXML.x.toString());
+            if (layerXML.y !== undefined)
+                layer.y = parseInt(layerXML.y.toString());
+            if (layerXML.z !== undefined)
+                layer.z = parseInt(layerXML.z.toString());
             layer.ignoreMouse = layerXML.ignoreMouse as any;
 
             layers[layerXML.id] = layer;
@@ -224,8 +228,11 @@ export default class FurniJsonMapper {
             for (const animationXML of visXML.animations) {
                 if (animationXML.layers.length > 0) {
                     const animation: Animation = {} as any;
-                    animation.transitionTo = animationXML.transitionTo;
-                    animation.transitionFrom = animationXML.transitionFrom;
+
+                    if (animationXML.transitionTo !== undefined)
+                        animation.transitionTo = parseInt(animationXML.transitionTo.toString());
+                    if (animationXML.transitionFrom !== undefined)
+                        animation.transitionFrom = parseInt(animationXML.transitionFrom.toString());
                     animation.immediateChangeFrom = animationXML.immediateChangeFrom;
 
                     animation.layers = FurniJsonMapper.mapVisualizationAnimationLayerXML(animationXML);
