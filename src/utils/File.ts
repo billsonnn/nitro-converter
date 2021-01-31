@@ -1,3 +1,5 @@
+import {RmDirOptions, RmOptions} from "fs";
+
 const fs = require("fs");
 
 export default class File {
@@ -29,5 +31,9 @@ export default class File {
 
     get path(): string {
         return this._path;
+    }
+
+    public rmdir(options: RmOptions): void {
+        return fs.rmSync(this._path, options);
     }
 }

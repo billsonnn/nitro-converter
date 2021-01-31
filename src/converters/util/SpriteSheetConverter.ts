@@ -94,10 +94,11 @@ export default class SpriteSheetConverter {
 
             if (spriteSheetType === null) throw new Error("Failed to parse SpriteSheet. " + images[0].path);
         } catch (error) {
-            console.log("Error: " + error);
+            console.log("Image Packing Error: ");
+            console.log(error);
         }
 
-        if (spriteSheetType !== null) spriteSheetType.meta.imageb64 = base64;
+        if (spriteSheetType !== null) spriteSheetType.meta.image = base64;
         return spriteSheetType;
     }
 }

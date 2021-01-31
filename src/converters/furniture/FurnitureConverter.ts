@@ -4,11 +4,13 @@ import DefineBinaryDataTag from "../../swf/tags/DefineBinaryDataTag";
 import Configuration from "../../config/Configuration";
 import FurniJsonMapper from "./FurniJsonMapper";
 import {FurniJson} from "./FurniTypes";
+import File from "../../utils/File";
 
 const xml2js = require('xml2js');
 const parser = new xml2js.Parser(/* options */);
 
 const fs = require('fs').promises;
+const {gzip} = require('node-gzip');
 
 export default class FurnitureConverter {
 
@@ -78,8 +80,18 @@ export default class FurnitureConverter {
         const furnitureJson = await this.convertXML2JSON(habboAssetSWF);
         if (furnitureJson !== null) {
             furnitureJson.spritesheet = spriteSheetType;
+            furnitureJson.type = type;
 
-            await fs.writeFile(outputFolder + "/" + habboAssetSWF.getDocumentClass() + ".json", JSON.stringify(furnitureJson));
+            const path = outputFolder + "/" + habboAssetSWF.getDocumentClass() + ".nitro";
+            const assetOuputFolder = new File(path);
+            if (assetOuputFolder.exists()) {
+                console.log("Furniture already exists or the directory is not empty!");
+
+                return;
+            }
+
+            const compressed = await gzip(JSON.stringify(furnitureJson));
+            await fs.writeFile(path, compressed);
         }
     }
 }

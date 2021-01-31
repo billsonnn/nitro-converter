@@ -47,7 +47,7 @@ import FurnitureConverter from "./converters/furniture/FurnitureConverter";
     if (config.getBoolean("convert.furniture")) {
         const furnitureDownloader = new FurnitureDownloader(config);
         await furnitureDownloader.download(async function (habboAssetSwf: HabboAssetSWF, className: string) {
-            //console.log("Attempt parsing furniture: " + habboAssetSwf.getDocumentClass());
+            console.log("Attempt parsing furniture: " + habboAssetSwf.getDocumentClass());
 
             try {
                 const assetOuputFolder = new File(outputFolderFurniture.path + "/" + className);
@@ -68,8 +68,15 @@ import FurnitureConverter from "./converters/furniture/FurnitureConverter";
             }
         });
 
-        console.log(`Parsed ${count} furnitures`)
+        console.log(`Parsed ${++count} furnitures`)
     }
 
     console.log('finished!');
+
+    /*
+
+    outputFolderFurniture.rmdir({
+        recursive: true,
+        force: true
+    });*/
 })()

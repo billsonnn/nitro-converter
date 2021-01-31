@@ -80,7 +80,6 @@ export interface FrameSequences {
 }
 
 export interface AnimationLayer {
-    id: number,
     loopCount: number,
     frameRepeat: number,
     random: number,
@@ -97,7 +96,6 @@ export interface Animations {
 }
 
 export interface Animation {
-    id: number,
     transitionTo: number,
     transitionFrom: number,
     immediateChangeFrom: string,
@@ -110,7 +108,6 @@ export interface ColorLayers {
 }
 
 export interface ColorLayer {
-    id: number,
     color: number
 }
 
@@ -119,7 +116,6 @@ export interface Colors {
 }
 
 export interface Color {
-    id: number;
     layers: ColorLayers;
 }
 
@@ -128,7 +124,6 @@ export interface Directions {
 }
 
 export interface Direction {
-    id: number;
     layers: VisualizationLayers;
 }
 
@@ -137,7 +132,6 @@ export interface VisualizationLayers {
 }
 
 export interface Layer {
-    id: number,
     alpha: number,
     x: number,
     y: number,

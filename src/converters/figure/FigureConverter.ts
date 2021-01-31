@@ -3,7 +3,7 @@ import {SpriteSheetType} from "../util/SpriteSheetTypes";
 import DefineBinaryDataTag from "../../swf/tags/DefineBinaryDataTag";
 import Configuration from "../../config/Configuration";
 import FigureJsonMapper from "./FigureJsonMapper";
-import {FigureJson} from "./FigureType";
+import {FigureJson} from "./FigureJsonType";
 import File from "../../utils/File";
 
 const xml2js = require('xml2js');
@@ -50,7 +50,7 @@ export default class FigureConverter {
             const path = outputFolder + "/" + habboAssetSWF.getDocumentClass() + ".nitro";
             const assetOuputFolder = new File(path);
             if (assetOuputFolder.exists()) {
-                console.log("Furniture already exists or the directory is not empty!");
+                console.log("Figure already exists or the directory is not empty!");
 
                 return;
             }

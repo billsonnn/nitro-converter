@@ -43,7 +43,7 @@ export interface SpriteSheetFrameDimensions {
 export interface SpriteSheetMeta {
     app: string,
     version: string,
-    imageb64: string,
+    image: string,
     format: string,
     size: SpriteSheetSize,
     scale: number

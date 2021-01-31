@@ -61,7 +61,7 @@ export default class FurnitureDownloader {
     }
 
     async extractFurniture(revision: string, className: string, callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>) {
-        if (className !== "rare_dragonlamp") return;
+        //if (className !== "rare_dragonlamp" && className !== "tiki_bflies" && className !== "room_wl15_ele") return;
 
         const url = this._config.getValue("dynamic.download.url.furniture").replace("%revision%", revision).replace("%className%", className);
         const file = new File(url);
