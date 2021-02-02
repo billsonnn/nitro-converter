@@ -6,6 +6,8 @@ import FigureConverter from "./converters/figure/FigureConverter";
 import File from "./utils/File";
 import FurnitureDownloader from "./downloaders/FurnitureDownloader";
 import FurnitureConverter from "./converters/furniture/FurnitureConverter";
+import EffectConverter from "./converters/effect/EffectConverter";
+import EffectDownloader from "./downloaders/EffectDownloader";
 
 (async () => {
     const config = new Configuration();
@@ -21,9 +23,15 @@ import FurnitureConverter from "./converters/furniture/FurnitureConverter";
         outputFolderFurniture.mkdirs();
     }
 
+    const outputFolderEffect = new File(config.getValue("output.folder.effect"));
+    if (!outputFolderEffect.isDirectory()) {
+        outputFolderEffect.mkdirs();
+    }
+
     const spriteSheetConverter = new SpriteSheetConverter();
     const figureConverter = new FigureConverter(config);
-    const furnitureConverter= new FurnitureConverter(config);
+    const furnitureConverter = new FurnitureConverter(config);
+    const effectConverter = new EffectConverter(config);
 
     if (config.getBoolean("convert.figure")) {
         const figureDownloader = new FigureDownloader(config);
@@ -38,29 +46,21 @@ import FurnitureConverter from "./converters/furniture/FurnitureConverter";
 
             } catch (e) {
                 console.log("Figure error: " + habboAssetSwf.getDocumentClass());
+                console.log(e);
             }
         });
     }
 
-    let count = 0;
-
     if (config.getBoolean("convert.furniture")) {
+        let count = 0;
         const furnitureDownloader = new FurnitureDownloader(config);
         await furnitureDownloader.download(async function (habboAssetSwf: HabboAssetSWF, className: string) {
             console.log("Attempt parsing furniture: " + habboAssetSwf.getDocumentClass());
 
             try {
-                const assetOuputFolder = new File(outputFolderFurniture.path + "/" + className);
-                if (!assetOuputFolder.isDirectory()) {
-                    assetOuputFolder.mkdirs();
-                } else if (assetOuputFolder.list().length > 0) {
-                    console.log("Furniture already exists or the directory is not empty!");
-                    return;
-                }
-
-                const spriteSheetType = await spriteSheetConverter.generateSpriteSheet(habboAssetSwf, assetOuputFolder.path, "furniture");
+                const spriteSheetType = await spriteSheetConverter.generateSpriteSheet(habboAssetSwf, outputFolderFurniture.path, "furniture");
                 if (spriteSheetType !== null) {
-                    await furnitureConverter.fromHabboAsset(habboAssetSwf, assetOuputFolder.path, "furniture", spriteSheetType);
+                    await furnitureConverter.fromHabboAsset(habboAssetSwf, outputFolderFurniture.path, "furniture", spriteSheetType);
                 }
             } catch (e) {
                 console.log("Furniture error: " + habboAssetSwf.getDocumentClass());
@@ -71,10 +71,26 @@ import FurnitureConverter from "./converters/furniture/FurnitureConverter";
         console.log(`Parsed ${++count} furnitures`)
     }
 
+    if (config.getBoolean("convert.effect")) {
+        const effectDownloader = new EffectDownloader(config);
+        await effectDownloader.download(async function (habboAssetSwf: HabboAssetSWF) {
+            console.log("Attempt parsing figure: " + habboAssetSwf.getDocumentClass());
+
+            try {
+                const spriteSheetType = await spriteSheetConverter.generateSpriteSheet(habboAssetSwf, outputFolderFurniture.path, "effect");
+                if (spriteSheetType !== null) {
+                    await effectConverter.fromHabboAsset(habboAssetSwf, outputFolderEffect.path, "effect", spriteSheetType);
+                }
+            } catch (e) {
+                console.log(e);
+                console.log("Effect error: "+ habboAssetSwf.getDocumentClass());
+            }
+        });
+    }
+
     console.log('finished!');
 
     /*
-
     outputFolderFurniture.rmdir({
         recursive: true,
         force: true

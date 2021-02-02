@@ -10,8 +10,7 @@ const util = require('util');
 
 const readFile = util.promisify(fs.readFile);
 
-export default class FigureDownloader {
-
+export default class EffectDownloader {
     private readonly _config: Configuration;
 
     constructor(config: Configuration) {
@@ -22,45 +21,45 @@ export default class FigureDownloader {
     public static types: Map<string, string> = new Map<string, string>();
 
     public async download(callback: (habboAssetSwf: HabboAssetSWF) => Promise<void>) {
-        const outputFolderFigure = this._config.getValue("output.folder.figure");
-        const figureMap = await this.parseFigureMap();
+        const outputFolderEffect = this._config.getValue("output.folder.effect");
+        const figureMap = await this.parseEffectMap();
         const map = figureMap.map;
 
-        for (const lib of map.lib) {
+        for (const lib of map.effect) {
             const info = lib['$'];
-            const className: string = info.id.split("\\*")[0];
-            if (className === "hh_human_fx") {
-                continue;
-            }
+            const className: string = info.lib;
 
-            const assetOutputFolder = new File(outputFolderFigure + "/" + className);
+            //if (className !== 'Hoverboard' && className !== 'Staff' && className !== 'ZombieMask' && className !== 'ESredUntouchable') continue;
+
+            const assetOutputFolder = new File(outputFolderEffect + "/" + className);
             if (assetOutputFolder.exists()) {
                 continue;
             }
 
-            if (!FigureDownloader.types.has(className)) {
-                if (className !== "jacket_U_snowwar4_team1" &&
-                    className !== "jacket_U_snowwar4_team2") { //TODO: Figure out why snowstorm assets aren't converting...
+            if (!EffectDownloader.types.has(className)) {
+                const url = this._config.getValue("dynamic.download.url.effect").replace("%className%", className);
+                if (!fs.existsSync(url)) {
+                    console.log("SWF File does not exist: " + url);
+                    continue;
+                }
 
-                    const url = this._config.getValue("dynamic.download.url.figure").replace("%className%", className);
-                    if (!fs.existsSync(url)) {
-                        console.log("SWF File does not exist: " + url);
-                        return;
-                    }
-
+                try {
                     const buffer: Buffer = await readFile(url);
                     const habboAssetSWF = new HabboAssetSWF(buffer);
                     await habboAssetSWF.setupAsync();
 
-                    FigureDownloader.types.set(className, lib.part[0]['$'].type);
+                    EffectDownloader.types.set(className, info.type);
                     await callback(habboAssetSWF);
+                } catch (e) {
+                    console.log(className);
+                    console.log(e);
                 }
             }
         }
     }
 
-    async parseFigureMap() {
-        const figureMapPath = this._config.getValue("figuremap.url");
+    async parseEffectMap() {
+        const figureMapPath = this._config.getValue("effectmap.url");
         const figureFetch = await fetch(figureMapPath);
         const figureMap = await figureFetch.text();
 

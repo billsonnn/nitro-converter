@@ -1,16 +1,16 @@
 import HabboAssetSWF from "../../swf/HabboAssetSWF";
-import {SpriteSheetType} from "../util/SpriteSheetTypes";
 import DefineBinaryDataTag from "../../swf/tags/DefineBinaryDataTag";
 import Configuration from "../../config/Configuration";
 import FurniJsonMapper from "./FurniJsonMapper";
 import {FurniJson} from "./FurniTypes";
 import File from "../../utils/File";
+import ArchiveType from "../ArchiveType";
+import NitroBundle from "../../utils/NitroBundle";
 
 const xml2js = require('xml2js');
 const parser = new xml2js.Parser(/* options */);
 
 const fs = require('fs').promises;
-const {gzip} = require('node-gzip');
 
 export default class FurnitureConverter {
 
@@ -50,7 +50,7 @@ export default class FurnitureConverter {
     }
 
     private static async getIndexXML(habboAssetSWF: HabboAssetSWF): Promise<any> {
-        const binaryData: DefineBinaryDataTag | null = FurnitureConverter.getBinaryData(habboAssetSWF, "index", true);
+        const binaryData: DefineBinaryDataTag | null = FurnitureConverter.getBinaryData(habboAssetSWF, "index", false);
         if (binaryData !== null) {
             return await parser.parseStringPromise(binaryData.binaryData);
         }
@@ -76,10 +76,10 @@ export default class FurnitureConverter {
         return this._furniJsonMapper.mapXML(assetXml, indexXml, logicXml, visualizationXml);
     }
 
-    public async fromHabboAsset(habboAssetSWF: HabboAssetSWF, outputFolder: string, type: string, spriteSheetType: SpriteSheetType) {
+    public async fromHabboAsset(habboAssetSWF: HabboAssetSWF, outputFolder: string, type: string, archiveType: ArchiveType) {
         const furnitureJson = await this.convertXML2JSON(habboAssetSWF);
         if (furnitureJson !== null) {
-            furnitureJson.spritesheet = spriteSheetType;
+            furnitureJson.spritesheet = archiveType.spriteSheetType;
             furnitureJson.type = type;
 
             const path = outputFolder + "/" + habboAssetSWF.getDocumentClass() + ".nitro";
@@ -90,8 +90,12 @@ export default class FurnitureConverter {
                 return;
             }
 
-            const compressed = await gzip(JSON.stringify(furnitureJson));
-            await fs.writeFile(path, compressed);
+            const nitroBundle = new NitroBundle();
+            nitroBundle.addFile(habboAssetSWF.getDocumentClass() + ".json", Buffer.from(JSON.stringify(furnitureJson)));
+            nitroBundle.addFile(archiveType.imageData.name, archiveType.imageData.buffer);
+
+            const buffer = await nitroBundle.toBufferAsync();
+            await fs.writeFile(path, buffer);
         }
     }
 }

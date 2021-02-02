@@ -1,16 +1,15 @@
 import HabboAssetSWF from "../../swf/HabboAssetSWF";
-import {SpriteSheetType} from "../util/SpriteSheetTypes";
 import DefineBinaryDataTag from "../../swf/tags/DefineBinaryDataTag";
 import Configuration from "../../config/Configuration";
 import FigureJsonMapper from "./FigureJsonMapper";
 import {FigureJson} from "./FigureJsonType";
 import File from "../../utils/File";
+import ArchiveType from "../ArchiveType";
+import NitroBundle from "../../utils/NitroBundle";
 
 const xml2js = require('xml2js');
 const parser = new xml2js.Parser(/* options */);
-
 const fs = require('fs').promises;
-const {gzip} = require('node-gzip');
 
 export default class FigureConverter {
 
@@ -42,10 +41,10 @@ export default class FigureConverter {
         return null;
     }
 
-    public async fromHabboAsset(habboAssetSWF: HabboAssetSWF, outputFolder: string, type: string, spriteSheetType: SpriteSheetType) {
+    public async fromHabboAsset(habboAssetSWF: HabboAssetSWF, outputFolder: string, type: string, archiveType: ArchiveType) {
         const manifestJson = await this.convertXML2JSON(habboAssetSWF);
         if (manifestJson !== null) {
-            manifestJson.spritesheet = spriteSheetType;
+            manifestJson.spritesheet = archiveType.spriteSheetType;
 
             const path = outputFolder + "/" + habboAssetSWF.getDocumentClass() + ".nitro";
             const assetOuputFolder = new File(path);
@@ -55,8 +54,12 @@ export default class FigureConverter {
                 return;
             }
 
-            const compressed = await gzip(JSON.stringify(manifestJson));
-            await fs.writeFile(path, compressed);
+            const nitroBundle = new NitroBundle();
+            nitroBundle.addFile(habboAssetSWF.getDocumentClass() + ".json", Buffer.from(JSON.stringify(manifestJson)));
+            nitroBundle.addFile(archiveType.imageData.name, archiveType.imageData.buffer);
+
+            const buffer = await nitroBundle.toBufferAsync();
+            await fs.writeFile(path, buffer);
         }
     }
 }
