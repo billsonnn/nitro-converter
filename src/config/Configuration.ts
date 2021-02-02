@@ -1,4 +1,5 @@
 const fs = require('fs/promises');
+const fetch = require('node-fetch');
 
 export default class Configuration {
 
@@ -11,7 +12,11 @@ export default class Configuration {
     async init() {
         const content = await fs.readFile("/home/user/git/nitro-asset-converter-node/config.ini");
 
-        const config: string[] = content.toString("utf-8").split("\n");
+        this.parseContent(content.toString("utf-8"));
+    }
+
+    private parseContent(content: string) {
+        const config: string[] = content.split("\n");
         for (const configEntry of config) {
             const configEntrySplit = configEntry.split("=");
             const configKey = configEntrySplit[0];
@@ -32,5 +37,13 @@ export default class Configuration {
         }
 
         return value;
+    }
+
+    public async loadExternalVariables(): Promise<void> {
+        const url = this.getValue("external_vars.url");
+        const fetchData = await fetch(url);
+        const textData = await fetchData.text();
+
+        this.parseContent(textData);
     }
 }

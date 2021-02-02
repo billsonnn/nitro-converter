@@ -9,6 +9,7 @@ export default class DefineBinaryDataTag extends CharacterTag implements ITag {
     private readonly _tag: number;
     private readonly _reserved: number;
     private readonly _binaryData: string;
+    private readonly _binaryDataBuffer: Buffer;
 
     constructor(tag: Tag) {
         super();
@@ -21,6 +22,7 @@ export default class DefineBinaryDataTag extends CharacterTag implements ITag {
         const binary = tag.rawData.slice(start, end);
 
         this._binaryData = binary.toString("utf-8");
+        this._binaryDataBuffer = binary;
 
         this.characterId = this._tag;
     }
@@ -39,5 +41,9 @@ export default class DefineBinaryDataTag extends CharacterTag implements ITag {
 
     get binaryData(): string {
         return this._binaryData;
+    }
+
+    get binaryDataBuffer(): Buffer {
+        return this._binaryDataBuffer;
     }
 }

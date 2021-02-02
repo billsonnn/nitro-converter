@@ -8,6 +8,8 @@ import FurnitureDownloader from "./downloaders/FurnitureDownloader";
 import FurnitureConverter from "./converters/furniture/FurnitureConverter";
 import EffectConverter from "./converters/effect/EffectConverter";
 import EffectDownloader from "./downloaders/EffectDownloader";
+import PetDownloader from "./downloaders/PetDownloader";
+import PetConverter from "./converters/pet/PetConverter";
 
 (async () => {
     const config = new Configuration();
@@ -28,10 +30,16 @@ import EffectDownloader from "./downloaders/EffectDownloader";
         outputFolderEffect.mkdirs();
     }
 
+    const outputFolderPet = new File(config.getValue("output.folder.pet"));
+    if (!outputFolderPet.isDirectory()) {
+        outputFolderPet.mkdirs();
+    }
+
     const spriteSheetConverter = new SpriteSheetConverter();
     const figureConverter = new FigureConverter(config);
     const furnitureConverter = new FurnitureConverter(config);
     const effectConverter = new EffectConverter(config);
+    const petConverter = new PetConverter();
 
     if (config.getBoolean("convert.figure")) {
         const figureDownloader = new FigureDownloader(config);
@@ -74,7 +82,7 @@ import EffectDownloader from "./downloaders/EffectDownloader";
     if (config.getBoolean("convert.effect")) {
         const effectDownloader = new EffectDownloader(config);
         await effectDownloader.download(async function (habboAssetSwf: HabboAssetSWF) {
-            console.log("Attempt parsing figure: " + habboAssetSwf.getDocumentClass());
+            console.log("Attempt parsing effect: " + habboAssetSwf.getDocumentClass());
 
             try {
                 const spriteSheetType = await spriteSheetConverter.generateSpriteSheet(habboAssetSwf, outputFolderFurniture.path, "effect");
@@ -83,7 +91,24 @@ import EffectDownloader from "./downloaders/EffectDownloader";
                 }
             } catch (e) {
                 console.log(e);
-                console.log("Effect error: "+ habboAssetSwf.getDocumentClass());
+                console.log("Effect error: " + habboAssetSwf.getDocumentClass());
+            }
+        });
+    }
+
+    if (config.getBoolean("convert.pet")) {
+        const petDownloader = new PetDownloader(config);
+        await petDownloader.download(async function (habboAssetSwf: HabboAssetSWF) {
+            console.log("Attempt parsing pet: " + habboAssetSwf.getDocumentClass());
+
+            try {
+                const spriteSheetType = await spriteSheetConverter.generateSpriteSheet(habboAssetSwf, outputFolderPet.path, "pet");
+                if (spriteSheetType !== null) {
+                    await petConverter.fromHabboAsset(habboAssetSwf, outputFolderPet.path, "pet", spriteSheetType);
+                }
+            } catch (e) {
+                console.log(e);
+                console.log("Effect error: " + habboAssetSwf.getDocumentClass());
             }
         });
     }
