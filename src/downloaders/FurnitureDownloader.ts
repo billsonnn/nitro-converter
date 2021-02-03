@@ -29,11 +29,15 @@ export default class FurnitureDownloader {
         const roomitemtypes = furniData.roomitemtypes;
         const wallitemtypes = furniData.wallitemtypes;
 
+        const classNames: Array<string> = new Array<string>();
         for (const roomItem of roomitemtypes) {
             for (const furnitype of roomItem.furnitype) {
                 const attributes = furnitype['$'];
                 const className = attributes.classname.split("\*")[0];
                 const revision = furnitype.revision[0];
+
+                if (classNames.includes(className)) continue;
+                else classNames.push(className);
 
                 const assetOuputFolder = new File(outputFolderFurniture.path + "/" + className);
                 if (assetOuputFolder.isDirectory()) {
@@ -49,6 +53,8 @@ export default class FurnitureDownloader {
                 const attributes = furnitype['$'];
                 const className = attributes.classname.split("\*")[0];
                 const revision = furnitype.revision[0];
+                if (classNames.includes(className)) continue;
+                else classNames.push(className);
 
                 const assetOuputFolder = new File(outputFolderFurniture + "/" + className);
                 if (assetOuputFolder.isDirectory()) {
@@ -66,14 +72,27 @@ export default class FurnitureDownloader {
         //if (className !== 'scifidoor') return;
 
         const url = this._config.getValue("dynamic.download.url.furniture").replace("%revision%", revision).replace("%className%", className);
-        const file = new File(url);
-        if (!file.exists()) {
-            console.log("SWF File does not exist: " + file.path);
-            return;
+        let buffer: Buffer | null = null;
+
+        if (url.includes("http")) {
+            const fetchData = await fetch(url);
+            if (fetchData.status === 404) {
+                console.log("SWF File does not exist: " + url);
+                return;
+            }
+
+            const arrayBuffer = await fetchData.arrayBuffer();
+            buffer = Buffer.from(arrayBuffer);
+        } else {
+            const file = new File(url);
+            if (!file.exists()) {
+                console.log("SWF File does not exist: " + file.path);
+                return;
+            }
         }
 
         try {
-            const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(url);
+            const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(buffer !== null ? buffer : url);
             await newHabboAssetSWF.setupAsync();
 
             await callback(newHabboAssetSWF, className);

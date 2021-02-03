@@ -2,9 +2,7 @@ import Configuration from "../config/Configuration";
 import HabboAssetSWF from "../swf/HabboAssetSWF";
 import File from "../utils/File";
 
-const util = require('util');
-const fs = require("fs");
-const readFile = util.promisify(fs.readFile);
+const fetch = require('node-fetch');
 
 export default class PetDownloader {
     private readonly _config: Configuration;
@@ -30,13 +28,26 @@ export default class PetDownloader {
 
                 if (!itemClassNames.includes(pet)) {
                     const url = this._config.getValue("dynamic.download.url.pet").replace("%className%", pet);
-                    const file = new File(url);
-                    if (!file.exists()) {
-                        console.log("SWF File does not exist: " + file.path);
-                        continue;
+                    let buffer: Buffer | null = null;
+
+                    if (url.includes("http")) {
+                        const fetchData = await fetch(url);
+                        if (fetchData.status === 404) {
+                            console.log("SWF File does not exist: " + url);
+                            continue;
+                        }
+
+                        const arrayBuffer = await fetchData.arrayBuffer();
+                        buffer = Buffer.from(arrayBuffer);
+                    } else {
+                        const file = new File(url);
+                        if (!file.exists()) {
+                            console.log("SWF File does not exist: " + file.path);
+                            return;
+                        }
                     }
 
-                    const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(url);
+                    const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(buffer !== null ? buffer : url);
                     await newHabboAssetSWF.setupAsync();
 
                     await callback(newHabboAssetSWF);

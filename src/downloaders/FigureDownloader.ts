@@ -6,9 +6,6 @@ const fs = require("fs");
 const fetch = require('node-fetch');
 const xml2js = require('xml2js');
 const parser = new xml2js.Parser(/* options */);
-const util = require('util');
-
-const readFile = util.promisify(fs.readFile);
 
 export default class FigureDownloader {
 
@@ -43,12 +40,26 @@ export default class FigureDownloader {
                     className !== "jacket_U_snowwar4_team2") { //TODO: Figure out why snowstorm assets aren't converting...
 
                     const url = this._config.getValue("dynamic.download.url.figure").replace("%className%", className);
-                    if (!fs.existsSync(url)) {
-                        console.log("SWF File does not exist: " + url);
-                        return;
+                    let buffer: Buffer | null = null;
+
+                    if (url.includes("http")) {
+                        const fetchData = await fetch(url);
+                        if (fetchData.status === 404) {
+                            console.log("SWF File does not exist: " + url);
+                            continue;
+                        }
+
+                        const arrayBuffer = await fetchData.arrayBuffer();
+                        buffer = Buffer.from(arrayBuffer);
+                    } else {
+                        const file = new File(url);
+                        if (!file.exists()) {
+                            console.log("SWF File does not exist: " + file.path);
+                            return;
+                        }
                     }
 
-                    const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(url);
+                    const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(buffer !== null ? buffer : url);
                     await newHabboAssetSWF.setupAsync();
 
                     FigureDownloader.types.set(className, lib.part[0]['$'].type);

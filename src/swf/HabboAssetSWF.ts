@@ -12,13 +12,13 @@ export default class HabboAssetSWF {
     private _documentClass: string | null = null;
 
     constructor(
-        private readonly _path: string
+        private readonly _data: string | Buffer
     ) {
         this._tags = new Array<ITag>();
     }
 
     async setupAsync() {
-        const swf = await readSwfAsync(this._path);
+        const swf = await readSwfAsync(this._data);
         for (const tag of swf.tags) {
 
             switch (tag.header.code) {
@@ -38,22 +38,22 @@ export default class HabboAssetSWF {
                     break;
 
                 case 35:
-                    const imageTag = await readImagesJPEG(35, tag);
+                    const jpegTag = await readImagesJPEG(35, tag);
                     this._tags.push(new ImageTag({
-                        code: imageTag.code,
-                        characterID: imageTag.characterId,
-                        imgType: imageTag.imgType,
-                        imgData: imageTag.imgData
+                        code: jpegTag.code,
+                        characterID: jpegTag.characterId,
+                        imgType: jpegTag.imgType,
+                        imgData: jpegTag.imgData
                     }));
                     break;
 
                 case 36:
-                    const imageTag: any = await readImagesDefineBitsLossless(tag);
+                    const pngTag: any = await readImagesDefineBitsLossless(tag);
                     this._tags.push(new ImageTag({
-                        code: imageTag.code,
-                        characterID: imageTag.characterId,
-                        imgType: imageTag.imgType,
-                        imgData: imageTag.imgData
+                        code: pngTag.code,
+                        characterID: pngTag.characterId,
+                        imgType: pngTag.imgType,
+                        imgData: pngTag.imgData
                     }));
                     break;
 

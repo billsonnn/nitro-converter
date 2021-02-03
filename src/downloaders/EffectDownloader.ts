@@ -2,13 +2,9 @@ import Configuration from "../config/Configuration";
 import HabboAssetSWF from "../swf/HabboAssetSWF";
 import File from "../utils/File";
 
-const fs = require("fs");
 const fetch = require('node-fetch');
 const xml2js = require('xml2js');
 const parser = new xml2js.Parser(/* options */);
-const util = require('util');
-
-const readFile = util.promisify(fs.readFile);
 
 export default class EffectDownloader {
     private readonly _config: Configuration;
@@ -25,11 +21,10 @@ export default class EffectDownloader {
         const figureMap = await this.parseEffectMap();
         const map = figureMap.map;
 
+        let count = 0;
         for (const lib of map.effect) {
             const info = lib['$'];
             const className: string = info.lib;
-
-            //if (className !== 'Hoverboard' && className !== 'Staff' && className !== 'ZombieMask' && className !== 'ESredUntouchable') continue;
 
             const assetOutputFolder = new File(outputFolderEffect + "/" + className);
             if (assetOutputFolder.exists()) {
@@ -38,13 +33,27 @@ export default class EffectDownloader {
 
             if (!EffectDownloader.types.has(className)) {
                 const url = this._config.getValue("dynamic.download.url.effect").replace("%className%", className);
-                if (!fs.existsSync(url)) {
-                    console.log("SWF File does not exist: " + url);
-                    continue;
+                let buffer: Buffer | null = null;
+
+                if (url.includes("http")) {
+                    const fetchData = await fetch(url);
+                    if (fetchData.status === 404) {
+                        console.log("SWF File does not exist: " + url);
+                        continue;
+                    }
+
+                    const arrayBuffer = await fetchData.arrayBuffer();
+                    buffer = Buffer.from(arrayBuffer);
+                } else {
+                    const file = new File(url);
+                    if (!file.exists()) {
+                        console.log("SWF File does not exist: " + file.path);
+                        return;
+                    }
                 }
 
                 try {
-                    const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(url);
+                    const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(buffer !== null ? buffer : url);
                     await newHabboAssetSWF.setupAsync();
 
                     EffectDownloader.types.set(className, info.type);
