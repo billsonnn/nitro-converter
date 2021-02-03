@@ -36,11 +36,10 @@ export default class PetDownloader {
                         continue;
                     }
 
-                    const buffer: Buffer = await readFile(url);
-                    const habboAssetSWF = new HabboAssetSWF(buffer);
-                    await habboAssetSWF.setupAsync();
+                    const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(url);
+                    await newHabboAssetSWF.setupAsync();
 
-                    await callback(habboAssetSWF);
+                    await callback(newHabboAssetSWF);
                 }
 
                 itemClassNames.push(pet);

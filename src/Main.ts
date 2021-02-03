@@ -108,15 +108,15 @@ import PetConverter from "./converters/pet/PetConverter";
                 }
             } catch (e) {
                 console.log(e);
-                console.log("Effect error: " + habboAssetSwf.getDocumentClass());
+                console.log("Pet error: " + habboAssetSwf.getDocumentClass());
             }
         });
     }
 
     console.log('finished!');
 
-    /*
-    outputFolderFurniture.rmdir({
+
+    /*outputFolderEffect.rmdir({
         recursive: true,
         force: true
     });*/

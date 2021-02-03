@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@gizeta/swf-reader": "^1.0.0",
     "@types/node": "^14.14.22",
     "bytebuffer": "^5.0.1",
     "free-tex-packer-core": "^0.3.2",

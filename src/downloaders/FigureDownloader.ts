@@ -48,12 +48,11 @@ export default class FigureDownloader {
                         return;
                     }
 
-                    const buffer: Buffer = await readFile(url);
-                    const habboAssetSWF = new HabboAssetSWF(buffer);
-                    await habboAssetSWF.setupAsync();
+                    const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(url);
+                    await newHabboAssetSWF.setupAsync();
 
                     FigureDownloader.types.set(className, lib.part[0]['$'].type);
-                    await callback(habboAssetSWF);
+                    await callback(newHabboAssetSWF);
                 }
             }
         }

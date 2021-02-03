@@ -73,11 +73,10 @@ export default class FurnitureDownloader {
         }
 
         try {
-            const buffer: Buffer = await readFile(url);
-            const habboAssetSWF = new HabboAssetSWF(buffer);
-            await habboAssetSWF.setupAsync();
+            const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(url);
+            await newHabboAssetSWF.setupAsync();
 
-            await callback(habboAssetSWF, className);
+            await callback(newHabboAssetSWF, className);
         } catch (e) {
             console.log("Error with furniture: " + url);
             console.log(e);

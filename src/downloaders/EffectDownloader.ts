@@ -44,12 +44,11 @@ export default class EffectDownloader {
                 }
 
                 try {
-                    const buffer: Buffer = await readFile(url);
-                    const habboAssetSWF = new HabboAssetSWF(buffer);
-                    await habboAssetSWF.setupAsync();
+                    const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(url);
+                    await newHabboAssetSWF.setupAsync();
 
                     EffectDownloader.types.set(className, info.type);
-                    await callback(habboAssetSWF);
+                    await callback(newHabboAssetSWF);
                 } catch (e) {
                     console.log(className);
                     console.log(e);

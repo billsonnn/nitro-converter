@@ -1,30 +1,22 @@
-import {Tag} from "../HabboAssetSWF";
 import ITag from "./ITag";
 
-const {SWFBuffer} = require('swf-extract/swf-buffer');
+export interface SymbolClass {
+    id: number,
+    name: string
+}
 
 export default class SymbolClassTag implements ITag {
 
     private readonly _tags: Array<number>;
     private readonly _names: Array<string>;
 
-    constructor(tag: Tag) {
+    constructor(tags: Array<SymbolClass>) {
         this._tags = [];
         this._names = [];
 
-        this.init(tag);
-    }
-
-    init(tag: Tag) {
-        const swfBuffer = new SWFBuffer(tag.rawData);
-
-        const numSymbols = swfBuffer.readUIntLE(16);
-        for (let i = 0; i < numSymbols; i++) {
-            const tagId = swfBuffer.readUIntLE(16);
-            const tagName = swfBuffer.readString("utf-8");
-
-            this._tags.push(tagId);
-            this._names.push(tagName);
+        for (const symbolClass of tags) {
+            this._tags.push(symbolClass.id);
+            this._names.push(symbolClass.name);
         }
     }
 

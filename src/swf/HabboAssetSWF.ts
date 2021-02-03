@@ -1,77 +1,74 @@
-import SymbolClassTag from "./tags/SymbolClassTag";
-import ImageTag from "./tags/ImageTag";
+import {readImagesDefineBitsLossless, readImagesJPEG, readSwfAsync} from "../utils/SwfReader";
 import ITag from "./tags/ITag";
+import SymbolClassTag from "./tags/SymbolClassTag";
+import DefineBinaryDataTag from "./tags/DefineBinaryDataTag";
+import ImageTag from "./tags/ImageTag";
 import CustomIterator from "../utils/CustomIterator";
 import CharacterTag from "./tags/CharacterTag";
-import DefineBinaryDataTag from "./tags/DefineBinaryDataTag";
-
-const {readFromBufferP, extractImages} = require('swf-extract');
-
-export interface Tag {
-    code: number,
-    length: number,
-    rawData: Buffer
-}
-
-export interface SWFFrameSize {
-    x: number,
-    y: number,
-    width: number,
-    height: number
-}
-
-export interface SWFFileLength {
-    compressed: number,
-    uncompressed: number
-}
-
-export interface SWF {
-    tags: Array<Tag>,
-    version: number,
-    fileLength: SWFFileLength,
-    frameSize: SWFFrameSize,
-    frameRate: number,
-    frameCount: number
-}
 
 export default class HabboAssetSWF {
 
-    private swf: SWF | null;
-
     private readonly _tags: Array<ITag>;
-
     private _documentClass: string | null = null;
 
-    constructor(private readonly _buffer: Buffer) {
-        this.swf = null;
-
+    constructor(
+        private readonly _path: string
+    ) {
         this._tags = new Array<ITag>();
     }
 
-    public async setupAsync() {
-        this.swf = await readFromBufferP(this._buffer);
+    async setupAsync() {
+        const swf = await readSwfAsync(this._path);
+        for (const tag of swf.tags) {
 
-        if (this.swf === null) throw new Error("SWF Can't be null!");
+            switch (tag.header.code) {
+                case 76:
+                    this._tags.push(new SymbolClassTag(tag.symbols));
+                    break;
+                case 87:
+                    this._tags.push(new DefineBinaryDataTag(tag.data))
+                    break;
 
-        for (const tag of this.swf.tags) {
-            if (tag.code === 76) {
-                this._tags.push(new SymbolClassTag(tag));
+                case 6:
+                    console.log(tag);
+                    break;
+
+                case 21:
+                    console.log(tag);
+                    break;
+
+                case 35:
+                    const imageTag = await readImagesJPEG(35, tag);
+                    this._tags.push(new ImageTag({
+                        code: imageTag.code,
+                        characterID: imageTag.characterId,
+                        imgType: imageTag.imgType,
+                        imgData: imageTag.imgData
+                    }));
+                    break;
+
+                case 36:
+                    const imageTag: any = await readImagesDefineBitsLossless(tag);
+                    this._tags.push(new ImageTag({
+                        code: imageTag.code,
+                        characterID: imageTag.characterId,
+                        imgType: imageTag.imgType,
+                        imgData: imageTag.imgData
+                    }));
+                    break;
+
+                case 20:
+                    console.log(tag);
+                    break;
+
+                case 90:
+                    console.log(tag);
+                    break;
+
+                default:
+                    //console.log(tag.header.code);
+                    break;
             }
-
-            if (tag.code === 87) {
-                this._tags.push(new DefineBinaryDataTag(tag));
-            }
-        }
-
-        const images = await Promise.all(extractImages(this.swf.tags));
-        for (const image of images) {
-            const imgObj: any = image;
-            this._tags.push(new ImageTag({
-                code: imgObj.code,
-                characterID: imgObj.characterId,
-                imgType: imgObj.imgType,
-                imgData: imgObj.imgData
-            }));
         }
 
         this.assignClassesToSymbols();
@@ -87,15 +84,6 @@ export default class HabboAssetSWF {
 
     private binaryTags(): Array<DefineBinaryDataTag> {
         return this._tags.filter((tag: ITag) => tag instanceof DefineBinaryDataTag).map(x => x as DefineBinaryDataTag);
-    }
-
-    public getBinaryTagByName(name: string): DefineBinaryDataTag | null {
-        const streamTag = this.binaryTags()
-            .filter(tag => tag.className === name)[0];
-
-        if (streamTag === undefined) return null;
-
-        return streamTag;
     }
 
     private assignClassesToSymbols() {
@@ -137,13 +125,20 @@ export default class HabboAssetSWF {
         }
     }
 
+    public getBinaryTagByName(name: string): DefineBinaryDataTag | null {
+        const streamTag = this.binaryTags()
+            .filter(tag => tag.className === name)[0];
+
+        if (streamTag === undefined) return null;
+
+        return streamTag;
+    }
+
     public getFullClassName(type: string, documentNameTwice: boolean): string {
         return this.getFullClassNameSnake(type, documentNameTwice, false);
     }
 
     public getFullClassNameSnake(type: string, documentNameTwice: boolean, snakeCase: boolean): string {
-        if (this.swf === null) throw new Error("SWF Can't be null!");
-
         let result: string = this.getDocumentClass() + "_";
         if (documentNameTwice) {
             if (snakeCase) {
@@ -180,9 +175,5 @@ export default class HabboAssetSWF {
                 }
             }
         }
-    }
-
-    public setDocumentClass(documentClass: string) {
-        this._documentClass = documentClass;
     }
 }

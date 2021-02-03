@@ -55,7 +55,6 @@ export default class SpriteSheetConverter {
                     contents: imageTag.imgData
                 });
             }
-
         }
 
         if (images.length === 0) {

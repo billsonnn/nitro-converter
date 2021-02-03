@@ -1,8 +1,5 @@
-import {Tag} from "../HabboAssetSWF";
 import ITag from "./ITag";
 import CharacterTag from "./CharacterTag";
-
-const {SWFBuffer} = require('swf-extract/swf-buffer');
 
 export default class DefineBinaryDataTag extends CharacterTag implements ITag {
 
@@ -11,15 +8,14 @@ export default class DefineBinaryDataTag extends CharacterTag implements ITag {
     private readonly _binaryData: string;
     private readonly _binaryDataBuffer: Buffer;
 
-    constructor(tag: Tag) {
+    constructor(buffer: Buffer) {
         super();
 
-        const swfBuffer = new SWFBuffer(tag.rawData);
-        this._tag = swfBuffer.readUIntLE(16);
-        this._reserved = swfBuffer.readUIntLE(32);
+        this._tag = buffer.readUInt16LE(0);
+        this._reserved = buffer.readUInt32LE(2);
         const start = 6; //short 2 + int 4
-        const end = tag.rawData.length;
-        const binary = tag.rawData.slice(start, end);
+        const end = buffer.length;
+        const binary = buffer.slice(start, end);
 
         this._binaryData = binary.toString("utf-8");
         this._binaryDataBuffer = binary;

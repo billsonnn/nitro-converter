@@ -10,7 +10,7 @@ export default class Configuration {
     }
 
     async init() {
-        const content = await fs.readFile("/home/user/git/nitro-asset-converter-node/config.ini");
+        const content = await fs.readFile("/home/user/git/nitro-asset-converter-node (copy)/config.ini");
 
         this.parseContent(content.toString("utf-8"));
     }
