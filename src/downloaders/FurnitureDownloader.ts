@@ -104,9 +104,14 @@ export default class FurnitureDownloader {
 
     async parseFurniData() {
         const furniDataFetch = this._config.getValue("furnidata.url");
-        const furniFetch = await fetch(furniDataFetch);
-        const furniData = await furniFetch.text();
+        if (furniDataFetch.includes("http")) {
+            const furniFetch = await fetch(furniDataFetch);
+            const furniData = await furniFetch.text();
 
-        return await parser.parseStringPromise(furniData);
+            return await parser.parseStringPromise(furniData);
+        } else {
+            const content = await readFile(furniDataFetch);
+            return await parser.parseStringPromise(content);
+        }
     }
 }

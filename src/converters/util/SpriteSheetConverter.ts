@@ -67,8 +67,8 @@ export default class SpriteSheetConverter {
     async packImages(documentClass: string, outputFolder: string, images: Array<{ path: string, contents: Buffer }>): Promise<ArchiveType | null> {
         let options = {
             textureName: documentClass,
-            width: 1024,
-            height: 1024,
+            width: 3072,
+            height: 2048,
             fixedSize: false,
             allowRotation: true,
             detectIdentical: true,

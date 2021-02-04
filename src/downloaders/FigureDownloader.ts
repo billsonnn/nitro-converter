@@ -26,7 +26,7 @@ export default class FigureDownloader {
         for (const lib of map.lib) {
             const info = lib['$'];
             const className: string = info.id.split("\\*")[0];
-            if (className === "hh_human_fx") {
+            if (className === "hh_human_fx" || className === "hh_pets") {
                 continue;
             }
 
@@ -38,6 +38,8 @@ export default class FigureDownloader {
             if (!FigureDownloader.types.has(className)) {
                 if (className !== "jacket_U_snowwar4_team1" &&
                     className !== "jacket_U_snowwar4_team2") { //TODO: Figure out why snowstorm assets aren't converting...
+
+                    if (className !== "hh_human_hats") continue;
 
                     const url = this._config.getValue("dynamic.download.url.figure").replace("%className%", className);
                     let buffer: Buffer | null = null;

@@ -69,8 +69,10 @@ export default class FurniJsonMapper {
                     furniAsset.source = SpriteSheetConverter.imageSource.get(asset.name) as string;
                 }
 
-                furniAsset.x = parseInt(asset.x.toString());
-                furniAsset.y = parseInt(asset.y.toString());
+                if (asset.x !== undefined)
+                    furniAsset.x = parseInt(asset.x.toString());
+                if (asset.y !== undefined)
+                    furniAsset.y = parseInt(asset.y.toString());
                 furniAsset.flipH = asset.flipH as any;
                 assets[asset.name] = furniAsset;
             }

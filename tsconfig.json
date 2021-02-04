@@ -10,5 +10,9 @@
     "noImplicitAny": true,
     "esModuleInterop": true,
     "resolveJsonModule": true
-  }
+  },
+  "include": [
+    "src/config.json",
+    "src/**/*.ts"
+  ]
 }

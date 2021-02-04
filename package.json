@@ -21,5 +21,6 @@
     "png-stream": "^1.0.5",
     "stream-to-array": "^2.3.0",
     "xml2js": "^0.4.23"
-  }
+  },
+  "devDependencies": {}
 }
