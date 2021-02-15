@@ -2,6 +2,8 @@ import HabboAssetSWF from "../swf/HabboAssetSWF";
 import Configuration from "../config/Configuration";
 import {type} from "os";
 import File from "../utils/File";
+import {singleton} from "tsyringe";
+import Logger from "../utils/Logger";
 
 const fs = require("fs");
 const fetch = require('node-fetch');
@@ -11,12 +13,12 @@ const util = require('util');
 
 const readFile = util.promisify(fs.readFile);
 
+@singleton()
 export default class FurnitureDownloader {
 
-    private readonly _config: Configuration;
-
-    constructor(config: Configuration) {
-        this._config = config;
+    constructor(
+        private readonly _config: Configuration,
+        private readonly _logger: Logger) {
     }
 
     public async download(callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>) {
@@ -67,9 +69,7 @@ export default class FurnitureDownloader {
     }
 
     async extractFurniture(revision: string, className: string, callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>) {
-        //if (className !== "rare_dragonlamp" && className !== "tiki_bflies" && className !== "room_wl15_ele") return;
-
-        //if (className !== 'scifidoor') return;
+        //if (/*className !== 'present_wrap' && */className !== 'holo_dragon') return;
 
         const url = this._config.getValue("dynamic.download.url.furniture").replace("%revision%", revision).replace("%className%", className);
         let buffer: Buffer | null = null;
@@ -97,8 +97,7 @@ export default class FurnitureDownloader {
 
             await callback(newHabboAssetSWF, className);
         } catch (e) {
-            console.log("Error with furniture: " + url);
-            console.log(e);
+            await this._logger.logErrorAsync(`Error with furniture: ${url} \n ${e}`);
         }
     }
 

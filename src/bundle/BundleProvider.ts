@@ -1,14 +1,16 @@
-let {packAsync} = require("free-tex-packer-core");
+import HabboAssetSWF from "../swf/HabboAssetSWF";
+import BundleTypes from "./BundleTypes";
+import SymbolClassTag from "../swf/tags/SymbolClassTag";
+import ImageTag from "../swf/tags/ImageTag";
+import {singleton} from "tsyringe";
 
-import HabboAssetSWF from "../../swf/HabboAssetSWF";
-import SymbolClassTag from "../../swf/tags/SymbolClassTag";
-import ImageTag from "../../swf/tags/ImageTag";
-import ArchiveType from "../ArchiveType";
+const {packAsync} = require('free-tex-packer-core');
 
-export default class SpriteSheetConverter {
+@singleton()
+export default class BundleProvider {
     public static imageSource: Map<string, string> = new Map<string, string>();
 
-    public async generateSpriteSheet(habboAssetSWF: HabboAssetSWF, outputFolder: string, type: string): Promise<ArchiveType | null> {
+    public async generateSpriteSheet(habboAssetSWF: HabboAssetSWF, outputFolder: string, type: string): Promise<BundleTypes | null> {
         const tagList: Array<SymbolClassTag> = habboAssetSWF.symbolTags();
         const names: Array<string> = new Array<string>();
         const tags: Array<number> = new Array<number>();
@@ -31,7 +33,7 @@ export default class SpriteSheetConverter {
                             (names[i].includes("_64_") && type === "pet")) {
 
                             if (names[i] !== imageTag.className) {
-                                SpriteSheetConverter.imageSource.set(names[i].substring(habboAssetSWF.getDocumentClass().length + 1), imageTag.className.substring(habboAssetSWF.getDocumentClass().length + 1));
+                                BundleProvider.imageSource.set(names[i].substring(habboAssetSWF.getDocumentClass().length + 1), imageTag.className.substring(habboAssetSWF.getDocumentClass().length + 1));
                                 if ((imageTag.className.includes("_32_") && type === "furniture") ||
                                     (imageTag.className.includes("_sh_") && (type === "figure" || type === "effect")) ||
                                     (imageTag.className.includes("_32_") && type === "pet")) {
@@ -47,6 +49,7 @@ export default class SpriteSheetConverter {
             }
 
             if ((imageTag.className.includes("_64_") && type === "furniture") ||
+                (imageTag.className.includes("_1_") && type === "furniture") ||
                 (imageTag.className.includes("_icon_") && type === "furniture") ||
                 (imageTag.className.includes("_h_") && (type === "figure" || type === "effect")) ||
                 (imageTag.className.includes("_64_") && type === "pet")) {
@@ -57,6 +60,7 @@ export default class SpriteSheetConverter {
             }
         }
 
+
         if (images.length === 0) {
             return null;
         }
@@ -64,7 +68,7 @@ export default class SpriteSheetConverter {
         return await this.packImages(habboAssetSWF.getDocumentClass(), outputFolder + "/", images);
     }
 
-    async packImages(documentClass: string, outputFolder: string, images: Array<{ path: string, contents: Buffer }>): Promise<ArchiveType | null> {
+    async packImages(documentClass: string, outputFolder: string, images: Array<{ path: string, contents: Buffer }>): Promise<BundleTypes | null> {
         let options = {
             textureName: documentClass,
             width: 3072,
@@ -76,7 +80,7 @@ export default class SpriteSheetConverter {
             exporter: "Pixi"
         };
 
-        const archiveType: ArchiveType = {} as any;
+        const archiveType: BundleTypes = {} as any;
         const imageData: {
             name: string,
             buffer: Buffer
@@ -103,6 +107,7 @@ export default class SpriteSheetConverter {
             archiveType.spriteSheetType.meta.image = imageData.name;
             archiveType.imageData = imageData;
         }
+
         return archiveType;
     }
 }

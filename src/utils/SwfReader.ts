@@ -164,6 +164,15 @@ export async function readImagesJPEG(code: number, tagData: any): Promise<any> {
     });
 }
 
+export interface ImageTagData {
+    code: number,
+    characterId: number,
+    imgType: string,
+    imgData: Buffer,
+    bitmapWidth: number,
+    bitmapHeight: number
+}
+
 export function readImagesDefineBitsLossless(tag: any) {
     const characterId = tag.characterId,
         bitmapFormat = tag.bitmapFormat,
@@ -188,9 +197,9 @@ export function readImagesDefineBitsLossless(tag: any) {
                 for (var y = 0; y < bitmapHeight; ++y) {
                     for (var x = 0; x < bitmapWidth; ++x) {
                         var alpha = dataBuf[ptr];
-                        output[index] = dataBuf[ptr + 1];
-                        output[index + 1] = dataBuf[ptr + 2];
-                        output[index + 2] = dataBuf[ptr + 3];
+                        output[index] = dataBuf[ptr + 1] * (255 / alpha);
+                        output[index + 1] = dataBuf[ptr + 2] * (255 / alpha);
+                        output[index + 2] = dataBuf[ptr + 3] * (255 / alpha);
                         output[index + 3] = alpha;
                         index += 4;
                         ptr += 4;
@@ -231,7 +240,9 @@ export function readImagesDefineBitsLossless(tag: any) {
                 code: 36,
                 characterId: characterId,
                 imgType: 'png',
-                imgData: Buffer.concat(buffers)
+                imgData: Buffer.concat(buffers),
+                bitmapWidth: bitmapWidth,
+                bitmapHeight: bitmapHeight
             });
         });
     }).catch(function (e) {

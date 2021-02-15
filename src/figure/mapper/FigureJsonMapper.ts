@@ -1,18 +1,19 @@
 import Configuration from "../../config/Configuration";
 import HabboAssetSWF from "../../swf/HabboAssetSWF";
 import {FigureAsset, FigureAssets, FigureJson} from "./FigureJsonType";
-import FigureDownloader from "../../downloaders/FigureDownloader";
-import SpriteSheetConverter from "../util/SpriteSheetConverter";
 import {FigureXMLManifest} from "./FigureXMLTypes";
+import FigureDownloader from "../FigureDownloader";
+import {singleton} from "tsyringe";
+import BundleProvider from "../../bundle/BundleProvider";
 
+@singleton()
 export default class FigureJsonMapper {
 
     private static MUST_START_WITH: string = "h_";
 
-    private readonly _config: Configuration;
-
-    constructor(config: Configuration) {
-        this._config = config;
+    constructor(
+        private readonly _config: Configuration
+    ) {
     }
 
 
@@ -47,8 +48,8 @@ export default class FigureJsonMapper {
                     figureAsset.x = parseFloat(asset.param.value.split(',')[0]);
                     figureAsset.y = parseFloat(asset.param.value.split(',')[1]);
 
-                    if (SpriteSheetConverter.imageSource.has(name)) {
-                        figureAsset.source = SpriteSheetConverter.imageSource.get(name) as string;
+                    if (BundleProvider.imageSource.has(name)) {
+                        figureAsset.source = BundleProvider.imageSource.get(name) as string;
                     }
 
                     assets[name] = figureAsset;

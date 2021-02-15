@@ -22,7 +22,6 @@ import {
     Visualization,
     VisualizationLayers
 } from "./FurniTypes";
-import SpriteSheetConverter from "../util/SpriteSheetConverter";
 import {AssetsXML, IndexXML, LogicXML} from "./FurniXMLTypes";
 import {
     AnimationLayerXML,
@@ -32,8 +31,10 @@ import {
     VisualizationDataXML,
     VisualizationXML
 } from "./VisualizationXMLTypes";
-import {log} from "util";
+import BundleProvider from "../../bundle/BundleProvider";
+import {singleton} from "tsyringe";
 
+@singleton()
 export default class FurniJsonMapper {
     private static readonly VISUALIZATION_DEFAULT_SIZE = 64;
 
@@ -42,7 +43,7 @@ export default class FurniJsonMapper {
     public mapXML(assets: any, indexXML: any, logic: any, visualization: any): FurniJson {
         const furniJson: FurniJson = {} as any;
 
-        FurniJsonMapper.mapAssetsXML(new AssetsXML(assets), furniJson);
+        this.mapAssetsXML(new AssetsXML(assets), furniJson);
         FurniJsonMapper.mapIndexXML(new IndexXML(indexXML.object), furniJson);
         FurniJsonMapper.mapLogicXML(new LogicXML(logic.objectData), furniJson);
         FurniJsonMapper.mapVisualizationXML(new VisualizationDataXML(visualization.visualizationData), furniJson);
@@ -51,7 +52,7 @@ export default class FurniJsonMapper {
     }
 
 
-    private static mapAssetsXML(assetsXML: AssetsXML, output: FurniJson) {
+    private mapAssetsXML(assetsXML: AssetsXML, output: FurniJson) {
         const assets: FurniAssets = {} as any;
 
         for (const asset of assetsXML.assets) {
@@ -60,13 +61,13 @@ export default class FurniJsonMapper {
 
                 if (asset.source !== undefined) {
                     furniAsset.source = asset.source;
-                    if (SpriteSheetConverter.imageSource.has(asset.source)) {
-                        furniAsset.source = SpriteSheetConverter.imageSource.get(asset.source) as string;
+                    if (BundleProvider.imageSource.has(asset.source)) {
+                        furniAsset.source = BundleProvider.imageSource.get(asset.source) as string;
                     }
                 }
 
-                if (SpriteSheetConverter.imageSource.has(asset.name)) {
-                    furniAsset.source = SpriteSheetConverter.imageSource.get(asset.name) as string;
+                if (BundleProvider.imageSource.has(asset.name)) {
+                    furniAsset.source = BundleProvider.imageSource.get(asset.name) as string;
                 }
 
                 if (asset.x !== undefined)
@@ -158,7 +159,8 @@ export default class FurniJsonMapper {
         const layers: VisualizationLayers = {};
         for (const layerXML of layersXML) {
             const layer: Layer = {} as any;
-            layer.alpha = layerXML.alpha;
+            if (layerXML.alpha !== undefined)
+                layer.alpha = parseInt(layerXML.alpha.toString());
             layer.ink = layerXML.ink;
             layer.tag = layerXML.tag;
 
@@ -253,9 +255,15 @@ export default class FurniJsonMapper {
         const animationLayers: AnimationLayers = {};
         for (const animationLayerXML of animationXML.layers) {
             const animationLayer: AnimationLayer = {} as any;
-            animationLayer.frameRepeat = animationLayerXML.frameRepeat;
-            animationLayer.loopCount = animationLayerXML.loopCount;
-            animationLayer.random = animationLayerXML.random;
+
+            if (animationLayerXML.frameRepeat !== undefined)
+                animationLayer.frameRepeat = parseInt(animationLayerXML.frameRepeat.toString());
+
+            if (animationLayerXML.loopCount !== undefined)
+                animationLayer.loopCount = parseInt(animationLayerXML.loopCount.toString());
+
+            if (animationLayerXML.random !== undefined)
+                animationLayer.random = parseInt(animationLayerXML.random.toString());
 
             if (animationLayerXML.frameSequences.length > 0) {
                 animationLayer.frameSequences = FurniJsonMapper.mapVisualizationFrameSequenceXML(animationLayerXML);
@@ -277,10 +285,16 @@ export default class FurniJsonMapper {
                 const frames: Frames = {};
                 for (const frameXML of frameSequenceXML.frames) {
                     const frame: Frame = {} as any;
-                    frame.x = frameXML.x;
-                    frame.y = frameXML.y;
-                    frame.randomX = frameXML.randomX;
-                    frame.randomY = frameXML.randomY;
+                    if (frameXML.x !== undefined)
+                        frame.x = parseInt(frameXML.x.toString());
+                    if (frameXML.y !== undefined)
+                        frame.y = parseInt(frameXML.y.toString());
+
+                    if (frameXML.randomX !== undefined)
+                        frame.randomX = parseInt(frameXML.randomX.toString());
+
+                    if (frameXML.randomY !== undefined)
+                        frame.randomY = parseInt(frameXML.randomY.toString());
                     if (frameXML.id === "NaN") {
                         frame.id = 0;
                     } else {

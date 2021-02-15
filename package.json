@@ -14,12 +14,15 @@
     "bytebuffer": "^5.0.1",
     "concat-frames": "^1.0.3",
     "free-tex-packer-core": "^0.3.2",
+    "jimp": "^0.16.1",
     "jpg-stream": "^1.1.2",
     "lodash": "^4.17.20",
     "node-fetch": "^2.6.1",
     "node-gzip": "^1.1.2",
     "png-stream": "^1.0.5",
+    "reflect-metadata": "^0.1.13",
     "stream-to-array": "^2.3.0",
+    "tsyringe": "^4.4.0",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {}

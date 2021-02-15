@@ -1,3 +1,11 @@
+export default interface BundleTypes {
+    spriteSheetType: SpriteSheetType,
+    imageData: {
+        name: string,
+        buffer: Buffer
+    }
+}
+
 export interface SpriteSheetType {
     frames: SpriteSheetFrames,
     meta: SpriteSheetMeta

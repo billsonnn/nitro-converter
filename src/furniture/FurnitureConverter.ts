@@ -1,23 +1,30 @@
-import HabboAssetSWF from "../../swf/HabboAssetSWF";
-import DefineBinaryDataTag from "../../swf/tags/DefineBinaryDataTag";
-import Configuration from "../../config/Configuration";
-import FurniJsonMapper from "./FurniJsonMapper";
-import {FurniJson} from "./FurniTypes";
-import File from "../../utils/File";
-import ArchiveType from "../ArchiveType";
-import NitroBundle from "../../utils/NitroBundle";
+import FurniJsonMapper from "./mapper/FurniJsonMapper";
+import Configuration from "../config/Configuration";
+import HabboAssetSWF from "../swf/HabboAssetSWF";
+import DefineBinaryDataTag from "../swf/tags/DefineBinaryDataTag";
+import {FurniJson} from "./mapper/FurniTypes";
+import BundleTypes from "../bundle/BundleTypes";
+import File from "../utils/File";
+import NitroBundle from "../utils/NitroBundle";
+import BundleProvider from "../bundle/BundleProvider";
+import FurnitureDownloader from "./FurnitureDownloader";
+import {singleton} from "tsyringe";
+import Logger from "../utils/Logger";
 
 const xml2js = require('xml2js');
 const parser = new xml2js.Parser(/* options */);
 
 const fs = require('fs').promises;
 
+@singleton()
 export default class FurnitureConverter {
 
-    private readonly _furniJsonMapper: FurniJsonMapper;
-
-    constructor(config: Configuration) {
-        this._furniJsonMapper = new FurniJsonMapper();
+    constructor(
+        private readonly _furniDownloader: FurnitureDownloader,
+        private readonly _furniJsonMapper: FurniJsonMapper,
+        private readonly _config: Configuration,
+        private readonly _bundleProvider: BundleProvider,
+        private readonly _logger: Logger) {
     }
 
     private static getBinaryData(habboAssetSWF: HabboAssetSWF, type: string, documentNameTwice: boolean) {
@@ -76,15 +83,15 @@ export default class FurnitureConverter {
         return this._furniJsonMapper.mapXML(assetXml, indexXml, logicXml, visualizationXml);
     }
 
-    public async fromHabboAsset(habboAssetSWF: HabboAssetSWF, outputFolder: string, type: string, archiveType: ArchiveType) {
+    private async fromHabboAsset(habboAssetSWF: HabboAssetSWF, outputFolder: string, type: string, archiveType: BundleTypes) {
         const furnitureJson = await this.convertXML2JSON(habboAssetSWF);
         if (furnitureJson !== null) {
             furnitureJson.spritesheet = archiveType.spriteSheetType;
             furnitureJson.type = type;
 
             const path = outputFolder + "/" + habboAssetSWF.getDocumentClass() + ".nitro";
-            const assetOuputFolder = new File(path);
-            if (assetOuputFolder.exists()) {
+            const assetOutputFolder = new File(path);
+            if (assetOutputFolder.exists()) {
                 console.log("Furniture already exists or the directory is not empty!");
 
                 return;
@@ -97,5 +104,26 @@ export default class FurnitureConverter {
             const buffer = await nitroBundle.toBufferAsync();
             await fs.writeFile(path, buffer);
         }
+    }
+
+    public async convertAsync() {
+        const outputFolderFurniture = new File(this._config.getValue("output.folder.furniture"));
+        if (!outputFolderFurniture.isDirectory()) {
+            outputFolderFurniture.mkdirs();
+        }
+
+        const furnitureConverter = this;
+        await this._furniDownloader.download(async function (habboAssetSwf: HabboAssetSWF, className: string) {
+            console.log("Attempt parsing furniture: " + habboAssetSwf.getDocumentClass());
+
+            try {
+                const spriteSheetType = await furnitureConverter._bundleProvider.generateSpriteSheet(habboAssetSwf, outputFolderFurniture.path, "furniture");
+                if (spriteSheetType !== null) {
+                    await furnitureConverter.fromHabboAsset(habboAssetSwf, outputFolderFurniture.path, "furniture", spriteSheetType);
+                }
+            } catch (e) {
+                await furnitureConverter._logger.logErrorAsync("Furniture error: " + habboAssetSwf.getDocumentClass() + " " + e);
+            }
+        });
     }
 }

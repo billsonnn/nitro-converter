@@ -1,4 +1,4 @@
-import {readImagesDefineBitsLossless, readImagesJPEG, readSwfAsync} from "../utils/SwfReader";
+import {ImageTagData, readImagesDefineBitsLossless, readImagesJPEG, readSwfAsync} from "../utils/SwfReader";
 import ITag from "./tags/ITag";
 import SymbolClassTag from "./tags/SymbolClassTag";
 import DefineBinaryDataTag from "./tags/DefineBinaryDataTag";
@@ -38,12 +38,14 @@ export default class HabboAssetSWF {
                     break;
 
                 case 35:
-                    const jpegTag = await readImagesJPEG(35, tag);
+                    const jpegTag: any = await readImagesJPEG(35, tag);
                     this._tags.push(new ImageTag({
                         code: jpegTag.code,
                         characterID: jpegTag.characterId,
                         imgType: jpegTag.imgType,
-                        imgData: jpegTag.imgData
+                        imgData: jpegTag.imgData,
+                        bitmapWidth: jpegTag.bitmapWidth,
+                        bitmapHeight: jpegTag.bitmapHeight
                     }));
                     break;
 
@@ -53,7 +55,9 @@ export default class HabboAssetSWF {
                         code: pngTag.code,
                         characterID: pngTag.characterId,
                         imgType: pngTag.imgType,
-                        imgData: pngTag.imgData
+                        imgData: pngTag.imgData,
+                        bitmapWidth: pngTag.bitmapWidth,
+                        bitmapHeight: pngTag.bitmapHeight
                     }));
                     break;
 

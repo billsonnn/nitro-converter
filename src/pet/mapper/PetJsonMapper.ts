@@ -1,4 +1,3 @@
-import SpriteSheetConverter from "../util/SpriteSheetConverter";
 import {
     Action, Animation, AnimationLayer, AnimationLayers, Animations, Color, ColorLayer, ColorLayers, Colors,
     Direction,
@@ -21,9 +20,12 @@ import {
 } from "./VisualizationXMLTypes";
 import HabboAssetSWF from "../../swf/HabboAssetSWF";
 import RGB from "./RGB";
+import BundleProvider from "../../bundle/BundleProvider";
+import {singleton} from "tsyringe";
 
 const ByteBuffer = require('bytebuffer');
 
+@singleton()
 export default class PetJsonMapper {
 
 
@@ -52,13 +54,13 @@ export default class PetJsonMapper {
 
                 if (asset.source !== undefined) {
                     petAsset.source = asset.source;
-                    if (SpriteSheetConverter.imageSource.has(asset.source)) {
-                        petAsset.source = SpriteSheetConverter.imageSource.get(asset.source) as string;
+                    if (BundleProvider.imageSource.has(asset.source)) {
+                        petAsset.source = BundleProvider.imageSource.get(asset.source) as string;
                     }
                 }
 
-                if (SpriteSheetConverter.imageSource.has(asset.name)) {
-                    petAsset.source = SpriteSheetConverter.imageSource.get(asset.name) as string;
+                if (BundleProvider.imageSource.has(asset.name)) {
+                    petAsset.source = BundleProvider.imageSource.get(asset.name) as string;
                 }
 
                 petAsset.x = parseInt(asset.x.toString());

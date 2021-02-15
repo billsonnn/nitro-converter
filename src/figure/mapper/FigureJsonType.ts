@@ -1,4 +1,4 @@
-import {SpriteSheetType} from "../util/SpriteSheetTypes";
+import {SpriteSheetType} from "../../bundle/BundleTypes";
 
 export interface FigureJson {
     type: string,

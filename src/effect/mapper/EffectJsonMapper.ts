@@ -12,41 +12,44 @@ import {
     Frame,
     Fx, Item, Override, Remove, Shadow, Sprite
 } from "./EffectTypes";
-import EffectDownloader from "../../downloaders/EffectDownloader";
 import {ManifestXML} from "./EffectManifestXMLTypes";
-import SpriteSheetConverter from "../util/SpriteSheetConverter";
 import {
     AnimationXML,
     BodyPartXML
 } from "./EffectAnimationXMLTypes";
+import {singleton} from "tsyringe";
+import EffectDownloader from "../EffectDownloader";
+import BundleProvider from "../../bundle/BundleProvider";
 
+@singleton()
 export default class EffectJsonMapper {
     public static readonly MUST_START_WITH: string = "h_";
+
 
     public mapXML(habboAssetSWF: HabboAssetSWF, manifest: any, animation: any): EffectJson {
         const name = habboAssetSWF.getDocumentClass();
         const result = {} as EffectJson;
         result.name = name;
         result.type = EffectDownloader.types.get(name) as string;
-        EffectJsonMapper.mapManifestXML(new ManifestXML(manifest), result);
+        this.mapManifestXML(new ManifestXML(manifest), result);
         EffectJsonMapper.mapAnimationXML(new AnimationXML(animation), result);
 
         return result;
     }
 
-    private static mapManifestXML(manifestXML: ManifestXML, output: EffectJson) {
+    private mapManifestXML(manifestXML: ManifestXML, output: EffectJson) {
         const assets: AssetsJSON = {};
 
         for (const assetXML of manifestXML.library.assets) {
-            if (assetXML.name.startsWith(this.MUST_START_WITH)) {
+            if (assetXML.name.startsWith(EffectJsonMapper.MUST_START_WITH)) {
 
                 const asset: AssetJSON = {} as any;
                 if (assetXML.param != undefined && assetXML.param.value !== undefined) {
                     asset.x = parseInt(assetXML.param.value.split(",")[0]);
                     asset.y = parseInt(assetXML.param.value.split(",")[1]);
                 }
-                if (SpriteSheetConverter.imageSource.has(assetXML.name)) {
-                    asset.source = SpriteSheetConverter.imageSource.get(assetXML.name) as any;
+                if (BundleProvider.imageSource.has(assetXML.name)) {
+                    asset.source = BundleProvider.imageSource.get(assetXML.name) as string;
                 }
 
                 assets[assetXML.name] = asset;
@@ -55,10 +58,10 @@ export default class EffectJsonMapper {
 
         output.assets = assets;
 
-        if (manifestXML.library.aliases.length > 0 || SpriteSheetConverter.imageSource.size > 0) {
+        if (manifestXML.library.aliases.length > 0 || BundleProvider.imageSource.size > 0) {
             const aliases: Aliases = {};
             for (const aliasXML of manifestXML.library.aliases) {
-                if (aliasXML.name.startsWith(this.MUST_START_WITH)) {
+                if (aliasXML.name.startsWith(EffectJsonMapper.MUST_START_WITH)) {
                     const alias: Alias = {} as any;
 
                     alias.link = aliasXML.link;

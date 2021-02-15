@@ -1,8 +1,11 @@
+import {singleton} from "tsyringe";
+
 const fs = require('fs/promises');
 const fetch = require('node-fetch');
 
 const config = require('../config.json');
 
+@singleton()
 export default class Configuration {
 
     private readonly _config: Map<string, string>;

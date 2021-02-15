@@ -1,14 +1,16 @@
 import Configuration from "../config/Configuration";
 import HabboAssetSWF from "../swf/HabboAssetSWF";
 import File from "../utils/File";
+import {singleton} from "tsyringe";
+import Logger from "../utils/Logger";
 
 const fetch = require('node-fetch');
 
+@singleton()
 export default class PetDownloader {
-    private readonly _config: Configuration;
-
-    constructor(config: Configuration) {
-        this._config = config;
+    constructor(
+        private readonly _config: Configuration,
+        private readonly _logger: Logger) {
     }
 
     public async download(callback: (habboAssetSwf: HabboAssetSWF) => Promise<void>) {
@@ -39,6 +41,7 @@ export default class PetDownloader {
 
                         const arrayBuffer = await fetchData.arrayBuffer();
                         buffer = Buffer.from(arrayBuffer);
+                        console.log(buffer.toString('utf-8'));
                     } else {
                         const file = new File(url);
                         if (!file.exists()) {
@@ -47,10 +50,14 @@ export default class PetDownloader {
                         }
                     }
 
-                    const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(buffer !== null ? buffer : url);
-                    await newHabboAssetSWF.setupAsync();
+                    try {
+                        const newHabboAssetSWF: HabboAssetSWF = new HabboAssetSWF(buffer !== null ? buffer : url);
+                        await newHabboAssetSWF.setupAsync();
 
-                    await callback(newHabboAssetSWF);
+                        await callback(newHabboAssetSWF);
+                    } catch (e) {
+                        await this._logger.logErrorAsync(`[${pet}]` + e);
+                    }
                 }
 
                 itemClassNames.push(pet);
