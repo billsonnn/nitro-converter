@@ -39,6 +39,7 @@ export default class CustomIterator<TType>
             typeof candidate === 'object' &&
             typeof candidate.length === 'number' &&
             typeof candidate.splice === 'function' &&
+            // eslint-disable-next-line no-prototype-builtins
             !(candidate.propertyIsEnumerable('length'));
     }
 

@@ -49,13 +49,13 @@ export class FurnitureTypeXML
 
             if(xml.partcolors)
             {
-                for(let key in xml.partcolors)
+                for(const key in xml.partcolors)
                 {
                     const colorData = xml.partcolors[key].color;
-                    
+
                     if(colorData)
                     {
-                        for(let color of colorData)
+                        for(const color of colorData)
                         {
                             let code = color;
 

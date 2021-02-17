@@ -1,6 +1,4 @@
-import { RmOptions } from 'fs';
-
-const fs = require('fs');
+import { existsSync, lstatSync, mkdirSync, readdirSync, RmOptions, rmSync } from 'fs';
 
 export default class File
 {
@@ -14,24 +12,24 @@ export default class File
 
     public exists(): boolean
     {
-        return fs.existsSync(this._path);
+        return existsSync(this._path);
     }
 
     public mkdirs(): void
     {
-        return fs.mkdirSync(this._path);
+        return mkdirSync(this._path);
     }
 
     public list(): string[]
     {
-        const test = fs.readdirSync(this._path);
+        const test = readdirSync(this._path);
 
         return test;
     }
 
     public isDirectory(): boolean
     {
-        return this.exists() && fs.lstatSync(this._path).isDirectory();
+        return this.exists() && lstatSync(this._path).isDirectory();
     }
 
     get path(): string
@@ -41,6 +39,6 @@ export default class File
 
     public rmdir(options: RmOptions): void
     {
-        return fs.rmSync(this._path, options);
+        return rmSync(this._path, options);
     }
 }

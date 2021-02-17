@@ -30,7 +30,7 @@ export class PetDownloader
                     await this.extractPet(petType, callback);
                 }
 
-                catch(error)
+                catch (error)
                 {
                     console.log();
                     console.error(error);
@@ -54,14 +54,14 @@ export class PetDownloader
             const petTypes: string[] = [];
 
             const pets = this._config.getValue('pet.configuration');
-    
+
             if(pets)
             {
                 const types = pets.split(',');
-    
+
                 for(const type of types) petTypes.push(type);
             }
-    
+
             return petTypes;
         }
 

@@ -10,7 +10,7 @@ import { AssetMapper, IndexMapper, LogicMapper, VisualizationMapper } from '../.
 import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
 import File from '../../utils/File';
 import Logger from '../../utils/Logger';
-import NitroBundle from '../../utils/NitroBundle';
+import { NitroBundle } from '../../utils/NitroBundle';
 import { FurnitureDownloader } from './FurnitureDownloader';
 
 @singleton()

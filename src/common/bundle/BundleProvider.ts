@@ -53,7 +53,7 @@ export class BundleProvider
                     }
 
                     if(isProhibited) continue;
-                    
+
                     BundleProvider.imageSource.set(names[i].substring(habboAssetSWF.getDocumentClass().length + 1), imageTag.className.substring(habboAssetSWF.getDocumentClass().length + 1));
 
                     images.push({

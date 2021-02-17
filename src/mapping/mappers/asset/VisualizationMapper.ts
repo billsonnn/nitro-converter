@@ -32,7 +32,7 @@ export class VisualizationMapper extends Mapper
             if(visualizationDataXML.size !== undefined)
             {
                 let isProhibited = false;
-                
+
                 for(const size of VisualizationMapper.PROHIBITED_SIZES)
                 {
                     if(visualizationDataXML.size === parseInt(size))
@@ -45,7 +45,7 @@ export class VisualizationMapper extends Mapper
 
                 if(isProhibited) continue;
             }
-            
+
             const visualizationData: IAssetVisualizationData = {};
 
             if(visualizationDataXML.angle !== undefined) visualizationData.angle = visualizationDataXML.angle;
@@ -197,7 +197,7 @@ export class VisualizationMapper extends Mapper
     private static mapVisualizationAnimationXML(xml: AnimationXML[], output: { [index: string]: IAssetAnimation }): void
     {
         if(!xml || !xml.length) return;
-        
+
         for(const animationXML of xml)
         {
             const animation: IAssetAnimation = {};
@@ -313,7 +313,7 @@ export class VisualizationMapper extends Mapper
     {
         if(!xml || !xml.length) return;
 
-        let i = 0;
+        const i = 0;
 
         for(const offsetXML of xml)
         {

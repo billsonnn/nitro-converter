@@ -24,7 +24,7 @@ export class SWFConverter
         const binaryData = SWFConverter.getBinaryData(habboAssetSWF, paletteName, false);
 
         if(!binaryData || !binaryData.binaryDataBuffer) return null;
-        
+
         const byteBuffer = wrap(binaryData.binaryDataBuffer);
 
         const paletteColors: [ number, number, number ][] = [];
@@ -69,7 +69,7 @@ export class SWFConverter
         const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'assets', true);
 
         if(!binaryData) return null;
-        
+
         return await parseStringPromise(binaryData.binaryData);
     }
 
@@ -78,7 +78,7 @@ export class SWFConverter
         const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'logic', true);
 
         if(!binaryData) return null;
-        
+
         return await parseStringPromise(binaryData.binaryData);
     }
 
@@ -87,7 +87,7 @@ export class SWFConverter
         const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'index', false);
 
         if(!binaryData) return null;
-        
+
         return await parseStringPromise(binaryData.binaryData);
     }
 
@@ -96,7 +96,7 @@ export class SWFConverter
         const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'visualization', true);
 
         if(!binaryData) return null;
-        
+
         return await parseStringPromise(binaryData.binaryData);
     }
 }

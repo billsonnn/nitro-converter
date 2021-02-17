@@ -49,7 +49,7 @@ export class FurnitureDownloader
                             count ++;
                         }
 
-                        catch(error)
+                        catch (error)
                         {
                             console.log();
                             console.error(error);
@@ -76,7 +76,7 @@ export class FurnitureDownloader
                             await this.extractFurniture(revision, className, callback);
                         }
 
-                        catch(error)
+                        catch (error)
                         {
                             console.log();
                             console.error(error);
@@ -96,7 +96,7 @@ export class FurnitureDownloader
     public async parseFurniData(): Promise<IFurnitureData>
     {
         const url = this._configuration.getValue('furnidata.url');
- 
+
         if(!url || !url.length) return null;
 
         try
@@ -108,7 +108,7 @@ export class FurnitureDownloader
             return (JSON.parse(content) as IFurnitureData);
         }
 
-        catch(error)
+        catch (error)
         {
             console.log();
             console.error(error);
@@ -129,7 +129,7 @@ export class FurnitureDownloader
             const buffer = await FileUtilities.readFileAsBuffer(url);
 
             if(!buffer) return;
-            
+
             const newHabboAssetSWF = new HabboAssetSWF(buffer);
 
             await newHabboAssetSWF.setupAsync();

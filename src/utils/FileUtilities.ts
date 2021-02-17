@@ -29,7 +29,7 @@ export class FileUtilities
             return content;
         }
 
-        catch(error)
+        catch (error)
         {
             console.log();
             console.error(error);
@@ -60,7 +60,7 @@ export class FileUtilities
             return content;
         }
 
-        catch(error)
+        catch (error)
         {
             console.log();
             console.error(error);

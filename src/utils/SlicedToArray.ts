@@ -5,7 +5,7 @@ export class SlicedToArray
         if(Array.isArray(arr)) return arr;
 
         if(Symbol.iterator in Object(arr)) return SlicedToArray.sliceIterator(arr, i);
-        
+
         throw new TypeError('Invalid attempt to destructure non-iterable instance');
     }
 

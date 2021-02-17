@@ -42,7 +42,7 @@ export class AssetMapper extends Mapper
             if(assetXML.name !== undefined)
             {
                 let isProhibited = false;
-                
+
                 for(const size of AssetMapper.PROHIBITED_SIZES)
                 {
                     if(assetXML.name.indexOf(('_' + size + '_')) >= 0)
@@ -73,7 +73,7 @@ export class AssetMapper extends Mapper
                     asset.source = BundleProvider.imageSource.get(assetXML.name) as string;
                 }
             }
-            
+
             if(assetXML.x !== undefined) asset.x = assetXML.x;
             if(assetXML.y !== undefined) asset.y = assetXML.y;
             if(assetXML.flipH !== undefined) asset.flipH = assetXML.flipH;

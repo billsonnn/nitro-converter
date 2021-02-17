@@ -1,7 +1,6 @@
+import { createWriteStream, existsSync } from 'fs';
+import { appendFile } from 'fs/promises';
 import { singleton } from 'tsyringe';
-
-const fs = require('fs');
-const fsAsync = require('fs/promises');
 
 @singleton()
 export default class Logger
@@ -9,15 +8,15 @@ export default class Logger
 
     constructor()
     {
-        if(!fs.existsSync('error.log'))
+        if(!existsSync('error.log'))
         {
-            const createStream = fs.createWriteStream('error.log');
+            const createStream = createWriteStream('error.log');
             createStream.end();
         }
     }
 
     public logErrorAsync(message: string): Promise<void>
     {
-        return fsAsync.appendFile('error.log', message + '\n');
+        return appendFile('error.log', message + '\n');
     }
 }

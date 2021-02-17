@@ -1,7 +1,7 @@
-const ByteBuffer = require('bytebuffer');
-const { gzip } = require('node-gzip');
+import * as ByteBuffer from 'bytebuffer';
+import { gzip } from 'zlib';
 
-export default class NitroBundle
+export class NitroBundle
 {
     private readonly _files: Map<string, Buffer>;
 
@@ -19,7 +19,7 @@ export default class NitroBundle
     {
         const buffer = new ByteBuffer();
 
-        buffer.writeUInt16(this._files.size);
+        buffer.writeUint16(this._files.size);
 
         const iterator = this._files.entries();
         let result: IteratorResult<[string, Buffer]> = iterator.next();
@@ -31,7 +31,7 @@ export default class NitroBundle
             buffer.writeUint16(fileName.length);
             buffer.writeString(fileName);
 
-            const compressed = await gzip(file);
+            const compressed = await gzip.__promisify__(file);
             buffer.writeUint32(compressed.length);
             buffer.append(compressed);
 

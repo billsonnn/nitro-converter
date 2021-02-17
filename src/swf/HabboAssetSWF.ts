@@ -41,8 +41,8 @@ export class HabboAssetSWF
                     console.log(tag);
                     break;
 
-                case 35:
-                    const jpegTag: any = await readImagesJPEG(35, tag);
+                case 35: {
+                    const jpegTag = await readImagesJPEG(35, tag);
                     this._tags.push(new ImageTag({
                         code: jpegTag.code,
                         characterID: jpegTag.characterId,
@@ -52,8 +52,9 @@ export class HabboAssetSWF
                         bitmapHeight: jpegTag.bitmapHeight
                     }));
                     break;
+                }
 
-                case 36:
+                case 36: {
                     const pngTag: any = await readImagesDefineBitsLossless(tag);
                     this._tags.push(new ImageTag({
                         code: pngTag.code,
@@ -64,6 +65,7 @@ export class HabboAssetSWF
                         bitmapHeight: pngTag.bitmapHeight
                     }));
                     break;
+                }
 
                 case 20:
                     console.log(tag);
@@ -103,9 +105,11 @@ export class HabboAssetSWF
 
         let iterator: CustomIterator<ITag> = new CustomIterator(this._tags);
 
+        // eslint-disable-next-line no-constant-condition
         while(true)
         {
             let t: ITag;
+
             do
             {
                 if(!iterator.hasNext())
@@ -184,6 +188,7 @@ export class HabboAssetSWF
 
         const iterator: CustomIterator<ITag> = new CustomIterator(this._tags);
 
+        // eslint-disable-next-line no-constant-condition
         while(true)
         {
             let t: ITag;
