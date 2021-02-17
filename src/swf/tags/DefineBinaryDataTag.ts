@@ -1,14 +1,15 @@
-import ITag from "./ITag";
-import CharacterTag from "./CharacterTag";
+import { CharacterTag } from './CharacterTag';
+import { ITag } from './ITag';
 
-export default class DefineBinaryDataTag extends CharacterTag implements ITag {
-
+export class DefineBinaryDataTag extends CharacterTag implements ITag
+{
     private readonly _tag: number;
     private readonly _reserved: number;
     private readonly _binaryData: string;
     private readonly _binaryDataBuffer: Buffer;
 
-    constructor(buffer: Buffer) {
+    constructor(buffer: Buffer)
+    {
         super();
 
         this._tag = buffer.readUInt16LE(0);
@@ -17,29 +18,34 @@ export default class DefineBinaryDataTag extends CharacterTag implements ITag {
         const end = buffer.length;
         const binary = buffer.slice(start, end);
 
-        this._binaryData = binary.toString("utf-8");
+        this._binaryData = binary.toString('utf-8');
         this._binaryDataBuffer = binary;
 
         this.characterId = this._tag;
     }
 
-    get code(): number {
+    public get code(): number
+    {
         return 87;
     }
 
-    get tag(): number {
+    public get tag(): number
+    {
         return this._tag;
     }
 
-    get reserved(): number {
+    public get reserved(): number
+    {
         return this._reserved;
     }
 
-    get binaryData(): string {
+    public get binaryData(): string
+    {
         return this._binaryData;
     }
 
-    get binaryDataBuffer(): Buffer {
+    public get binaryDataBuffer(): Buffer
+    {
         return this._binaryDataBuffer;
     }
 }

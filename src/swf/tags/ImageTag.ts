@@ -1,8 +1,8 @@
-import ITag from "./ITag";
-import CharacterTag from "./CharacterTag";
+import { CharacterTag } from './CharacterTag';
+import { ITag } from './ITag';
 
-export default class ImageTag extends CharacterTag implements ITag {
-
+export class ImageTag extends CharacterTag implements ITag
+{
     private readonly _code: number;
     private readonly _characterID: number;
     private readonly _imgType: string;
@@ -11,7 +11,8 @@ export default class ImageTag extends CharacterTag implements ITag {
     private readonly _bitmapWidth: number;
     private readonly _bitmapHeight: number;
 
-    constructor(image: { code: number, characterID: number, imgType: string, imgData: Buffer, bitmapWidth: number, bitmapHeight: number }) {
+    constructor(image: { code: number, characterID: number, imgType: string, imgData: Buffer, bitmapWidth: number, bitmapHeight: number })
+    {
         super();
 
         this._code = image.code;
@@ -25,27 +26,33 @@ export default class ImageTag extends CharacterTag implements ITag {
         this._bitmapHeight = image.bitmapHeight;
     }
 
-    get code(): number {
+    public get code(): number
+    {
         return this._code;
-    };
+    }
 
-    get characterID(): number {
+    public get characterID(): number
+    {
         return this._characterID;
     }
 
-    get imgType(): string {
+    public get imgType(): string
+    {
         return this._imgType;
     }
 
-    get imgData(): Buffer {
+    public get imgData(): Buffer
+    {
         return this._imgData;
     }
 
-    get bitmapWidth(): number {
+    public get bitmapWidth(): number
+    {
         return this._bitmapWidth;
     }
 
-    get bitmapHeight(): number {
+    public get bitmapHeight(): number
+    {
         return this._bitmapHeight;
     }
 }

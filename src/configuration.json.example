@@ -1,0 +1,19 @@
+{
+  "output.folder.furniture": "/converted-assets/furniture/",
+  "output.folder.figure": "/converted-assets/figure/",
+  "output.folder.effect": "/converted-assets/effect/",
+  "output.folder.pet": "/converted-assets/pet/",
+  "furnidata.url": "/gamedata/json/furnidata",
+  "figuremap.url": "/gamedata/figuremap.xml",
+  "effectmap.url": "/gamedata/effectmap.xml",
+  "external_vars.url": "/gamedata/external_variables.txt",
+  "dynamic.download.url.furniture": "/dcr/hof_furni/%className%.swf",
+  "dynamic.download.url.figure": "/gordon/PRODUCTION/%className%.swf",
+  "dynamic.download.url.effect": "/gordon/PRODUCTION/%className%.swf",
+  "dynamic.download.url.pet": "/gordon/PRODUCTION/%className%.swf",
+  "convert.furniture": "1",
+  "convert.figure": "0",
+  "convert.effect": "0",
+  "convert.pet": "1",
+  "prohibited.sizes": "32,sh"
+}

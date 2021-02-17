@@ -1,34 +1,35 @@
-import ITag from "./ITag";
+import { ISymbolClass } from './ISymbolClass';
+import { ITag } from './ITag';
 
-export interface SymbolClass {
-    id: number,
-    name: string
-}
+export class SymbolClassTag implements ITag
+{
+    private readonly _tags: number[];
+    private readonly _names: string[];
 
-export default class SymbolClassTag implements ITag {
-
-    private readonly _tags: Array<number>;
-    private readonly _names: Array<string>;
-
-    constructor(tags: Array<SymbolClass>) {
+    constructor(tags: ISymbolClass[])
+    {
         this._tags = [];
         this._names = [];
 
-        for (const symbolClass of tags) {
+        for(const symbolClass of tags)
+        {
             this._tags.push(symbolClass.id);
             this._names.push(symbolClass.name);
         }
     }
 
-    get tags(): Array<number> {
+    public get tags(): number[]
+    {
         return this._tags;
     }
 
-    get names(): Array<string> {
+    public get names(): string[]
+    {
         return this._names;
     }
 
-    get code(): number {
+    public get code(): number
+    {
         return 76;
     }
 }

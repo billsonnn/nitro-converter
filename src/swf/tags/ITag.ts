@@ -1,3 +1,4 @@
-export default interface ITag {
+export interface ITag
+{
     code: number;
 }
