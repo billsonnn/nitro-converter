@@ -18,8 +18,6 @@ export class FurnitureDownloader
     {
         try
         {
-            let count = 0;
-
             const furniData = await this.parseFurniData();
             const classNames: string[] = [];
 
@@ -36,8 +34,6 @@ export class FurnitureDownloader
                         const className = furniType.classname.split('*')[0];
                         const revision = furniType.revision;
 
-                        if(count === 3) return;
-
                         if(classNames.indexOf(className) >= 0) continue;
 
                         classNames.push(className);
@@ -45,8 +41,6 @@ export class FurnitureDownloader
                         try
                         {
                             await this.extractFurniture(revision, className, callback);
-
-                            count ++;
                         }
 
                         catch (error)

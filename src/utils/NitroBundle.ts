@@ -1,5 +1,8 @@
 import * as ByteBuffer from 'bytebuffer';
-import { gzip } from 'zlib';
+import { promisify } from 'util';
+import * as zlib from 'zlib';
+
+const gzip = promisify(zlib.gzip);
 
 export class NitroBundle
 {
@@ -31,7 +34,7 @@ export class NitroBundle
             buffer.writeUint16(fileName.length);
             buffer.writeString(fileName);
 
-            const compressed = await gzip.__promisify__(file);
+            const compressed = await gzip(file);
             buffer.writeUint32(compressed.length);
             buffer.append(compressed);
 
