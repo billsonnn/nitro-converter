@@ -74,7 +74,7 @@ export class FurnitureConverter extends SWFConverter
         const name = habboAssetSWF.getDocumentClass();
         const path = outputFolder + '/' + name + '.nitro';
         const nitroBundle = new NitroBundle();
-        
+
         nitroBundle.addFile((name + '.json'), Buffer.from(JSON.stringify(assetData)));
 
         if(spriteBundle && (spriteBundle.spritesheet !== undefined))
@@ -88,7 +88,7 @@ export class FurnitureConverter extends SWFConverter
         }
 
         const buffer = await nitroBundle.toBufferAsync();
-        
+
         await writeFile(path, buffer);
     }
 

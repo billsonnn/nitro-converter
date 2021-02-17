@@ -1,4 +1,5 @@
 import { writeFile } from 'fs/promises';
+import * as ora from 'ora';
 import { singleton } from 'tsyringe';
 import { BundleProvider } from '../../common/bundle/BundleProvider';
 import { SpriteBundle } from '../../common/bundle/SpriteBundle';
@@ -26,13 +27,26 @@ export class PetConverter extends SWFConverter
 
     public async convertAsync(): Promise<void>
     {
+        const now = Date.now();
+
+        const spinner = ora('Preparing Pets').start();
+
         const outputFolder = new File(this._config.getValue('output.folder.pet'));
 
-        if(!outputFolder.isDirectory()) outputFolder.mkdirs();
+        if(!outputFolder.isDirectory())
+        {
+            spinner.text = `Creating Folder: ${ outputFolder.path }`;
+
+            spinner.render();
+
+            outputFolder.mkdirs();
+        }
 
         await this._petDownloader.download(async (habboAssetSwf: HabboAssetSWF) =>
         {
-            console.log('Parsing Pet: ' + habboAssetSwf.getDocumentClass());
+            spinner.text = 'Parsing Pet: ' + habboAssetSwf.getDocumentClass();
+
+            spinner.render();
 
             try
             {
@@ -47,6 +61,8 @@ export class PetConverter extends SWFConverter
                 console.error(error);
             }
         });
+
+        spinner.succeed(`Pets Finished in ${ Date.now() - now }ms`);
     }
 
     private async fromHabboAsset(habboAssetSWF: HabboAssetSWF, outputFolder: string, type: string, spriteBundle: SpriteBundle): Promise<void>
@@ -56,26 +72,26 @@ export class PetConverter extends SWFConverter
             const assetData = await this.mapXML2JSON(habboAssetSWF, 'pet');
 
             if(!assetData) return;
-    
+
             if(spriteBundle && (spriteBundle.spritesheet !== undefined)) assetData.spritesheet = spriteBundle.spritesheet;
-    
+
             const name = habboAssetSWF.getDocumentClass();
             const path = outputFolder + '/' + name + '.nitro';
             const nitroBundle = new NitroBundle();
-            
+
             nitroBundle.addFile((name + '.json'), Buffer.from(JSON.stringify(assetData)));
-    
+
             if(spriteBundle.imageData !== undefined)
             {
                 nitroBundle.addFile(spriteBundle.imageData.name, spriteBundle.imageData.buffer);
             }
-    
+
             const buffer = await nitroBundle.toBufferAsync();
-            
+
             await writeFile(path, buffer);
         }
 
-        catch(err)
+        catch (err)
         {
             this._logger.logErrorAsync(err);
         }
