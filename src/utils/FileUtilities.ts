@@ -12,28 +12,19 @@ export class FileUtilities
 
         let content: Buffer = null;
 
-        try
+        if(url.startsWith('http'))
         {
-            if(url.startsWith('http'))
-            {
-                const data = await fetch.default(url);
-                const arrayBuffer = await data.arrayBuffer();
+            const data = await fetch.default(url);
+            const arrayBuffer = await data.arrayBuffer();
 
-                if(arrayBuffer) content = Buffer.from(arrayBuffer);
-            }
-            else
-            {
-                content = await readFileAsync(url);
-            }
-
-            return content;
+            if(arrayBuffer) content = Buffer.from(arrayBuffer);
+        }
+        else
+        {
+            content = await readFileAsync(url);
         }
 
-        catch (error)
-        {
-            console.log();
-            console.error(error);
-        }
+        return content;
     }
 
     public static async readFileAsString(url: string): Promise<string>
@@ -42,28 +33,19 @@ export class FileUtilities
 
         let content = null;
 
-        try
+        if(url.startsWith('http'))
         {
-            if(url.startsWith('http'))
-            {
-                const data = await fetch.default(url);
+            const data = await fetch.default(url);
 
-                if(data) content = await data.text();
-            }
-            else
-            {
-                const data = await readFileAsync(url);
+            if(data) content = await data.text();
+        }
+        else
+        {
+            const data = await readFileAsync(url);
 
-                content = data.toString('utf-8');
-            }
-
-            return content;
+            content = data.toString('utf-8');
         }
 
-        catch (error)
-        {
-            console.log();
-            console.error(error);
-        }
+        return content;
     }
 }

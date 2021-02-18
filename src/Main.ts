@@ -42,6 +42,4 @@ import { Mapper } from './mapping/mappers/asset/Mapper';
     //     const effectConverter = container.resolve(EffectConverter);
     //     await effectConverter.convertAsync();
     // }
-
-    console.log('finished!');
 })();

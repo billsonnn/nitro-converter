@@ -1,8 +1,6 @@
-import { writeFile } from 'fs/promises';
 import * as ora from 'ora';
 import { singleton } from 'tsyringe';
 import { BundleProvider } from '../../common/bundle/BundleProvider';
-import { SpriteBundle } from '../../common/bundle/SpriteBundle';
 import { Configuration } from '../../common/config/Configuration';
 import { SWFConverter } from '../../common/converters/SWFConverter';
 import { IAssetData } from '../../mapping/json';
@@ -10,7 +8,6 @@ import { AssetMapper, IndexMapper, LogicMapper, VisualizationMapper } from '../.
 import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
 import File from '../../utils/File';
 import Logger from '../../utils/Logger';
-import { NitroBundle } from '../../utils/NitroBundle';
 import { FurnitureDownloader } from './FurnitureDownloader';
 
 @singleton()
@@ -33,63 +30,29 @@ export class FurnitureConverter extends SWFConverter
 
         const outputFolder = new File(this._configuration.getValue('output.folder.furniture'));
 
-        if(!outputFolder.isDirectory())
+        if(!outputFolder.isDirectory()) outputFolder.mkdirs();
+
+        try
         {
-            spinner.text = `Creating Folder: ${ outputFolder.path }`;
-
-            spinner.render();
-
-            outputFolder.mkdirs();
-        }
-
-        await this._furniDownloader.download(async (habboAssetSwf: HabboAssetSWF) =>
-        {
-            spinner.text = 'Parsing Furniture: ' + habboAssetSwf.getDocumentClass();
-
-            spinner.render();
-
-            try
+            await this._furniDownloader.download(async (habboAssetSwf: HabboAssetSWF) =>
             {
+                spinner.text = 'Parsing Furniture: ' + habboAssetSwf.getDocumentClass();
+
+                spinner.render();
+
+                const assetData = await this.mapXML2JSON(habboAssetSwf, 'furniture');
                 const spriteBundle = await this._bundleProvider.generateSpriteSheet(habboAssetSwf);
 
-                await this.fromHabboAsset(habboAssetSwf, outputFolder.path, 'furniture', spriteBundle);
-            }
+                await this.fromHabboAsset(habboAssetSwf, outputFolder.path, 'furniture', assetData, spriteBundle);
+            });
 
-            catch (error)
-            {
-                console.log();
-                console.error(error);
-            }
-        });
-
-        spinner.succeed(`Furniture Finished in ${ Date.now() - now }ms`);
-    }
-
-    private async fromHabboAsset(habboAssetSWF: HabboAssetSWF, outputFolder: string, type: string, spriteBundle: SpriteBundle): Promise<void>
-    {
-        const assetData = await this.mapXML2JSON(habboAssetSWF, 'furniture');
-
-        if(!assetData) return;
-
-        const name = habboAssetSWF.getDocumentClass();
-        const path = outputFolder + '/' + name + '.nitro';
-        const nitroBundle = new NitroBundle();
-
-        nitroBundle.addFile((name + '.json'), Buffer.from(JSON.stringify(assetData)));
-
-        if(spriteBundle && (spriteBundle.spritesheet !== undefined))
-        {
-            if(spriteBundle.spritesheet && spriteBundle.imageData)
-            {
-                assetData.spritesheet = spriteBundle.spritesheet;
-
-                nitroBundle.addFile(spriteBundle.imageData.name, spriteBundle.imageData.buffer);
-            }
+            spinner.succeed(`Furniture finished in ${ Date.now() - now }ms`);
         }
 
-        const buffer = await nitroBundle.toBufferAsync();
-
-        await writeFile(path, buffer);
+        catch (error)
+        {
+            spinner.fail('Furniture failed: ' + error.message);
+        }
     }
 
     private async mapXML2JSON(habboAssetSWF: HabboAssetSWF, assetType: string): Promise<IAssetData>
@@ -100,31 +63,22 @@ export class FurnitureConverter extends SWFConverter
 
         assetData.type = assetType;
 
-        try
-        {
-            const indexXML = await FurnitureConverter.getIndexXML(habboAssetSWF);
+        const indexXML = await FurnitureConverter.getIndexXML(habboAssetSWF);
 
-            if(indexXML) IndexMapper.mapXML(indexXML, assetData);
+        if(indexXML) IndexMapper.mapXML(indexXML, assetData);
 
-            const assetXML = await FurnitureConverter.getAssetsXML(habboAssetSWF);
+        const assetXML = await FurnitureConverter.getAssetsXML(habboAssetSWF);
 
-            if(assetXML) AssetMapper.mapXML(assetXML, assetData);
+        if(assetXML) AssetMapper.mapXML(assetXML, assetData);
 
-            const logicXML = await FurnitureConverter.getLogicXML(habboAssetSWF);
+        const logicXML = await FurnitureConverter.getLogicXML(habboAssetSWF);
 
-            if(logicXML) LogicMapper.mapXML(logicXML, assetData);
+        if(logicXML) LogicMapper.mapXML(logicXML, assetData);
 
-            const visualizationXML = await FurnitureConverter.getVisualizationXML(habboAssetSWF);
+        const visualizationXML = await FurnitureConverter.getVisualizationXML(habboAssetSWF);
 
-            if(visualizationXML) VisualizationMapper.mapXML(visualizationXML, assetData);
+        if(visualizationXML) VisualizationMapper.mapXML(visualizationXML, assetData);
 
-            return assetData;
-        }
-
-        catch (error)
-        {
-            console.log();
-            console.error(error);
-        }
+        return assetData;
     }
 }
