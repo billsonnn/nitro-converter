@@ -40,8 +40,8 @@ export class PetConverter extends SWFConverter
 
                 spinner.render();
 
-                const assetData = await this.mapXML2JSON(habboAssetSwf, 'pet');
                 const spriteBundle = await this._bundleProvider.generateSpriteSheet(habboAssetSwf);
+                const assetData = await this.mapXML2JSON(habboAssetSwf, 'pet');
 
                 await this.fromHabboAsset(habboAssetSwf, outputFolder.path, 'pet', assetData, spriteBundle);
             });

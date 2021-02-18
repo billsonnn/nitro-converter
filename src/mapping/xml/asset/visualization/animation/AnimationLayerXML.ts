@@ -25,9 +25,12 @@ export class AnimationLayerXML
 
         if(xml.frameSequence !== undefined)
         {
-            this._frameSequences = [];
+            if(Array.isArray(xml.frameSequence))
+            {
+                this._frameSequences = [];
 
-            for(const frameSequence of xml.frameSequence) this._frameSequences.push(new FrameSequenceXML(frameSequence));
+                for(const frameSequence of xml.frameSequence) this._frameSequences.push(new FrameSequenceXML(frameSequence));
+            }
         }
     }
 

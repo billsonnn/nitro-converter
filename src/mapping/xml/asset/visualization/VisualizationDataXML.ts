@@ -31,78 +31,96 @@ export class VisualizationDataXML
 
         if(xml.layers !== undefined)
         {
-            this._layers = [];
-
-            for(const layerParent of xml.layers)
+            if(Array.isArray(xml.layers))
             {
-                if(Array.isArray(layerParent.layer))
+                this._layers = [];
+
+                for(const layerParent of xml.layers)
                 {
-                    for(const layer of layerParent.layer) this._layers.push(new LayerXML(layer));
+                    if(Array.isArray(layerParent.layer))
+                    {
+                        for(const layer of layerParent.layer) this._layers.push(new LayerXML(layer));
+                    }
                 }
             }
         }
 
         if(xml.directions !== undefined)
         {
-            this._directions = [];
-
-            for(const directionParent of xml.directions)
+            if(Array.isArray(xml.directions))
             {
-                if(Array.isArray(directionParent.direction))
+                this._directions = [];
+
+                for(const directionParent of xml.directions)
                 {
-                    for(const direction of directionParent.direction) this._directions.push(new VisualDirectionXML(direction));
+                    if(Array.isArray(directionParent.direction))
+                    {
+                        for(const direction of directionParent.direction) this._directions.push(new VisualDirectionXML(direction));
+                    }
                 }
             }
         }
 
         if(xml.colors !== undefined)
         {
-            this._colors = [];
-
-            for(const colorParent of xml.colors)
+            if(Array.isArray(xml.colors))
             {
-                if(Array.isArray(colorParent.color))
+                this._colors = [];
+
+                for(const colorParent of xml.colors)
                 {
-                    for(const color of colorParent.color) this._colors.push(new ColorXML(color));
+                    if(Array.isArray(colorParent.color))
+                    {
+                        for(const color of colorParent.color) this._colors.push(new ColorXML(color));
+                    }
                 }
             }
         }
 
         if(xml.animations !== undefined)
         {
-            this._animations = [];
-
-            for(const animationParent of xml.animations)
+            if(Array.isArray(xml.animations))
             {
-                if(Array.isArray(animationParent.animation))
+                this._animations = [];
+
+                for(const animationParent of xml.animations)
                 {
-                    for(const animation of animationParent.animation) this._animations.push(new AnimationXML(animation));
+                    if(Array.isArray(animationParent.animation))
+                    {
+                        for(const animation of animationParent.animation) this._animations.push(new AnimationXML(animation));
+                    }
                 }
             }
         }
 
-        if((xml.postures !== undefined) && xml.postures.length)
+        if(xml.postures !== undefined)
         {
-            this._postures = [];
-
-            for(const postureParent of xml.postures)
+            if(Array.isArray(xml.postures))
             {
-                if(Array.isArray(postureParent.posture))
+                this._postures = [];
+
+                for(const postureParent of xml.postures)
                 {
-                    for(const posture of postureParent.posture) this._postures.push(new PostureXML(posture));
+                    if(Array.isArray(postureParent.posture))
+                    {
+                        for(const posture of postureParent.posture) this._postures.push(new PostureXML(posture));
+                    }
                 }
             }
         }
 
         if(xml.gestures !== undefined)
         {
-            this._gestures = [];
-
-            for(const gestureParent of xml.gestures)
+            if(Array.isArray(xml.gestures))
             {
-                if(Array.isArray(gestureParent.gesture))
+                this._gestures = [];
+
+                for(const gestureParent of xml.gestures)
                 {
-                    for(const gesture of gestureParent.gesture) this._gestures.push(new GestureXML(gesture));
+                    if(Array.isArray(gestureParent.gesture))
+                    {
+                        for(const gesture of gestureParent.gesture) this._gestures.push(new GestureXML(gesture));
+                    }
                 }
             }
         }

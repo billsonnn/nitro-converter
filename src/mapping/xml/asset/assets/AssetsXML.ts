@@ -8,17 +8,23 @@ export class AssetsXML
 
     constructor(xml: any)
     {
-        if(xml.assets !== undefined)
+        if(xml.asset !== undefined)
         {
-            this._assets = [];
+            if(Array.isArray(xml.asset))
+            {
+                this._assets = [];
 
-            if(xml.assets.asset !== undefined) for(const asset of xml.assets.asset) this._assets.push(new AssetXML(asset));
+                for(const asset of xml.asset) this._assets.push(new AssetXML(asset));
+            }
+        }
 
-            if(xml.assets.palette !== undefined)
+        if(xml.palette !== undefined)
+        {
+            if(Array.isArray(xml.palette))
             {
                 this._palettes = [];
 
-                for(const palette of xml.assets.palette) this._palettes.push(new PaletteXML(palette));
+                for(const palette of xml.palette) this._palettes.push(new PaletteXML(palette));
             }
         }
     }

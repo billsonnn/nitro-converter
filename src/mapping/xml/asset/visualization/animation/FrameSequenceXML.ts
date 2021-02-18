@@ -19,9 +19,12 @@ export class FrameSequenceXML
 
         if(xml.frame !== undefined)
         {
-            this._frames = [];
+            if(Array.isArray(xml.frame))
+            {
+                this._frames = [];
 
-            for(const frame of xml.frame) this._frames.push(new FrameXML(frame));
+                for(const frame of xml.frame) this._frames.push(new FrameXML(frame));
+            }
         }
     }
 

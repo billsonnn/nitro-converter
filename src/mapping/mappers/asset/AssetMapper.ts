@@ -9,31 +9,37 @@ export class AssetMapper extends Mapper
     {
         if(!assets || !output) return;
 
-        AssetMapper.mapAssetsXML(new AssetsXML(assets), output);
+        AssetMapper.mapAssetsXML(new AssetsXML(assets.assets), output);
     }
 
     private static mapAssetsXML(xml: AssetsXML, output: IAssetData): void
     {
-        if(!xml) return;
+        if(!xml || !output) return;
 
         if(xml.assets !== undefined)
         {
-            output.assets = {};
+            if(xml.assets.length)
+            {
+                output.assets = {};
 
-            AssetMapper.mapAssetsAssetXML(xml.assets, output.assets);
+                AssetMapper.mapAssetsAssetXML(xml.assets, output.assets);
+            }
         }
 
         if(xml.palettes !== undefined)
         {
-            output.palettes = {};
+            if(xml.palettes.length)
+            {
+                output.palettes = {};
 
-            AssetMapper.mapAssetsPaletteXML(xml.palettes, output.palettes);
+                AssetMapper.mapAssetsPaletteXML(xml.palettes, output.palettes);
+            }
         }
     }
 
     private static mapAssetsAssetXML(xml: AssetXML[], output: { [index: string]: IAsset }): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         for(const assetXML of xml)
         {
@@ -41,51 +47,35 @@ export class AssetMapper extends Mapper
 
             if(assetXML.name !== undefined)
             {
-                let isProhibited = false;
+                if(assetXML.name.startsWith('sh_')) continue;
 
-                for(const size of AssetMapper.PROHIBITED_SIZES)
+                if(assetXML.name.indexOf('_32_') >= 0) continue;
+
+                if(assetXML.source !== undefined)
                 {
-                    if(assetXML.name.indexOf(('_' + size + '_')) >= 0)
-                    {
-                        isProhibited = true;
+                    asset.source = assetXML.source;
 
-                        break;
-                    }
+                    if(BundleProvider.imageSource.has(assetXML.source)) asset.source = BundleProvider.imageSource.get(assetXML.source) as string;
                 }
 
-                if(isProhibited) continue;
-            }
-
-            if(assetXML.source !== undefined)
-            {
-                asset.source = assetXML.source;
-
-                if(BundleProvider.imageSource.has(assetXML.source))
+                if(assetXML.name !== undefined)
                 {
-                    asset.source = BundleProvider.imageSource.get(assetXML.source) as string;
+                    if(BundleProvider.imageSource.has(assetXML.name)) asset.source = BundleProvider.imageSource.get(assetXML.name) as string;
                 }
+
+                if(assetXML.x !== undefined) asset.x = assetXML.x;
+                if(assetXML.y !== undefined) asset.y = assetXML.y;
+                if(assetXML.flipH !== undefined) asset.flipH = assetXML.flipH;
+                if(assetXML.flipV !== undefined) asset.flipV = assetXML.flipV;
+
+                output[assetXML.name] = asset;
             }
-
-            if(assetXML.name !== undefined)
-            {
-                if(BundleProvider.imageSource.has(assetXML.name))
-                {
-                    asset.source = BundleProvider.imageSource.get(assetXML.name) as string;
-                }
-            }
-
-            if(assetXML.x !== undefined) asset.x = assetXML.x;
-            if(assetXML.y !== undefined) asset.y = assetXML.y;
-            if(assetXML.flipH !== undefined) asset.flipH = assetXML.flipH;
-            if(assetXML.flipV !== undefined) asset.flipV = assetXML.flipV;
-
-            output[assetXML.name] = asset;
         }
     }
 
     private static mapAssetsPaletteXML(xml: PaletteXML[], output: { [index: string]: IAssetPalette }): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         for(const paletteXML of xml)
         {

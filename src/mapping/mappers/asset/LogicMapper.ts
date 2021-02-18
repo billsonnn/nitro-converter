@@ -13,7 +13,7 @@ export class LogicMapper extends Mapper
 
     private static mapLogicXML(xml: LogicXML, output: IAssetData): void
     {
-        if(!xml) return;
+        if(!xml || !output) return;
 
         if(xml.model !== undefined)
         {

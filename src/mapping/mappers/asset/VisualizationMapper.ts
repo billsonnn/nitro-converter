@@ -13,37 +13,28 @@ export class VisualizationMapper extends Mapper
 
     private static mapVisualizationXML(xml: VisualizationXML, output: IAssetData): void
     {
-        if(!xml) return;
+        if(!xml || !output) return;
 
         if(xml.visualizations !== undefined)
         {
-            output.visualizations = [];
+            if(xml.visualizations.length)
+            {
+                output.visualizations = [];
 
-            VisualizationMapper.mapVisualizationDataXML(xml.visualizations, output.visualizations);
+                VisualizationMapper.mapVisualizationDataXML(xml.visualizations, output.visualizations);
+            }
         }
     }
 
     private static mapVisualizationDataXML(xml: VisualizationDataXML[], output: IAssetVisualizationData[]): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         for(const visualizationDataXML of xml)
         {
             if(visualizationDataXML.size !== undefined)
             {
-                let isProhibited = false;
-
-                for(const size of VisualizationMapper.PROHIBITED_SIZES)
-                {
-                    if(visualizationDataXML.size === parseInt(size))
-                    {
-                        isProhibited = true;
-
-                        break;
-                    }
-                }
-
-                if(isProhibited) continue;
+                if([ 32 ].indexOf(visualizationDataXML.size) >= 0) continue;
             }
 
             const visualizationData: IAssetVisualizationData = {};
@@ -118,7 +109,7 @@ export class VisualizationMapper extends Mapper
 
     private static mapVisualizationLayerXML(xml: LayerXML[], output: { [index: string]: IAssetVisualizationLayer }): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         for(const layerXML of xml)
         {
@@ -138,7 +129,7 @@ export class VisualizationMapper extends Mapper
 
     private static mapVisualizationDirectionXML(xml: VisualDirectionXML[], output: { [index: string]: IAssetVisualizationDirection }): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         for(const directionXML of xml)
         {
@@ -160,7 +151,7 @@ export class VisualizationMapper extends Mapper
 
     private static mapVisualizationColorXML(xml: ColorXML[], output: { [index: string]: IAssetColor }): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         for(const colorXML of xml)
         {
@@ -182,7 +173,7 @@ export class VisualizationMapper extends Mapper
 
     private static mapVisualizationColorLayerXML(xml: ColorLayerXML[], output: { [index: string]: IAssetColorLayer }): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         for(const colorLayerXML of xml)
         {
@@ -196,7 +187,7 @@ export class VisualizationMapper extends Mapper
 
     private static mapVisualizationAnimationXML(xml: AnimationXML[], output: { [index: string]: IAssetAnimation }): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         for(const animationXML of xml)
         {
@@ -222,7 +213,7 @@ export class VisualizationMapper extends Mapper
 
     private static mapVisualizationAnimationLayerXML(xml: AnimationLayerXML[], output: { [index: string]: IAssetAnimationLayer }): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         for(const animationLayerXML of xml)
         {
@@ -248,7 +239,7 @@ export class VisualizationMapper extends Mapper
 
     private static mapVisualizationFrameSequenceXML(xml: FrameSequenceXML[], output: { [index: string]: IAssetAnimationSequence }): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         let i = 0;
 
@@ -277,7 +268,7 @@ export class VisualizationMapper extends Mapper
 
     private static mapVisualizationFrameSequenceFrameXML(xml: FrameXML[], output: { [index: string]: IAssetAnimationSequenceFrame }): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         let i = 0;
 
@@ -311,7 +302,7 @@ export class VisualizationMapper extends Mapper
 
     private static mapVisualizationFrameSequenceFrameOffsetXML(xml: FrameOffsetXML[], output: { [index: string]: IAssetAnimationSequenceFrameOffset }): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         const i = 0;
 
@@ -329,7 +320,7 @@ export class VisualizationMapper extends Mapper
 
     private static mapVisualizationPostureXML(xml: PostureXML[], output: { [index: string]: IAssetPosture }): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         for(const postureXML of xml)
         {
@@ -344,7 +335,7 @@ export class VisualizationMapper extends Mapper
 
     private static mapVisualizationGestureXML(xml: GestureXML[], output: { [index: string]: IAssetGesture }): void
     {
-        if(!xml || !xml.length) return;
+        if(!xml || !xml.length || !output) return;
 
         for(const gestureXML of xml)
         {

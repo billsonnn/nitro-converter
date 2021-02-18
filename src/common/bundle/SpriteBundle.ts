@@ -3,7 +3,7 @@ import { ISpritesheetData } from '../../mapping/json';
 export class SpriteBundle
 {
     private _spritesheet: ISpritesheetData;
-    private _imageData: { name: string, buffer: Buffer};
+    private _imageData: { name: string, buffer: Buffer };
 
     public get spritesheet(): ISpritesheetData
     {

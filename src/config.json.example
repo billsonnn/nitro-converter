@@ -14,6 +14,5 @@
   "convert.furniture": "1",
   "convert.figure": "0",
   "convert.effect": "0",
-  "convert.pet": "1",
-  "prohibited.sizes": "32,sh"
+  "convert.pet": "1"
 }

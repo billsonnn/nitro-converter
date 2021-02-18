@@ -38,6 +38,24 @@ export class SWFConverter
         return tag;
     }
 
+    protected static async getManifestXML(habboAssetSWF: HabboAssetSWF): Promise<any>
+    {
+        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'manifest', false);
+
+        if(!binaryData) return null;
+
+        return await parseStringPromise(binaryData.binaryData);
+    }
+
+    protected static async getIndexXML(habboAssetSWF: HabboAssetSWF): Promise<any>
+    {
+        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'index', false);
+
+        if(!binaryData) return null;
+
+        return await parseStringPromise(binaryData.binaryData);
+    }
+
     protected static async getAssetsXML(habboAssetSWF: HabboAssetSWF): Promise<any>
     {
         const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'assets', true);
@@ -50,15 +68,6 @@ export class SWFConverter
     protected static async getLogicXML(habboAssetSWF: HabboAssetSWF): Promise<any>
     {
         const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'logic', true);
-
-        if(!binaryData) return null;
-
-        return await parseStringPromise(binaryData.binaryData);
-    }
-
-    protected static async getIndexXML(habboAssetSWF: HabboAssetSWF): Promise<any>
-    {
-        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'index', false);
 
         if(!binaryData) return null;
 

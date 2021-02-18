@@ -22,9 +22,12 @@ export class AnimationXML
 
         if(xml.animationLayer !== undefined)
         {
-            this._layers = [];
+            if(Array.isArray(xml.animationLayer))
+            {
+                this._layers = [];
 
-            for(const animationLayer of xml.animationLayer) this._layers.push(new AnimationLayerXML(animationLayer));
+                for(const animationLayer of xml.animationLayer) this._layers.push(new AnimationLayerXML(animationLayer));
+            }
         }
     }
 

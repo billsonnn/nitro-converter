@@ -16,9 +16,12 @@ export class VisualDirectionXML
 
         if(xml.layer !== undefined)
         {
-            this._layers = [];
+            if(Array.isArray(xml.layer))
+            {
+                this._layers = [];
 
-            for(const layer of xml.layer) this._layers.push(new LayerXML(layer));
+                for(const layer of xml.layer) this._layers.push(new LayerXML(layer));
+            }
         }
     }
 

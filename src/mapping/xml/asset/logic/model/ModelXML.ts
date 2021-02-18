@@ -15,10 +15,10 @@ export class ModelXML
 
         if(xml.directions !== undefined)
         {
-            this._directions = [];
-
             if(Array.isArray(xml.directions))
             {
+                this._directions = [];
+
                 for(const directionParent of xml.directions)
                 {
                     if(Array.isArray(directionParent.direction)) for(const direction of directionParent.direction) this._directions.push(new ModelDirectionXML(direction.$));

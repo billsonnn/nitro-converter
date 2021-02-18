@@ -25,9 +25,18 @@ export class FrameXML
 
         if(xml.offsets !== undefined)
         {
-            this._offsets = [];
+            if(Array.isArray(xml.offsets))
+            {
+                this._offsets = [];
 
-            for(const offsetParent of xml.offsets) for(const offset of offsetParent.offset) this._offsets.push(new FrameOffsetXML(offset));
+                for(const offsetParent of xml.offsets)
+                {
+                    if(Array.isArray(offsetParent.offset))
+                    {
+                        for(const offset of offsetParent.offset) this._offsets.push(new FrameOffsetXML(offset));
+                    }
+                }
+            }
         }
     }
 

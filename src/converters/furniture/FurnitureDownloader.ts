@@ -39,7 +39,7 @@ export class FurnitureDownloader
                     catch (error)
                     {
                         console.log();
-                        console.error(error.message);
+                        console.error(error);
                     }
                 }
             }
@@ -66,7 +66,7 @@ export class FurnitureDownloader
                     catch (error)
                     {
                         console.log();
-                        console.error(`Error parsing ${ className }: ` + error.message);
+                        console.error(error);
                     }
                 }
             }

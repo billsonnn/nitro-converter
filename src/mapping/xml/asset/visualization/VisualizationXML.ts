@@ -16,11 +16,18 @@ export class VisualizationXML
 
         if(xml.graphics !== undefined)
         {
-            this._visualizations = [];
-
             if(Array.isArray(xml.graphics))
             {
-                for(const graphic of xml.graphics) for(const visualization of graphic.visualization) this._visualizations.push(new VisualizationDataXML(visualization));
+                this._visualizations = [];
+
+                for(const graphic of xml.graphics)
+                {
+                    if(Array.isArray(graphic.visualization))
+                    {
+                        for(const visualization of graphic.visualization) this._visualizations.push(new VisualizationDataXML(visualization));
+
+                    }
+                }
             }
         }
     }

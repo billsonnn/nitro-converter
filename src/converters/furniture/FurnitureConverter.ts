@@ -40,8 +40,8 @@ export class FurnitureConverter extends SWFConverter
 
                 spinner.render();
 
-                const assetData = await this.mapXML2JSON(habboAssetSwf, 'furniture');
                 const spriteBundle = await this._bundleProvider.generateSpriteSheet(habboAssetSwf);
+                const assetData = await this.mapXML2JSON(habboAssetSwf, 'furniture');
 
                 await this.fromHabboAsset(habboAssetSwf, outputFolder.path, 'furniture', assetData, spriteBundle);
             });

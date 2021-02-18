@@ -1,18 +1,13 @@
 import { packAsync } from 'free-tex-packer-core';
 import { singleton } from 'tsyringe';
 import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
-import { Configuration } from '../config/Configuration';
+import { ImageBundle } from './ImageBundle';
 import { SpriteBundle } from './SpriteBundle';
 
 @singleton()
 export class BundleProvider
 {
-    public static PROHIBITED_SIZES: string[] = [];
-
     public static imageSource: Map<string, string> = new Map();
-
-    constructor(private readonly _configuration: Configuration)
-    {}
 
     public async generateSpriteSheet(habboAssetSWF: HabboAssetSWF): Promise<SpriteBundle>
     {
@@ -26,7 +21,7 @@ export class BundleProvider
             tags.push(...tag.tags);
         }
 
-        const images: { path: string, contents: Buffer }[] = [];
+        const imageBundle = new ImageBundle();
 
         const imageTags = habboAssetSWF.imageTags();
 
@@ -40,105 +35,62 @@ export class BundleProvider
 
                     if(names[i] == imageTag.className) continue;
 
-                    let isProhibited = false;
+                    if(imageTag.className.startsWith('sh_')) continue;
 
-                    for(const size of BundleProvider.PROHIBITED_SIZES)
-                    {
-                        if(imageTag.className.indexOf(size) >= 0)
-                        {
-                            isProhibited = true;
-
-                            break;
-                        }
-                    }
-
-                    if(isProhibited) continue;
+                    if(imageTag.className.indexOf('_32_') >= 0) continue;
 
                     BundleProvider.imageSource.set(names[i].substring(habboAssetSWF.getDocumentClass().length + 1), imageTag.className.substring(habboAssetSWF.getDocumentClass().length + 1));
-
-                    images.push({
-                        path: imageTag.className,
-                        contents: imageTag.imgData
-                    });
                 }
             }
 
-            let isProhibited = false;
+            if(imageTag.className.startsWith('sh_')) continue;
 
-            for(const size of BundleProvider.PROHIBITED_SIZES)
-            {
-                if(imageTag.className.indexOf(size) >= 0)
-                {
-                    isProhibited = true;
+            if(imageTag.className.indexOf('_32_') >= 0) continue;
 
-                    break;
-                }
-            }
-
-            if(isProhibited) continue;
-
-            images.push({
-                path: imageTag.className,
-                contents: imageTag.imgData
-            });
+            imageBundle.addImage(imageTag.className, imageTag.imgData);
         }
 
-        if(!images.length) return null;
+        if(!imageBundle.images.length) return null;
 
-        return await this.packImages(habboAssetSWF.getDocumentClass(), images);
+        return await this.packImages(habboAssetSWF.getDocumentClass(), imageBundle);
     }
 
-    async packImages(documentClass: string, images: { path: string, contents: Buffer }[]): Promise<SpriteBundle>
+    async packImages(documentClass: string, imageBundle: ImageBundle): Promise<SpriteBundle>
     {
-        try
+        const files = await packAsync(imageBundle.images, {
+            textureName: documentClass,
+            width: 3072,
+            height: 2048,
+            fixedSize: false,
+            allowRotation: true,
+            detectIdentical: true,
+            allowTrim: true,
+            //@ts-ignore
+            exporter: 'Pixi'
+        });
+
+        const bundle = new SpriteBundle();
+
+        for(const item of files)
         {
-            const files = await packAsync(images, {
-                textureName: documentClass,
-                width: 3072,
-                height: 2048,
-                fixedSize: false,
-                allowRotation: true,
-                detectIdentical: true,
-                allowTrim: true,
-                //@ts-ignore
-                exporter: 'Pixi'
-            });
-
-            const bundle = new SpriteBundle();
-
-            for(const item of files)
+            if(item.name.endsWith('.json'))
             {
-                if(item.name.endsWith('.json'))
-                {
-                    bundle.spritesheet = JSON.parse(item.buffer.toString('utf8'));
+                bundle.spritesheet = JSON.parse(item.buffer.toString('utf8'));
 
-                    delete bundle.spritesheet.meta.app;
-                    delete bundle.spritesheet.meta.version;
-                }
-                else
-                {
-                    bundle.imageData = {
-                        name: item.name,
-                        buffer: item.buffer
-                    };
-                }
+                delete bundle.spritesheet.meta.app;
+                delete bundle.spritesheet.meta.version;
             }
-
-            if(!bundle.spritesheet) throw new Error('Failed to parse SpriteSheet. ' + images[0].path);
-
-            if((bundle.spritesheet !== undefined) && (bundle.imageData !== undefined))
+            else
             {
-                bundle.spritesheet.meta.image = bundle.imageData.name;
+                bundle.imageData = {
+                    name: item.name,
+                    buffer: item.buffer
+                };
             }
-
-            return bundle;
         }
 
-        catch (error)
-        {
-            console.error('Image Packing Error', error);
-        }
+        if((bundle.spritesheet !== undefined) && (bundle.imageData !== undefined)) bundle.spritesheet.meta.image = bundle.imageData.name;
 
-        return null;
+        return bundle;
     }
 }
