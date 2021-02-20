@@ -83,6 +83,15 @@ export class SWFConverter
         return await parseStringPromise(binaryData.binaryData);
     }
 
+    protected static async getAnimationXML(habboAssetSWF: HabboAssetSWF): Promise<any>
+    {
+        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'animation', false);
+
+        if(!binaryData) return null;
+
+        return await parseStringPromise(binaryData.binaryData);
+    }
+
     protected static getPalette(habboAssetSWF: HabboAssetSWF, paletteName: string): [ number, number, number ][]
     {
         const binaryData = SWFConverter.getBinaryData(habboAssetSWF, paletteName, false);

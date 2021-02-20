@@ -1,4 +1,4 @@
-import { IAssetAnimation } from './animation/IAssetAnimation';
+import { IAssetVisualAnimation } from './animation/IAssetVisualAnimation';
 import { IAssetColor } from './color/IAssetColor';
 import { IAssetGesture } from './gestures/IAssetGesture';
 import { IAssetVisualizationDirection } from './IAssetVisualizationDirection';
@@ -13,7 +13,7 @@ export interface IAssetVisualizationData
     layers?: { [index: string]: IAssetVisualizationLayer };
     colors?: { [index: string]: IAssetColor };
     directions?: { [index: string]: IAssetVisualizationDirection };
-    animations?: { [index: string]: IAssetAnimation };
+    animations?: { [index: string]: IAssetVisualAnimation };
     postures?: { [index: string]: IAssetPosture };
     gestures?: { [index: string]: IAssetGesture };
 }

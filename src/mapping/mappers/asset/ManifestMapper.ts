@@ -1,6 +1,6 @@
 import { BundleProvider } from '../../../common/bundle/BundleProvider';
-import { IAsset, IAssetData } from '../../json';
-import { ManifestLibraryAssetParamXML, ManifestLibraryAssetXML, ManifestLibraryXML, ManifestXML } from '../../xml';
+import { IAsset, IAssetAlias, IAssetData } from '../../json';
+import { ManifestLibraryAliasXML, ManifestLibraryAssetParamXML, ManifestLibraryAssetXML, ManifestLibraryXML, ManifestXML } from '../../xml';
 import { Mapper } from './Mapper';
 
 export class ManifestMapper extends Mapper
@@ -30,6 +30,16 @@ export class ManifestMapper extends Mapper
                 output.assets = {};
 
                 ManifestMapper.mapManifestLibraryAssetXML(xml.assets, output.assets);
+            }
+        }
+
+        if(xml.aliases !== undefined)
+        {
+            if(xml.aliases.length)
+            {
+                output.aliases = {};
+
+                ManifestMapper.mapManifestLibraryAliasXML(xml.aliases, output.aliases);
             }
         }
     }
@@ -67,6 +77,33 @@ export class ManifestMapper extends Mapper
 
             output.x = parseInt(split[0]);
             output.y = parseInt(split[1]);
+        }
+    }
+
+    private static mapManifestLibraryAliasXML(xml: ManifestLibraryAliasXML[], output: { [index: string]: IAssetAlias }): void
+    {
+        if(!xml || !xml.length || !output) return;
+
+        for(const libraryAliasXML of xml)
+        {
+            const alias: IAssetAlias = {};
+
+            if(libraryAliasXML.name !== undefined)
+            {
+                if(libraryAliasXML.link !== undefined)
+                {
+                    if(libraryAliasXML.link.startsWith('sh_')) continue;
+
+                    if(libraryAliasXML.link.indexOf('_32_') >= 0) continue;
+
+                    alias.link = libraryAliasXML.link;
+                }
+
+                if(libraryAliasXML.flipH !== undefined) alias.flipH = libraryAliasXML.flipH;
+                if(libraryAliasXML.flipH !== undefined) alias.flipV = libraryAliasXML.flipV;
+
+                output[libraryAliasXML.name] = alias;
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { Configuration } from './common/config/Configuration';
+import { EffectConverter } from './converters/effect/EffectConverter';
 import { FigureConverter } from './converters/figure/FigureConverter';
 import { FurnitureConverter } from './converters/furniture/FurnitureConverter';
 import { PetConverter } from './converters/pet/PetConverter';
@@ -28,9 +29,9 @@ import { PetConverter } from './converters/pet/PetConverter';
         await petConverter.convertAsync();
     }
 
-    // if(config.getBoolean('convert.effect'))
-    // {
-    //     const effectConverter = container.resolve(EffectConverter);
-    //     await effectConverter.convertAsync();
-    // }
+    if(config.getBoolean('convert.effect'))
+    {
+        const effectConverter = container.resolve(EffectConverter);
+        await effectConverter.convertAsync();
+    }
 })();

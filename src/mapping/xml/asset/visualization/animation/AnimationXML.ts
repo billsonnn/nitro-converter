@@ -6,6 +6,7 @@ export class AnimationXML
     private readonly _transitionTo: number;
     private readonly _transitionFrom: number;
     private readonly _immediateChangeFrom: string;
+    private readonly _randomStart: boolean;
     private readonly _layers: AnimationLayerXML[];
 
     constructor(xml: any)
@@ -18,6 +19,7 @@ export class AnimationXML
             if(attributes.transitionTo !== undefined) this._transitionTo = parseInt(attributes.transitionTo);
             if(attributes.transitionFrom !== undefined) this._transitionFrom = parseInt(attributes.transitionFrom);
             if(attributes.immediateChangeFrom !== undefined) this._immediateChangeFrom = attributes.immediateChangeFrom;
+            if(attributes.randomStart !== undefined) this._randomStart = (attributes.randomStart === '1');
         }
 
         if(xml.animationLayer !== undefined)
@@ -49,6 +51,11 @@ export class AnimationXML
     public get immediateChangeFrom(): string
     {
         return this._immediateChangeFrom;
+    }
+
+    public get randomStart(): boolean
+    {
+        return this._randomStart;
     }
 
     public get layers(): AnimationLayerXML[]

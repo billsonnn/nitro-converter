@@ -1,4 +1,4 @@
-export interface IAssetAnimationSequenceFrameOffset
+export interface IAssetVisualAnimationSequenceFrameOffset
 {
     direction?: number;
     x?: number;

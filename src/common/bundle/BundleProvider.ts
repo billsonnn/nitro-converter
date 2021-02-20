@@ -62,7 +62,7 @@ export class BundleProvider
             width: 3072,
             height: 2048,
             fixedSize: false,
-            allowRotation: true,
+            allowRotation: false,
             detectIdentical: true,
             allowTrim: true,
             //@ts-ignore

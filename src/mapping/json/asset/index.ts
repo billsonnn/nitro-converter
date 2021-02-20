@@ -1,3 +1,4 @@
+export * from './animation';
 export * from './IAsset';
 export * from './IAssetAlias';
 export * from './IAssetData';

@@ -1,3 +1,4 @@
+export * from './AnimationMapper';
 export * from './AssetMapper';
 export * from './IndexMapper';
 export * from './LogicMapper';

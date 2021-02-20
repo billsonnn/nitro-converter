@@ -12,7 +12,7 @@
   "dynamic.download.url.effect": "/gordon/PRODUCTION/%className%.swf",
   "dynamic.download.url.pet": "/gordon/PRODUCTION/%className%.swf",
   "convert.furniture": "1",
-  "convert.figure": "0",
-  "convert.effect": "0",
+  "convert.figure": "1",
+  "convert.effect": "1",
   "convert.pet": "1"
 }

@@ -1,4 +1,4 @@
-import { IAssetAnimation, IAssetAnimationLayer, IAssetAnimationSequence, IAssetAnimationSequenceFrame, IAssetAnimationSequenceFrameOffset, IAssetColor, IAssetColorLayer, IAssetData, IAssetGesture, IAssetPosture, IAssetVisualizationData, IAssetVisualizationDirection, IAssetVisualizationLayer } from '../../json';
+import { IAssetColor, IAssetColorLayer, IAssetData, IAssetGesture, IAssetPosture, IAssetVisualAnimation, IAssetVisualAnimationLayer, IAssetVisualAnimationSequence, IAssetVisualAnimationSequenceFrame, IAssetVisualAnimationSequenceFrameOffset, IAssetVisualizationData, IAssetVisualizationDirection, IAssetVisualizationLayer } from '../../json';
 import { AnimationLayerXML, AnimationXML, ColorLayerXML, ColorXML, FrameOffsetXML, FrameSequenceXML, FrameXML, GestureXML, LayerXML, PostureXML, VisualDirectionXML, VisualizationDataXML, VisualizationXML } from '../../xml';
 import { Mapper } from './Mapper';
 
@@ -185,17 +185,18 @@ export class VisualizationMapper extends Mapper
         }
     }
 
-    private static mapVisualizationAnimationXML(xml: AnimationXML[], output: { [index: string]: IAssetAnimation }): void
+    private static mapVisualizationAnimationXML(xml: AnimationXML[], output: { [index: string]: IAssetVisualAnimation }): void
     {
         if(!xml || !xml.length || !output) return;
 
         for(const animationXML of xml)
         {
-            const animation: IAssetAnimation = {};
+            const animation: IAssetVisualAnimation = {};
 
             if(animationXML.transitionTo !== undefined) animation.transitionTo = animationXML.transitionTo;
             if(animationXML.transitionFrom !== undefined) animation.transitionFrom = animationXML.transitionFrom;
             if(animationXML.immediateChangeFrom !== undefined) animation.immediateChangeFrom = animationXML.immediateChangeFrom;
+            if(animationXML.randomStart !== undefined) animation.randomStart = animationXML.randomStart;
 
             if(animationXML.layers !== undefined)
             {
@@ -211,13 +212,13 @@ export class VisualizationMapper extends Mapper
         }
     }
 
-    private static mapVisualizationAnimationLayerXML(xml: AnimationLayerXML[], output: { [index: string]: IAssetAnimationLayer }): void
+    private static mapVisualizationAnimationLayerXML(xml: AnimationLayerXML[], output: { [index: string]: IAssetVisualAnimationLayer }): void
     {
         if(!xml || !xml.length || !output) return;
 
         for(const animationLayerXML of xml)
         {
-            const animationLayer: IAssetAnimationLayer = {};
+            const animationLayer: IAssetVisualAnimationLayer = {};
 
             if(animationLayerXML.frameRepeat !== undefined) animationLayer.frameRepeat = animationLayerXML.frameRepeat;
             if(animationLayerXML.loopCount !== undefined) animationLayer.loopCount = animationLayerXML.loopCount;
@@ -237,7 +238,7 @@ export class VisualizationMapper extends Mapper
         }
     }
 
-    private static mapVisualizationFrameSequenceXML(xml: FrameSequenceXML[], output: { [index: string]: IAssetAnimationSequence }): void
+    private static mapVisualizationFrameSequenceXML(xml: FrameSequenceXML[], output: { [index: string]: IAssetVisualAnimationSequence }): void
     {
         if(!xml || !xml.length || !output) return;
 
@@ -245,7 +246,7 @@ export class VisualizationMapper extends Mapper
 
         for(const frameSequenceXML of xml)
         {
-            const frameSequence: IAssetAnimationSequence = {};
+            const frameSequence: IAssetVisualAnimationSequence = {};
 
             if(frameSequenceXML.loopCount !== undefined) frameSequence.loopCount = frameSequenceXML.loopCount;
             if(frameSequenceXML.random !== undefined) frameSequence.random = frameSequenceXML.random;
@@ -266,7 +267,7 @@ export class VisualizationMapper extends Mapper
         }
     }
 
-    private static mapVisualizationFrameSequenceFrameXML(xml: FrameXML[], output: { [index: string]: IAssetAnimationSequenceFrame }): void
+    private static mapVisualizationFrameSequenceFrameXML(xml: FrameXML[], output: { [index: string]: IAssetVisualAnimationSequenceFrame }): void
     {
         if(!xml || !xml.length || !output) return;
 
@@ -274,7 +275,7 @@ export class VisualizationMapper extends Mapper
 
         for(const frameXML of xml)
         {
-            const frame: IAssetAnimationSequenceFrame = {};
+            const frame: IAssetVisualAnimationSequenceFrame = {};
 
             if((frameXML.id === undefined) || (frameXML.id === 'NaN')) frame.id = 0;
             else frame.id = parseInt(frameXML.id);
@@ -300,7 +301,7 @@ export class VisualizationMapper extends Mapper
         }
     }
 
-    private static mapVisualizationFrameSequenceFrameOffsetXML(xml: FrameOffsetXML[], output: { [index: string]: IAssetAnimationSequenceFrameOffset }): void
+    private static mapVisualizationFrameSequenceFrameOffsetXML(xml: FrameOffsetXML[], output: { [index: string]: IAssetVisualAnimationSequenceFrameOffset }): void
     {
         if(!xml || !xml.length || !output) return;
 
@@ -308,7 +309,7 @@ export class VisualizationMapper extends Mapper
 
         for(const offsetXML of xml)
         {
-            const offset: IAssetAnimationSequenceFrameOffset = {};
+            const offset: IAssetVisualAnimationSequenceFrameOffset = {};
 
             if(offsetXML.direction !== undefined) offset.direction = offsetXML.direction;
             if(offsetXML.x !== undefined) offset.x = offsetXML.x;
