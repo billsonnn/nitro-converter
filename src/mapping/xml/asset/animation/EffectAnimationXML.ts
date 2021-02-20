@@ -30,7 +30,7 @@ export class EffectAnimationXML
         {
             if(attributes.name !== undefined) this._name = attributes.name;
             if(attributes.desc !== undefined) this._desc = attributes.desc;
-            if(attributes.resetOnToggle !== undefined) this._resetOnToggle = (attributes.resetOnToggle === '1');
+            if(attributes.resetOnToggle !== undefined) this._resetOnToggle = (attributes.resetOnToggle === 'true');
         }
 
         if(xml.direction !== undefined)

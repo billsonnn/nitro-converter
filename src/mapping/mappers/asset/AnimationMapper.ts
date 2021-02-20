@@ -215,6 +215,8 @@ export class AnimationMapper extends Mapper
         {
             const frame: IAssetAnimationFrame = {};
 
+            if(frameXML.repeats !== undefined) frame.repeats = frameXML.repeats;
+
             if(frameXML.fxs !== undefined)
             {
                 if(frameXML.fxs.length)
