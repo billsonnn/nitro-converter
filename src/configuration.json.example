@@ -1,0 +1,22 @@
+{
+  "output.folder": "C:/nitro-converted-assets/",
+  "flash.client.url": "",
+  "furnidata.load.url": "",
+  "productdata.load.url": "",
+  "figuremap.load.url": "${flash.client.url}figuremap.xml",
+  "effectmap.load.url": "${flash.client.url}effectmap.xml",
+  "dynamic.download.pet.url": "${flash.client.url}%className%.swf",
+  "dynamic.download.figure.url": "${flash.client.url}%className%.swf",
+  "dynamic.download.effect.url": "${flash.client.url}%className%.swf",
+  "flash.dynamic.download.url": "",
+  "dynamic.download.furniture.url": "${flash.dynamic.download.url}%revision%/%className%.swf",
+  "external.variables.url": "https://www.habbo.com/gamedata/external_variables/1",
+  "convert.furnidata": "1",
+  "convert.productdata": "1",
+  "convert.figuremap": "1",
+  "convert.effectmap": "1",
+  "convert.figure": "1",
+  "convert.effect": "1",
+  "convert.furniture": "1",
+  "convert.pet": "1"
+}

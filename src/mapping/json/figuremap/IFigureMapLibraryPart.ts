@@ -1,5 +1,5 @@
 export interface IFigureMapLibraryPart
 {
-    id: number;
-    type: string;
+    id?: number;
+    type?: string;
 }

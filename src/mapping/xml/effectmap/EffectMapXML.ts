@@ -1,29 +1,24 @@
-import { EffectLibraryXML } from './EffectLibraryXML';
+import { EffectMapEffectXML } from './EffectMapEffectXML';
 
 export class EffectMapXML
 {
-    private _librares: EffectLibraryXML[];
+    private _effect: EffectMapEffectXML[];
 
     constructor(xml: any)
     {
-        if(xml.map !== undefined)
+        if(xml.effect !== undefined)
         {
-            if(xml.map.lib !== undefined)
+            if(Array.isArray(xml.effect))
             {
-                this._librares = [];
+                this._effect = [];
 
-                for(const lib in xml.map.lib)
-                {
-                    const library = xml.map.lib[lib];
-
-                    this._librares.push(new EffectLibraryXML(library));
-                }
+                for(const library of xml.effect) this._effect.push(new EffectMapEffectXML(library));
             }
         }
     }
 
-    public get libraries(): EffectLibraryXML[]
+    public get effects(): EffectMapEffectXML[]
     {
-        return this._librares;
+        return this._effect;
     }
 }

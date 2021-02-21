@@ -3,11 +3,14 @@ import { Configuration } from '../../common/config/Configuration';
 import { IFurnitureData } from '../../mapping/json';
 import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
 import { FileUtilities } from '../../utils/FileUtilities';
+import { Logger } from '../../utils/Logger';
 
 @singleton()
 export class FurnitureDownloader
 {
-    constructor(private readonly _configuration: Configuration)
+    constructor(
+        private readonly _configuration: Configuration,
+        private readonly _logger: Logger)
     {}
 
     public async download(callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
@@ -39,7 +42,7 @@ export class FurnitureDownloader
                     catch (error)
                     {
                         console.log();
-                        console.error(error);
+                        console.error(`Error parsing ${ className }: ` + error.message);
                     }
                 }
             }
@@ -66,7 +69,9 @@ export class FurnitureDownloader
                     catch (error)
                     {
                         console.log();
-                        console.error(error);
+                        console.error(`Error parsing ${ className }: ` + error.message);
+
+                        this._logger.logError(`Error parsing ${ className }: ` + error.message);
                     }
                 }
             }
@@ -75,7 +80,7 @@ export class FurnitureDownloader
 
     public async parseFurniData(): Promise<IFurnitureData>
     {
-        const url = this._configuration.getValue('furnidata.url');
+        const url = this._configuration.getValue('furnidata.load.url');
 
         if(!url || !url.length) return null;
 
@@ -88,7 +93,7 @@ export class FurnitureDownloader
 
     public async extractFurniture(revision: number, className: string, callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
     {
-        let url = this._configuration.getValue('dynamic.download.url.furniture');
+        let url = this._configuration.getValue('dynamic.download.furniture.url');
 
         if(!url || !url.length) return;
 

@@ -13,13 +13,13 @@ export class FurnitureDataXML
         {
             this._floorItems = [];
 
-            for(const roomitemtype in xml.roomitemtypes)
+            for(const roomitemtype of xml.roomitemtypes)
             {
-                const furniTypes = xml.roomitemtypes[roomitemtype];
+                const furniTypes = roomitemtype.furnitype;
 
                 if(furniTypes !== undefined)
                 {
-                    for(const furniType in furniTypes) this._floorItems.push(new FurnitureTypeXML('floor', furniType));
+                    if(Array.isArray(furniTypes)) for(const furniType of furniTypes) this._floorItems.push(new FurnitureTypeXML('floor', furniType));
                 }
             }
         }
@@ -28,13 +28,13 @@ export class FurnitureDataXML
         {
             this._wallItems = [];
 
-            for(const wallitemtype in xml.wallitemtypes)
+            for(const wallitemtype of xml.wallitemtypes)
             {
-                const furniTypes = xml.wallitemtypes[wallitemtype];
+                const furniTypes = wallitemtype.furnitype;
 
                 if(furniTypes !== undefined)
                 {
-                    for(const furniType in furniTypes) this._wallItems.push(new FurnitureTypeXML('wall', furniType));
+                    if(Array.isArray(furniTypes)) for(const furniType in furniTypes) this._wallItems.push(new FurnitureTypeXML('wall', furniType));
                 }
             }
         }

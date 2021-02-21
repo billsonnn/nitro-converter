@@ -18,13 +18,16 @@ export class FigureLibraryXML
 
         if(xml.part !== undefined)
         {
-            this._parts = [];
-
-            for(const partId in xml.part)
+            if(Array.isArray(xml.part))
             {
-                const part = xml.part[partId];
+                this._parts = [];
 
-                this._parts.push(new FigureLibraryPartXML(part));
+                for(const partId in xml.part)
+                {
+                    const part = xml.part[partId];
+
+                    this._parts.push(new FigureLibraryPartXML(part));
+                }
             }
         }
     }

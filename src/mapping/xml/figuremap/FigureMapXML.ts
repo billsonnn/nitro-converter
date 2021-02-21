@@ -6,15 +6,15 @@ export class FigureMapXML
 
     constructor(xml: any)
     {
-        if(xml.map !== undefined)
+        if(xml.lib !== undefined)
         {
-            if(xml.map.lib !== undefined)
+            if(Array.isArray(xml.lib))
             {
                 this._librares = [];
 
-                for(const lib in xml.map.lib)
+                for(const lib in xml.lib)
                 {
-                    const library = xml.map.lib[lib];
+                    const library = xml.lib[lib];
 
                     this._librares.push(new FigureLibraryXML(library));
                 }

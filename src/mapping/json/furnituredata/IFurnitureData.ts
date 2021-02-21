@@ -2,10 +2,10 @@ import { IFurnitureType } from './IFurnitureType';
 
 export class IFurnitureData
 {
-    roomitemtypes: {
+    roomitemtypes?: {
         furnitype: IFurnitureType[]
     };
-    wallitemtypes: {
+    wallitemtypes?: {
         furnitype: IFurnitureType[]
     };
 }

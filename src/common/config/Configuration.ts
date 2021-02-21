@@ -14,26 +14,22 @@ export class Configuration
 
     public async init(): Promise<void>
     {
-        for(const key of Object.keys(configuration)) this._config.set(key, configuration[key]);
+        this.parseConfiguration(configuration);
+
+        await this.loadExternalVariables();
+
+        this.parseConfiguration(configuration);
     }
 
     public async loadExternalVariables(): Promise<void>
     {
-        const url = this.getValue('external_vars.url');
+        const url = this.getValue('external.variables.url');
 
         try
         {
             const content = await FileUtilities.readFileAsString(url);
-            const config: string[] = content.split('\n');
 
-            for(const configEntry of config)
-            {
-                const configEntrySplit = configEntry.split('=');
-                const configKey = configEntrySplit[0];
-                const configValue = configEntrySplit[1];
-
-                this._config.set(configKey, configValue);
-            }
+            this.parseExternalVariables(content);
         }
 
         catch (error)
@@ -43,19 +39,106 @@ export class Configuration
         }
     }
 
-    public getBoolean(key: string): boolean
+    private parseConfiguration(content: Object): boolean
     {
-        return this._config.get(key) === '1';
+        if(!content) return false;
+
+        try
+        {
+            const regex = new RegExp(/\${(.*?)}/g);
+
+            for(const key of Object.keys(configuration))
+            {
+                if(this._config.get(key))
+                {
+                    if(!configuration[key].length) continue;
+                }
+
+                this._config.set(key, this.interpolate(configuration[key], regex));
+            }
+
+            return true;
+        }
+
+        catch (e)
+        {
+            console.log();
+            console.error(e);
+
+            return false;
+        }
+    }
+
+    private parseExternalVariables(content: string): boolean
+    {
+        if(!content || (content === '')) return false;
+
+        try
+        {
+            const regex = new RegExp(/\${(.*?)}/g);
+            const lines: string[] = content.split('\n');
+
+            for(const line of lines)
+            {
+                const [ key, value ] = line.split('=');
+
+                if(key.startsWith('landing.view')) continue;
+
+                this._config.set(key, this.interpolate((value || ''), regex));
+            }
+
+            return true;
+        }
+
+        catch (e)
+        {
+            console.log();
+            console.error(e);
+
+            return false;
+        }
+    }
+
+    public interpolate(value: string, regex: RegExp = null): string
+    {
+        if(!regex) regex = new RegExp(/\${(.*?)}/g);
+
+        const pieces = value.match(regex);
+
+        if(pieces && pieces.length)
+        {
+            for(const piece of pieces)
+            {
+                const existing = this._config.get(this.removeInterpolateKey(piece));
+
+                if(existing) (value = value.replace(piece, existing));
+            }
+        }
+
+        return value;
+    }
+
+    private removeInterpolateKey(value: string): string
+    {
+        return value.replace('${', '').replace('}', '');
     }
 
     public getValue(key: string, value: string = ''): string
     {
-        if(this._config.has(key))
-        {
-            // @ts-ignore
-            return this._config.get(key);
-        }
+        if(this._config.has(key)) return this._config.get(key);
 
         return value;
+    }
+
+    public setValue(key: string, value: string): void
+    {
+        this._config.set(key, value);
+    }
+
+    public getBoolean(key: string): boolean
+    {
+        const value = this.getValue(key);
+
+        return ((value === 'true') || (value === '1'));
     }
 }

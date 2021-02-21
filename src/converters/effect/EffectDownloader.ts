@@ -3,13 +3,16 @@ import { Configuration } from '../../common/config/Configuration';
 import { IEffectMap } from '../../mapping/json';
 import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
 import { FileUtilities } from '../../utils/FileUtilities';
+import { Logger } from '../../utils/Logger';
 
 @singleton()
 export class EffectDownloader
 {
     public static EFFECT_TYPES: Map<string, string> = new Map();
 
-    constructor(private readonly _configuration: Configuration)
+    constructor(
+        private readonly _configuration: Configuration,
+        private readonly _logger: Logger)
     {}
 
     public async download(callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
@@ -38,6 +41,8 @@ export class EffectDownloader
                 {
                     console.log();
                     console.error(`Error parsing ${ className }: ` + error.message);
+
+                    this._logger.logError(`Error parsing ${ className }: ` + error.message);
                 }
             }
         }
@@ -45,7 +50,7 @@ export class EffectDownloader
 
     public async parseEffectMap(): Promise<IEffectMap>
     {
-        const url = this._configuration.getValue('effectmap.url');
+        const url = this._configuration.getValue('effectmap.load.url');
 
         if(!url || !url.length) return null;
 
@@ -58,7 +63,7 @@ export class EffectDownloader
 
     public async extractEffect(className: string, callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
     {
-        let url = this._configuration.getValue('dynamic.download.url.effect');
+        let url = this._configuration.getValue('dynamic.download.effect.url');
 
         if(!url || !url.length) return;
 

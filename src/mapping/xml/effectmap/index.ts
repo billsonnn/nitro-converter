@@ -1,3 +1,2 @@
-export * from './EffectLibraryPartXML';
-export * from './EffectLibraryXML';
+export * from './EffectMapEffectXML';
 export * from './EffectMapXML';

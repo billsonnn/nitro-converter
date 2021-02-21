@@ -2,13 +2,13 @@ import { singleton } from 'tsyringe';
 import { Configuration } from '../../common/config/Configuration';
 import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
 import { FileUtilities } from '../../utils/FileUtilities';
-import Logger from '../../utils/Logger';
+import { Logger } from '../../utils/Logger';
 
 @singleton()
 export class PetDownloader
 {
     constructor(
-        private readonly _config: Configuration,
+        private readonly _configuration: Configuration,
         private readonly _logger: Logger)
     {}
 
@@ -34,18 +34,18 @@ export class PetDownloader
             catch (error)
             {
                 console.log();
-                console.error(error);
+                console.error(`Error parsing ${ petType }: ` + error.message);
+
+                this._logger.logError(`Error parsing ${ petType }: ` + error.message);
             }
         }
     }
 
     public async parsePetTypes(): Promise<string[]>
     {
-        await this._config.loadExternalVariables();
-
         const petTypes: string[] = [];
 
-        const pets = this._config.getValue('pet.configuration');
+        const pets = this._configuration.getValue('pet.configuration');
 
         if(pets)
         {
@@ -59,7 +59,7 @@ export class PetDownloader
 
     public async extractPet(className: string, callback: (habboAssetSwf: HabboAssetSWF) => Promise<void>): Promise<void>
     {
-        let url = this._config.getValue('dynamic.download.url.pet');
+        let url = this._configuration.getValue('dynamic.download.pet.url');
 
         if(!url || !url.length) return;
 

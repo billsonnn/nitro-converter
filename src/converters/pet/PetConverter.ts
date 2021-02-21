@@ -7,7 +7,7 @@ import { IAssetData } from '../../mapping/json';
 import { AssetMapper, IndexMapper, LogicMapper, VisualizationMapper } from '../../mapping/mappers';
 import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
 import File from '../../utils/File';
-import Logger from '../../utils/Logger';
+import { Logger } from '../../utils/Logger';
 import { PetDownloader } from './PetDownloader';
 
 @singleton()
@@ -28,9 +28,7 @@ export class PetConverter extends SWFConverter
 
         const spinner = ora('Preparing Pets').start();
 
-        const outputFolder = new File(this._configuration.getValue('output.folder.pet'));
-
-        if(!outputFolder.isDirectory()) outputFolder.mkdirs();
+        const directory = this.getDirectory();
 
         try
         {
@@ -43,7 +41,7 @@ export class PetConverter extends SWFConverter
                 const spriteBundle = await this._bundleProvider.generateSpriteSheet(habboAssetSwf);
                 const assetData = await this.mapXML2JSON(habboAssetSwf, 'pet');
 
-                await this.fromHabboAsset(habboAssetSwf, outputFolder.path, 'pet', assetData, spriteBundle);
+                await this.fromHabboAsset(habboAssetSwf, directory.path, 'pet', assetData, spriteBundle);
             });
 
             spinner.succeed(`Pets finished in ${ Date.now() - now }ms`);
@@ -55,35 +53,48 @@ export class PetConverter extends SWFConverter
         }
     }
 
+    private getDirectory(): File
+    {
+        const baseFolder = new File(this._configuration.getValue('output.folder'));
+
+        if(!baseFolder.isDirectory()) baseFolder.mkdirs();
+
+        const gameDataFolder = new File(baseFolder.path + 'pet');
+
+        if(!gameDataFolder.isDirectory()) gameDataFolder.mkdirs();
+
+        return gameDataFolder;
+    }
+
     private async mapXML2JSON(habboAssetSWF: HabboAssetSWF, assetType: string): Promise<IAssetData>
     {
         if(!habboAssetSWF) return null;
 
-        const assetData: IAssetData = {};
+        const output: IAssetData = {};
 
-        assetData.type = assetType;
+        output.type = assetType;
 
         const indexXML = await PetConverter.getIndexXML(habboAssetSWF);
 
-        if(indexXML) IndexMapper.mapXML(indexXML, assetData);
+        if(indexXML) IndexMapper.mapXML(indexXML, output);
 
         const assetXML = await PetConverter.getAssetsXML(habboAssetSWF);
 
         if(assetXML)
         {
-            AssetMapper.mapXML(assetXML, assetData);
+            AssetMapper.mapXML(assetXML, output);
 
-            if(assetData.palettes !== undefined)
+            if(output.palettes !== undefined)
             {
-                for(const paletteId in assetData.palettes)
+                for(const paletteId in output.palettes)
                 {
-                    const palette = assetData.palettes[paletteId];
+                    const palette = output.palettes[paletteId];
 
                     const paletteColors = PetConverter.getPalette(habboAssetSWF, palette.source);
 
                     if(!paletteColors)
                     {
-                        delete assetData.palettes[paletteId];
+                        delete output.palettes[paletteId];
 
                         continue;
                     }
@@ -99,12 +110,12 @@ export class PetConverter extends SWFConverter
 
         const logicXML = await PetConverter.getLogicXML(habboAssetSWF);
 
-        if(logicXML) LogicMapper.mapXML(logicXML, assetData);
+        if(logicXML) LogicMapper.mapXML(logicXML, output);
 
         const visualizationXML = await PetConverter.getVisualizationXML(habboAssetSWF);
 
-        if(visualizationXML) VisualizationMapper.mapXML(visualizationXML, assetData);
+        if(visualizationXML) VisualizationMapper.mapXML(visualizationXML, output);
 
-        return assetData;
+        return output;
     }
 }

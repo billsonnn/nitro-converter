@@ -1,22 +1,19 @@
-import { createWriteStream, existsSync } from 'fs';
-import { appendFile } from 'fs/promises';
+import { WriteStream } from 'fs';
 import { singleton } from 'tsyringe';
 
 @singleton()
-export default class Logger
+export class Logger
 {
+    private _fileName: string = `error-${ Date.now() }.log`;
+    private _writeStream: WriteStream = null;
 
     constructor()
     {
-        if(!existsSync('error.log'))
-        {
-            const createStream = createWriteStream('error.log');
-            createStream.end();
-        }
+
     }
 
-    public logErrorAsync(message: string): Promise<void>
+    public logError(message: string): void
     {
-        return appendFile('error.log', message + '\n');
+        //
     }
 }

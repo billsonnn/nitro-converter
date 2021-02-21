@@ -12,6 +12,8 @@ export class FileUtilities
 
         let content: Buffer = null;
 
+        if(url.startsWith('//')) url = ('https:' + url);
+
         if(url.startsWith('http'))
         {
             const data = await fetch.default(url);
@@ -32,6 +34,8 @@ export class FileUtilities
         if(!url) return null;
 
         let content = null;
+
+        if(url.startsWith('//')) url = ('https:' + url);
 
         if(url.startsWith('http'))
         {

@@ -6,8 +6,9 @@ import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
 import { DefineBinaryDataTag } from '../../swf/tags/DefineBinaryDataTag';
 import { NitroBundle } from '../../utils/NitroBundle';
 import { SpriteBundle } from '../bundle/SpriteBundle';
+import { Converter } from './Converter';
 
-export class SWFConverter
+export class SWFConverter extends Converter
 {
     protected async fromHabboAsset(habboAssetSWF: HabboAssetSWF, outputFolder: string, type: string, assetData: IAssetData, spriteBundle: SpriteBundle): Promise<void>
     {
