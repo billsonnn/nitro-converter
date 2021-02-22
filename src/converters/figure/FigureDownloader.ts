@@ -29,7 +29,7 @@ export class FigureDownloader
 
                 const existingFile = new File(directory.path + '/' + className + '.nitro');
 
-                if(existingFile.isDirectory) continue;
+                if(existingFile.isDirectory()) continue;
 
                 if(className === 'hh_human_fx' || className === 'hh_pets') continue;
 

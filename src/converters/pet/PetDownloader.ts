@@ -25,7 +25,7 @@ export class PetDownloader
         {
             const existingFile = new File(directory.path + '/' + petType + '.nitro');
 
-            if(existingFile.isDirectory) continue;
+            if(existingFile.isDirectory()) continue;
 
             if(classNames.indexOf(petType) >= 0) continue;
 

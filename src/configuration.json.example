@@ -16,6 +16,7 @@
   "convert.productdata": "1",
   "convert.figuremap": "1",
   "convert.effectmap": "1",
+  "convert.externaltexts": "1",
   "convert.figure": "1",
   "convert.effect": "1",
   "convert.furniture": "1",
