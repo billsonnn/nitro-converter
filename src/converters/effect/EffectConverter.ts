@@ -34,7 +34,7 @@ export class EffectConverter extends SWFConverter
 
         try
         {
-            await this._effectDownloader.download(async (habboAssetSwf: HabboAssetSWF, className: string) =>
+            await this._effectDownloader.download(directory, async (habboAssetSwf: HabboAssetSWF, className: string) =>
             {
                 spinner.text = 'Parsing Effect: ' + habboAssetSwf.getDocumentClass();
 

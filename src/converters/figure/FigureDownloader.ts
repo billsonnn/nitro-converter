@@ -2,6 +2,7 @@ import { singleton } from 'tsyringe';
 import { Configuration } from '../../common/config/Configuration';
 import { IFigureMap } from '../../mapping/json';
 import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
+import File from '../../utils/File';
 import { FileUtilities } from '../../utils/FileUtilities';
 import { Logger } from '../../utils/Logger';
 
@@ -15,7 +16,7 @@ export class FigureDownloader
         private readonly _logger: Logger)
     {}
 
-    public async download(callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
+    public async download(directory: File, callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
     {
         const figureMap = await this.parseFigureMap();
         const classNames: string[] = [];
@@ -25,6 +26,10 @@ export class FigureDownloader
             for(const library of figureMap.libraries)
             {
                 const className = library.id.split('*')[0];
+
+                const existingFile = new File(directory.path + '/' + className + '.nitro');
+
+                if(existingFile.isDirectory) continue;
 
                 if(className === 'hh_human_fx' || className === 'hh_pets') continue;
 

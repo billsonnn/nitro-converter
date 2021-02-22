@@ -34,7 +34,7 @@ export class PetConverter extends SWFConverter
 
         try
         {
-            await this._petDownloader.download(async (habboAssetSwf: HabboAssetSWF) =>
+            await this._petDownloader.download(directory, async (habboAssetSwf: HabboAssetSWF) =>
             {
                 spinner.text = 'Parsing Pet: ' + habboAssetSwf.getDocumentClass();
 

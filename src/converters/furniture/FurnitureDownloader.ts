@@ -2,6 +2,7 @@ import { singleton } from 'tsyringe';
 import { Configuration } from '../../common/config/Configuration';
 import { IFurnitureData } from '../../mapping/json';
 import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
+import File from '../../utils/File';
 import { FileUtilities } from '../../utils/FileUtilities';
 import { Logger } from '../../utils/Logger';
 
@@ -13,7 +14,7 @@ export class FurnitureDownloader
         private readonly _logger: Logger)
     {}
 
-    public async download(callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
+    public async download(directory: File, callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
     {
         const furniData = await this.parseFurniData();
 
@@ -29,6 +30,10 @@ export class FurnitureDownloader
                 {
                     const className = furniType.classname.split('*')[0];
                     const revision = furniType.revision;
+
+                    const existingFile = new File(directory.path + '/' + className + '.nitro');
+
+                    if(existingFile.isDirectory) continue;
 
                     if(classNames.indexOf(className) >= 0) continue;
 
@@ -56,6 +61,10 @@ export class FurnitureDownloader
                 {
                     const className = furniType.classname.split('*')[0];
                     const revision = furniType.revision;
+
+                    const existingFile = new File(directory.path + '/' + className + '.nitro');
+
+                    if(existingFile.isDirectory) continue;
 
                     if(classNames.indexOf(className) >= 0) continue;
 

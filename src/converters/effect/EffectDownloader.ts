@@ -2,6 +2,7 @@ import { singleton } from 'tsyringe';
 import { Configuration } from '../../common/config/Configuration';
 import { IEffectMap } from '../../mapping/json';
 import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
+import File from '../../utils/File';
 import { FileUtilities } from '../../utils/FileUtilities';
 import { Logger } from '../../utils/Logger';
 
@@ -15,7 +16,7 @@ export class EffectDownloader
         private readonly _logger: Logger)
     {}
 
-    public async download(callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
+    public async download(directory: File, callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
     {
         const effectMap = await this.parseEffectMap();
         const classNames: string[] = [];
@@ -25,6 +26,10 @@ export class EffectDownloader
             for(const library of effectMap.effects)
             {
                 const className = library.lib;
+
+                const existingFile = new File(directory.path + '/' + className + '.nitro');
+
+                if(existingFile.isDirectory) continue;
 
                 if(classNames.indexOf(className) >= 0) continue;
 

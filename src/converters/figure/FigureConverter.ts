@@ -34,7 +34,7 @@ export class FigureConverter extends SWFConverter
 
         try
         {
-            await this._figureDownloader.download(async (habboAssetSwf: HabboAssetSWF, className: string) =>
+            await this._figureDownloader.download(directory, async (habboAssetSwf: HabboAssetSWF, className: string) =>
             {
                 spinner.text = 'Parsing Figure: ' + habboAssetSwf.getDocumentClass();
 

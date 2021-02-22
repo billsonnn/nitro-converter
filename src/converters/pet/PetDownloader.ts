@@ -1,6 +1,7 @@
 import { singleton } from 'tsyringe';
 import { Configuration } from '../../common/config/Configuration';
 import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
+import File from '../../utils/File';
 import { FileUtilities } from '../../utils/FileUtilities';
 import { Logger } from '../../utils/Logger';
 
@@ -12,7 +13,7 @@ export class PetDownloader
         private readonly _logger: Logger)
     {}
 
-    public async download(callback: (habboAssetSwf: HabboAssetSWF) => Promise<void>): Promise<void>
+    public async download(directory: File, callback: (habboAssetSwf: HabboAssetSWF) => Promise<void>): Promise<void>
     {
         const petTypes = await this.parsePetTypes();
 
@@ -22,6 +23,10 @@ export class PetDownloader
 
         for(const petType of petTypes)
         {
+            const existingFile = new File(directory.path + '/' + petType + '.nitro');
+
+            if(existingFile.isDirectory) continue;
+
             if(classNames.indexOf(petType) >= 0) continue;
 
             classNames.push(petType);
