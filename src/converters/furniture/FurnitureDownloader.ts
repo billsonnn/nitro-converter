@@ -33,7 +33,7 @@ export class FurnitureDownloader
 
                     const existingFile = new File(directory.path + '/' + className + '.nitro');
 
-                    if(existingFile.isDirectory) continue;
+                    if(existingFile.isDirectory()) continue;
 
                     if(classNames.indexOf(className) >= 0) continue;
 
@@ -64,7 +64,7 @@ export class FurnitureDownloader
 
                     const existingFile = new File(directory.path + '/' + className + '.nitro');
 
-                    if(existingFile.isDirectory) continue;
+                    if(existingFile.isDirectory()) continue;
 
                     if(classNames.indexOf(className) >= 0) continue;
 
