@@ -1,10 +1,10 @@
 {
-  "name": "nitroassetconverter",
+  "name": "nitro-converter",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "ts-node-dev --respawn --transpile-only src/Main.ts"
+    "start:dev": "ts-node-dev --respawn --transpile-only src/main.ts"
   },
   "author": "",
   "license": "ISC",

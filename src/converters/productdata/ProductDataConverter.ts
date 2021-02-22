@@ -21,6 +21,8 @@ export class ProductDataConverter extends Converter
 
     public async convertAsync(): Promise<void>
     {
+        if(!this._configuration.getBoolean('convert.productdata')) return;
+
         const now = Date.now();
 
         const spinner = ora('Preparing ProductData').start();

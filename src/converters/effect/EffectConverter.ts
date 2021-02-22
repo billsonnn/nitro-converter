@@ -24,6 +24,8 @@ export class EffectConverter extends SWFConverter
 
     public async convertAsync(): Promise<void>
     {
+        if(!this._configuration.getBoolean('convert.effect')) return;
+
         const now = Date.now();
 
         const spinner = ora('Preparing Effects').start();

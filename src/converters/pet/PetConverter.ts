@@ -24,6 +24,8 @@ export class PetConverter extends SWFConverter
 
     public async convertAsync(): Promise<void>
     {
+        if(!this._configuration.getBoolean('convert.pet')) return;
+
         const now = Date.now();
 
         const spinner = ora('Preparing Pets').start();

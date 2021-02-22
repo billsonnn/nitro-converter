@@ -1,8 +1,10 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { Configuration } from './common/config/Configuration';
+import { IConverter } from './common/converters/IConverter';
 import { EffectConverter } from './converters/effect/EffectConverter';
 import { EffectMapConverter } from './converters/effectmap/EffectMapConverter';
+import { ExternalTextsConverter } from './converters/externaltexts/ExternalTextsConverter';
 import { FigureConverter } from './converters/figure/FigureConverter';
 import { FigureMapConverter } from './converters/figuremap/FigureMapConverter';
 import { FurnitureConverter } from './converters/furniture/FurnitureConverter';
@@ -15,51 +17,22 @@ import { ProductDataConverter } from './converters/productdata/ProductDataConver
     const config = container.resolve(Configuration);
     await config.init();
 
-    if(config.getBoolean('convert.figuremap'))
-    {
-        const figureMapConverter = container.resolve(FigureMapConverter);
-        await figureMapConverter.convertAsync();
-    }
+    const converters = [
+        FigureMapConverter,
+        EffectMapConverter,
+        FurnitureDataConverter,
+        ProductDataConverter,
+        ExternalTextsConverter,
+        FigureConverter,
+        EffectConverter,
+        FurnitureConverter,
+        PetConverter
+    ];
 
-    if(config.getBoolean('convert.effectmap'))
+    for(const converterClass of converters)
     {
-        const effectMapConverter = container.resolve(EffectMapConverter);
-        await effectMapConverter.convertAsync();
-    }
+        const converter = (container.resolve<any>(converterClass) as IConverter);
 
-    if(config.getBoolean('convert.furnidata'))
-    {
-        const furniDataConverter = container.resolve(FurnitureDataConverter);
-        await furniDataConverter.convertAsync();
-    }
-
-    if(config.getBoolean('convert.productdata'))
-    {
-        const productDataConverter = container.resolve(ProductDataConverter);
-        await productDataConverter.convertAsync();
-    }
-
-    if(config.getBoolean('convert.figure'))
-    {
-        const figureConverter = container.resolve(FigureConverter);
-        await figureConverter.convertAsync();
-    }
-
-    if(config.getBoolean('convert.effect'))
-    {
-        const effectConverter = container.resolve(EffectConverter);
-        await effectConverter.convertAsync();
-    }
-
-    if(config.getBoolean('convert.furniture'))
-    {
-        const furnitureConverter = container.resolve(FurnitureConverter);
-        await furnitureConverter.convertAsync();
-    }
-
-    if(config.getBoolean('convert.pet'))
-    {
-        const petConverter = container.resolve(PetConverter);
-        await petConverter.convertAsync();
+        await converter.convertAsync();
     }
 })();

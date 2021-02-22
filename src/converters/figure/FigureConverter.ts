@@ -24,6 +24,8 @@ export class FigureConverter extends SWFConverter
 
     public async convertAsync(): Promise<void>
     {
+        if(!this._configuration.getBoolean('convert.figure')) return;
+
         const now = Date.now();
 
         const spinner = ora('Preparing Figure').start();

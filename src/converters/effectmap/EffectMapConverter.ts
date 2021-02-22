@@ -23,6 +23,8 @@ export class EffectMapConverter extends Converter
 
     public async convertAsync(): Promise<void>
     {
+        if(!this._configuration.getBoolean('convert.effectmap')) return;
+
         const now = Date.now();
 
         const spinner = ora('Preparing EffectMap').start();

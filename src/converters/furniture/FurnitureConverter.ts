@@ -24,6 +24,8 @@ export class FurnitureConverter extends SWFConverter
 
     public async convertAsync(): Promise<void>
     {
+        if(!this._configuration.getBoolean('convert.furniture')) return;
+
         const now = Date.now();
 
         const spinner = ora('Preparing Furniture').start();
