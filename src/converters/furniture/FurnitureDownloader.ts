@@ -18,7 +18,7 @@ export class FurnitureDownloader
 
     public async download(directory: File, callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
     {
-        this._furnitureDataConverter.convertAsync();
+        await this._furnitureDataConverter.convertAsync();
 
         const furniData = await this.parseFurniData();
 
