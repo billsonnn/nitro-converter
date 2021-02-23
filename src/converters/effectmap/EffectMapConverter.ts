@@ -23,45 +23,52 @@ export class EffectMapConverter extends Converter
 
     public async convertAsync(): Promise<void>
     {
-        const now = Date.now();
-
-        const spinner = ora('Preparing EffectMap').start();
-
-        const directory = this.getDirectory();
-
-        try
+        return new Promise((resolve, reject) =>
         {
-            await this._effectMapDownloader.download(async (content: string) =>
+            const now = Date.now();
+
+            const spinner = ora('Preparing EffectMap').start();
+
+            const directory = this.getDirectory();
+
+            try
             {
-                spinner.text = 'Parsing EffectMap';
-
-                spinner.render();
-
-                let effectMapString = content;
-
-                if(!effectMapString.startsWith('{'))
+                this._effectMapDownloader.download(async (content: string) =>
                 {
-                    const xml = await parseStringPromise(effectMapString);
+                    spinner.text = 'Parsing EffectMap';
 
-                    const effectMap = await this.mapXML2JSON(xml);
+                    spinner.render();
 
-                    effectMapString = JSON.stringify(effectMap);
-                }
+                    let effectMapString = content;
 
-                const path = directory.path + '/EffectMap.json';
+                    if(!effectMapString.startsWith('{'))
+                    {
+                        const xml = await parseStringPromise(effectMapString);
 
-                await writeFile(path, effectMapString, 'utf8');
+                        const effectMap = await this.mapXML2JSON(xml);
 
-                this._configuration.setValue('effectmap.load.url', path);
-            });
+                        effectMapString = JSON.stringify(effectMap);
+                    }
 
-            spinner.succeed(`EffectMap finished in ${ Date.now() - now }ms`);
-        }
+                    const path = directory.path + '/EffectMap.json';
 
-        catch (error)
-        {
-            spinner.fail('EffectMap failed: ' + error.message);
-        }
+                    await writeFile(path, effectMapString, 'utf8');
+
+                    this._configuration.setValue('effectmap.load.url', path);
+
+                    spinner.succeed(`EffectMap finished in ${ Date.now() - now }ms`);
+
+                    resolve();
+                });
+            }
+
+            catch (error)
+            {
+                spinner.fail('EffectMap failed: ' + error.message);
+
+                reject(error);
+            }
+        });
     }
 
     private getDirectory(): File

@@ -33,7 +33,7 @@ export class EffectDownloader
 
                 const existingFile = new File(directory.path + '/' + className + '.nitro');
 
-                if(existingFile.isDirectory()) continue;
+                if(existingFile.exists()) continue;
 
                 if(classNames.indexOf(className) >= 0) continue;
 

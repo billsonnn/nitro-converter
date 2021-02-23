@@ -23,41 +23,48 @@ export class ExternalTextsConverter extends Converter
     {
         if(!this._configuration.getBoolean('convert.externaltexts')) return;
 
-        const now = Date.now();
-
-        const spinner = ora('Preparing ExternalTexts').start();
-
-        const directory = this.getDirectory();
-
-        try
+        return new Promise((resolve, reject) =>
         {
-            await this._externalTextsDownloader.download(async (content: string) =>
+            const now = Date.now();
+
+            const spinner = ora('Preparing ExternalTexts').start();
+
+            const directory = this.getDirectory();
+
+            try
             {
-                spinner.text = 'Parsing ExternalTexts';
-
-                spinner.render();
-
-                let externalTextsString = content;
-
-                if(!externalTextsString.startsWith('{'))
+                this._externalTextsDownloader.download(async (content: string) =>
                 {
-                    const externalTexts = await this.mapText2JSON(externalTextsString);
+                    spinner.text = 'Parsing ExternalTexts';
 
-                    externalTextsString = JSON.stringify(externalTexts);
-                }
+                    spinner.render();
 
-                const path = directory.path + '/ExternalTexts.json';
+                    let externalTextsString = content;
 
-                await writeFile(path, externalTextsString, 'utf8');
-            });
+                    if(!externalTextsString.startsWith('{'))
+                    {
+                        const externalTexts = await this.mapText2JSON(externalTextsString);
 
-            spinner.succeed(`ExternalTexts finished in ${ Date.now() - now }ms`);
-        }
+                        externalTextsString = JSON.stringify(externalTexts);
+                    }
 
-        catch (error)
-        {
-            spinner.fail('ExternalTexts failed: ' + error.message);
-        }
+                    const path = directory.path + '/ExternalTexts.json';
+
+                    await writeFile(path, externalTextsString, 'utf8');
+
+                    spinner.succeed(`ExternalTexts finished in ${ Date.now() - now }ms`);
+
+                    resolve();
+                });
+            }
+
+            catch (error)
+            {
+                spinner.fail('ExternalTexts failed: ' + error.message);
+
+                reject(error);
+            }
+        });
     }
 
     private getDirectory(): File

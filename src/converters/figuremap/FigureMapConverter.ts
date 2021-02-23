@@ -23,45 +23,52 @@ export class FigureMapConverter extends Converter
 
     public async convertAsync(): Promise<void>
     {
-        const now = Date.now();
-
-        const spinner = ora('Preparing FigureMap').start();
-
-        const directory = this.getDirectory();
-
-        try
+        return new Promise((resolve, reject) =>
         {
-            await this._figureMapDownloader.download(async (content: string) =>
+            const now = Date.now();
+
+            const spinner = ora('Preparing FigureMap').start();
+
+            const directory = this.getDirectory();
+
+            try
             {
-                spinner.text = 'Parsing FigureMap';
-
-                spinner.render();
-
-                let figureMapString = content;
-
-                if(!figureMapString.startsWith('{'))
+                this._figureMapDownloader.download(async (content: string) =>
                 {
-                    const xml = await parseStringPromise(figureMapString);
+                    spinner.text = 'Parsing FigureMap';
 
-                    const figureMap = await this.mapXML2JSON(xml);
+                    spinner.render();
 
-                    figureMapString = JSON.stringify(figureMap);
-                }
+                    let figureMapString = content;
 
-                const path = directory.path + '/FigureMap.json';
+                    if(!figureMapString.startsWith('{'))
+                    {
+                        const xml = await parseStringPromise(figureMapString);
 
-                await writeFile(path, figureMapString, 'utf8');
+                        const figureMap = await this.mapXML2JSON(xml);
 
-                this._configuration.setValue('figuremap.load.url', path);
-            });
+                        figureMapString = JSON.stringify(figureMap);
+                    }
 
-            spinner.succeed(`FigureMap finished in ${ Date.now() - now }ms`);
-        }
+                    const path = directory.path + '/FigureMap.json';
 
-        catch (error)
-        {
-            spinner.fail('FigureMap failed: ' + error.message);
-        }
+                    await writeFile(path, figureMapString, 'utf8');
+
+                    this._configuration.setValue('figuremap.load.url', path);
+
+                    spinner.succeed(`FigureMap finished in ${ Date.now() - now }ms`);
+
+                    resolve();
+                });
+            }
+
+            catch (error)
+            {
+                spinner.fail('FigureMap failed: ' + error.message);
+
+                reject(error);
+            }
+        });
     }
 
     private getDirectory(): File

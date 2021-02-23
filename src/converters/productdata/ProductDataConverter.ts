@@ -23,41 +23,48 @@ export class ProductDataConverter extends Converter
     {
         if(!this._configuration.getBoolean('convert.productdata')) return;
 
-        const now = Date.now();
-
-        const spinner = ora('Preparing ProductData').start();
-
-        const directory = this.getDirectory();
-
-        try
+        return new Promise((resolve, reject) =>
         {
-            await this._productDataDownloader.download(async (content: string) =>
+            const now = Date.now();
+
+            const spinner = ora('Preparing ProductData').start();
+
+            const directory = this.getDirectory();
+
+            try
             {
-                spinner.text = 'Parsing FurnitureData';
-
-                spinner.render();
-
-                let productDataString = content;
-
-                if(!productDataString.startsWith('{'))
+                this._productDataDownloader.download(async (content: string) =>
                 {
-                    const productData = await this.mapText2JSON(productDataString);
+                    spinner.text = 'Parsing FurnitureData';
 
-                    productDataString = JSON.stringify(productData);
-                }
+                    spinner.render();
 
-                const path = directory.path + '/ProductData.json';
+                    let productDataString = content;
 
-                await writeFile(path, productDataString, 'utf8');
-            });
+                    if(!productDataString.startsWith('{'))
+                    {
+                        const productData = await this.mapText2JSON(productDataString);
 
-            spinner.succeed(`ProductData finished in ${ Date.now() - now }ms`);
-        }
+                        productDataString = JSON.stringify(productData);
+                    }
 
-        catch (error)
-        {
-            spinner.fail('ProductData failed: ' + error.message);
-        }
+                    const path = directory.path + '/ProductData.json';
+
+                    await writeFile(path, productDataString, 'utf8');
+
+                    spinner.succeed(`ProductData finished in ${ Date.now() - now }ms`);
+
+                    resolve();
+                });
+            }
+
+            catch (error)
+            {
+                spinner.fail('ProductData failed: ' + error.message);
+
+                reject(error);
+            }
+        });
     }
 
     private getDirectory(): File
