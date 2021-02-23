@@ -34,7 +34,7 @@ export class FurnitureDataXML
 
                 if(furniTypes !== undefined)
                 {
-                    if(Array.isArray(furniTypes)) for(const furniType in furniTypes) this._wallItems.push(new FurnitureTypeXML('wall', furniType));
+                    if(Array.isArray(furniTypes)) for(const furniType of furniTypes) this._wallItems.push(new FurnitureTypeXML('wall', furniType));
                 }
             }
         }

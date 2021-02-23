@@ -5,6 +5,7 @@ import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
 import File from '../../utils/File';
 import { FileUtilities } from '../../utils/FileUtilities';
 import { Logger } from '../../utils/Logger';
+import { FigureConverter } from './FigureConverter';
 
 @singleton()
 export class FigureDownloader
@@ -12,12 +13,15 @@ export class FigureDownloader
     public static FIGURE_TYPES: Map<string, string> = new Map();
 
     constructor(
+        private readonly _figureConverter: FigureConverter,
         private readonly _configuration: Configuration,
         private readonly _logger: Logger)
     {}
 
     public async download(directory: File, callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
     {
+        await this._figureConverter.convertAsync();
+
         const figureMap = await this.parseFigureMap();
         const classNames: string[] = [];
 

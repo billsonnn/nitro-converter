@@ -5,17 +5,21 @@ import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
 import File from '../../utils/File';
 import { FileUtilities } from '../../utils/FileUtilities';
 import { Logger } from '../../utils/Logger';
+import { FurnitureDataConverter } from '../furnituredata/FurnitureDataConverter';
 
 @singleton()
 export class FurnitureDownloader
 {
     constructor(
+        private readonly _furnitureDataConverter: FurnitureDataConverter,
         private readonly _configuration: Configuration,
         private readonly _logger: Logger)
     {}
 
     public async download(directory: File, callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
     {
+        this._furnitureDataConverter.convertAsync();
+
         const furniData = await this.parseFurniData();
 
         if(!furniData) throw new Error('invalid_furnidata');

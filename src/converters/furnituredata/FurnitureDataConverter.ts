@@ -23,8 +23,6 @@ export class FurnitureDataConverter extends Converter
 
     public async convertAsync(): Promise<void>
     {
-        if(!this._configuration.getBoolean('convert.furnituredata')) return;
-
         const now = Date.now();
 
         const spinner = ora('Preparing FurnitureData').start();
