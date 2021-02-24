@@ -11,6 +11,7 @@ import { ProductDataConverter } from './converters/productdata/ProductDataConver
 
 (async () =>
 {
+    checkNodeVersion();
     const config = container.resolve(Configuration);
     await config.init();
 
@@ -30,3 +31,13 @@ import { ProductDataConverter } from './converters/productdata/ProductDataConver
         await converter.convertAsync();
     }
 })();
+
+function checkNodeVersion()
+{
+    const version = process.version.replace('v', '');
+    const major = version.split('.')[0];
+    if(parseInt(major) < 14)
+    {
+        throw new Error('Invalid node version: ' + version + ' please use >= 14');
+    }
+}
