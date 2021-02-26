@@ -305,7 +305,7 @@ export class VisualizationMapper extends Mapper
     {
         if(!xml || !xml.length || !output) return;
 
-        const i = 0;
+        let i = 0;
 
         for(const offsetXML of xml)
         {
@@ -316,6 +316,8 @@ export class VisualizationMapper extends Mapper
             if(offsetXML.y !== undefined) offset.y = offsetXML.y;
 
             output[i.toString()] = offset;
+
+            i++;
         }
     }
 
