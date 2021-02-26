@@ -36,7 +36,7 @@ export class FurnitureConverter extends SWFConverter
         {
             await this._furniDownloader.download(directory, async (habboAssetSwf: HabboAssetSWF) =>
             {
-                spinner.text = 'Parsing Furniture: ' + habboAssetSwf.getDocumentClass();
+                spinner.text = (`Parsing Furniture: ${ habboAssetSwf.getDocumentClass() } (${ this._furniDownloader.totalFinished } / ${ this._furniDownloader.totalItems })`);
 
                 spinner.render();
 
