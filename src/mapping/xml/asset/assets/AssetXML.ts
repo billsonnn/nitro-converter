@@ -6,7 +6,7 @@ export class AssetXML
     private readonly _y: number;
     private readonly _flipH: boolean;
     private readonly _flipV: boolean;
-    private readonly _usesPalette: number;
+    private readonly _usesPalette: boolean;
 
     constructor(asset: any)
     {
@@ -20,7 +20,7 @@ export class AssetXML
             if(attributes.x !== undefined) this._y = parseInt(attributes.y);
             if(attributes.flipH !== undefined) this._flipH = (attributes.flipH === '1');
             if(attributes.flipV !== undefined) this._flipV = (attributes.flipV === '1');
-            if(attributes.usesPalette !== undefined) this._usesPalette = parseInt(attributes.usesPalette);
+            if(attributes.usesPalette !== undefined) this._usesPalette = (attributes.usesPalette === '1');
         }
     }
 
@@ -54,7 +54,7 @@ export class AssetXML
         return this._flipV;
     }
 
-    public get usesPalette(): number
+    public get usesPalette(): boolean
     {
         return this._usesPalette;
     }
