@@ -11,13 +11,13 @@
         "resolveJsonModule": true,
         "target": "es6",
         "sourceMap": false,
-        "allowJs": false,
+        "allowJs": true,
         "baseUrl": "./src",
         "outDir": "./dist"
     },
     "include": [
         "src/configuration.json",
-        "src/**/*.ts"
+        "src/**/*"
     ],
     "exclude": [
         "node_modules",

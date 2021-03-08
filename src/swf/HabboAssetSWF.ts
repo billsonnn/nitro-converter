@@ -5,7 +5,6 @@ import {DefineBinaryDataTag} from './tags/DefineBinaryDataTag';
 import {ImageTag} from './tags/ImageTag';
 import {ITag} from './tags/ITag';
 import {SymbolClassTag} from './tags/SymbolClassTag';
-import {writeFileSync} from "fs";
 
 export class HabboAssetSWF {
     private readonly _tags: Array<ITag>;

@@ -1,6 +1,6 @@
 import {writeFileSync} from "fs";
 
-const SWFReader = require('@gizeta/swf-reader');
+const SWFReader = require('../swf-reader/index.js');
 
 const _encoder = require('png-stream/encoder');
 
