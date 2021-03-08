@@ -10,6 +10,9 @@ import { FurnitureDataConverter } from '../furnituredata/FurnitureDataConverter'
 @singleton()
 export class FurnitureDownloader
 {
+    private _totalItems: number = 0;
+    private _totalFinished: number = 0;
+
     constructor(
         private readonly _furnitureDataConverter: FurnitureDataConverter,
         private readonly _configuration: Configuration,
@@ -25,6 +28,7 @@ export class FurnitureDownloader
         if(!furniData) throw new Error('invalid_furnidata');
 
         const classNames: string[] = [];
+        const revisions: number[] = [];
 
         if(furniData.roomitemtypes !== undefined)
         {
@@ -42,17 +46,7 @@ export class FurnitureDownloader
                     if(classNames.indexOf(className) >= 0) continue;
 
                     classNames.push(className);
-
-                    try
-                    {
-                        await this.extractFurniture(revision, className, callback);
-                    }
-
-                    catch (error)
-                    {
-                        console.log();
-                        console.error(`Error parsing ${ className }: ` + error.message);
-                    }
+                    revisions.push(revision);
                 }
             }
         }
@@ -73,21 +67,34 @@ export class FurnitureDownloader
                     if(classNames.indexOf(className) >= 0) continue;
 
                     classNames.push(className);
-
-                    try
-                    {
-                        await this.extractFurniture(revision, className, callback);
-                    }
-
-                    catch (error)
-                    {
-                        console.log();
-                        console.error(`Error parsing ${ className }: ` + error.message);
-
-                        this._logger.logError(`Error parsing ${ className }: ` + error.message);
-                    }
+                    revisions.push(revision);
                 }
             }
+        }
+
+        this._totalItems = classNames.length;
+
+        this._totalFinished = 0;
+
+        while(this._totalFinished < this._totalItems)
+        {
+            const className = classNames[this._totalFinished];
+            const revision = revisions[this._totalFinished];
+
+            try
+            {
+                await this.extractFurniture(revision, className, callback);
+            }
+
+            catch (error)
+            {
+                console.log();
+                console.error(`Error parsing ${ className }: ` + error.message);
+
+                this._logger.logError(`Error parsing ${ className }: ` + error.message);
+            }
+
+            this._totalFinished++;
         }
     }
 
@@ -122,5 +129,15 @@ export class FurnitureDownloader
         await newHabboAssetSWF.setupAsync();
 
         await callback(newHabboAssetSWF, className);
+    }
+
+    public get totalItems(): number
+    {
+        return this._totalItems;
+    }
+
+    public get totalFinished(): number
+    {
+        return this._totalFinished;
     }
 }

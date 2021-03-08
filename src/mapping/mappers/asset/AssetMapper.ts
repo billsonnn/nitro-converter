@@ -67,6 +67,7 @@ export class AssetMapper extends Mapper
                 if(assetXML.y !== undefined) asset.y = assetXML.y;
                 if(assetXML.flipH !== undefined) asset.flipH = assetXML.flipH;
                 if(assetXML.flipV !== undefined) asset.flipV = assetXML.flipV;
+                if(assetXML.usesPalette !== undefined) asset.usesPalette = assetXML.usesPalette;
 
                 output[assetXML.name] = asset;
             }
