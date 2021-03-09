@@ -2,6 +2,7 @@ import { ActionXML } from './ActionXML';
 import { CreditsXML } from './CreditsXML';
 import { MaskXML } from './MaskXML';
 import { ModelXML } from './model/ModelXML';
+import {SoundSampleXML} from "./SoundSampleXML";
 
 export class LogicXML
 {
@@ -10,6 +11,7 @@ export class LogicXML
     private readonly _action: ActionXML;
     private readonly _mask: MaskXML;
     private readonly _credits: CreditsXML;
+    private readonly _soundSample: SoundSampleXML;
 
     constructor(xml: any)
     {
@@ -39,6 +41,11 @@ export class LogicXML
         {
             if(xml.credits[0] !== undefined) this._credits = new CreditsXML(xml.credits[0]);
         }
+
+        if(xml.sound !== undefined)
+        {
+            if(xml.sound[0] !== undefined) this._soundSample = new SoundSampleXML(xml.sound[0].sample);
+        }
     }
 
     public get type(): string
@@ -64,5 +71,10 @@ export class LogicXML
     public get credits(): CreditsXML | undefined
     {
         return this._credits;
+    }
+
+    public get soundSample(): SoundSampleXML | undefined
+    {
+        return this._soundSample;
     }
 }

@@ -63,5 +63,7 @@ export class LogicMapper extends Mapper
         if(xml.mask !== undefined) output.maskType = xml.mask.type;
 
         if(xml.credits !== undefined) output.credits = xml.credits.value;
+
+        if(xml.soundSample !== undefined) output.soundSample = xml.soundSample.id;
     }
 }
