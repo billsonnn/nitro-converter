@@ -40,6 +40,7 @@ export class FileUtilities
         if(url.startsWith('http'))
         {
             const data = await fetch.default(url);
+            if (data.status === 404) return;
 
             if(data) content = await data.text();
         }
