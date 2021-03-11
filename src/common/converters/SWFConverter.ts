@@ -54,7 +54,10 @@ export class SWFConverter extends Converter
 
         if(!binaryData) return null;
 
-        return await parseStringPromise(binaryData.binaryData);
+        //Will fix some malformed comments exception.
+        const removedComments: string = binaryData.binaryData.replace(/<!--.*?-->/sg, '');
+
+        return await parseStringPromise(removedComments);
     }
 
     protected static async getAssetsXML(habboAssetSWF: HabboAssetSWF): Promise<any>
