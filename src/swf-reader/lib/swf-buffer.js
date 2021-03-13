@@ -32,7 +32,7 @@ function readFillStyle(buffer) {
          */
         fillStyleType : type
       };
-  
+
   switch (type) {
     case 0x00:
       fillStyle.color = buffer.readRGBA();
@@ -45,7 +45,7 @@ function readFillStyle(buffer) {
       break;
   }
 
-  return fillStyle; 
+  return fillStyle;
 }
 
 function readLineStyle(buffer) {
@@ -92,7 +92,7 @@ function SWFBuffer( buffer ) {
 }
 
 /**
- * Reads unsigned 16 or 32 Little Endian Bits 
+ * Reads unsigned 16 or 32 Little Endian Bits
  * and advance pointer to next bits / 8 bytes
  *
  * @param {Number} bits
@@ -158,7 +158,7 @@ SWFBuffer.prototype.readString = function(encoding) {
  * @return {Array} Array of RGB value
  */
 
-SWFBuffer.prototype.readRGB = function() { 
+SWFBuffer.prototype.readRGB = function() {
   return [this.readUInt8(), this.readUInt8(), this.readUInt8()];
 };
 
@@ -196,16 +196,20 @@ SWFBuffer.prototype.readShapeWithStyle = function() {
  * @return {Object} Tag code and length
  */
 
-SWFBuffer.prototype.readTagCodeAndLength = function() { 
+SWFBuffer.prototype.readTagCodeAndLength = function() {
+    if (this.pointer === this.length) {
+        return false;
+    }
+
   var n = this.readUIntLE(16)
     , tagType = n >> 6
-    , tagLength = n & RECORDHEADER_LENTH_FULL; 
+    , tagLength = n & RECORDHEADER_LENTH_FULL;
 
   if ( n === 0 )
     return false;
 
   if ( tagLength === RECORDHEADER_LENTH_FULL )
-    tagLength = this.readUIntLE(32); 
+    tagLength = this.readUIntLE(32);
 
   return { code : tagType, length : tagLength };
 };
