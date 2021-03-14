@@ -1,6 +1,7 @@
-import { IAssetData } from '../../json';
-import { LogicXML } from '../../xml';
-import { Mapper } from './Mapper';
+import {IAssetData} from '../../json';
+import {LogicXML} from '../../xml';
+import {Mapper} from './Mapper';
+import {ISoundSample} from "../../json/asset/ISoundSample";
 
 export class LogicMapper extends Mapper
 {
@@ -64,6 +65,12 @@ export class LogicMapper extends Mapper
 
         if(xml.credits !== undefined) output.credits = xml.credits.value;
 
-        if(xml.soundSample !== undefined) output.soundSample = xml.soundSample.id;
+        if(xml.soundSample !== undefined)
+        {
+            output.soundSample = {
+                id: xml.soundSample.id,
+                noPitch: xml.soundSample.noPitch
+            };
+        }
     }
 }

@@ -5,6 +5,7 @@ import { IAssetDimension } from './IAssetDimension';
 import { IAssetPalette } from './IAssetPalette';
 import { ISpritesheetData } from './spritesheet';
 import { IAssetVisualizationData } from './visualization';
+import {ISoundSample} from "./ISoundSample";
 
 export interface IAssetData {
     type?: string;
@@ -13,7 +14,7 @@ export interface IAssetData {
     logicType?: string;
     maskType?: string;
     credits?: string;
-    soundSample?: number;
+    soundSample?: ISoundSample;
     action?: { link?: string, startState?: number };
     spritesheet?: ISpritesheetData;
     dimensions?: IAssetDimension;
