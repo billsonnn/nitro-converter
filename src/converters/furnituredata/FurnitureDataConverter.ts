@@ -43,7 +43,8 @@ export class FurnitureDataConverter extends Converter
 
                     if(!furnitureDataString.startsWith('{'))
                     {
-                        const xml = await parseStringPromise(furnitureDataString);
+                        const xml = await parseStringPromise(furnitureDataString
+                            .replace(/&/g,'&amp;'));
 
                         const furnitureData = await this.mapXML2JSON(xml);
 
