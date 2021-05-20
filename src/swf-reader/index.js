@@ -335,27 +335,9 @@ function uncompress(swf, next) {
           return readSWFBuff(new SWFBuffer(uncompressed_buff), swf);
         }
 
-        const newBuffer = swf.slice(4);
-        const uncompressedLength = newBuffer.readUInt32LE();
-        const chunks = [];
-
-        let readLength = 0;
-          var decompressStream = zlib.createInflate()
-              .on('data', function (chunk) {
-                  readLength += chunk.length;
-                  chunks.push(chunk);
-
-                  if (uncompressedLength - 8 === readLength) {
-                      decompressStream.close();
-                  }
-                  //decompressStream.pause();
-              }).on('error', function(err) {
-                  console.log(err);
-                  //next(err);
-              }).on('close', function() {
-                  readSWFBuff(new SWFBuffer( Buffer.concat(chunks) ), swf, next);
-              });
-        decompressStream.write(compressed_buff);
+        zlib.inflate(compressed_buff, function(err, buf) {
+          readSWFBuff(new SWFBuffer(buf), swf, next);
+        });
         break;
       case 0x46 : // uncompressed
         return readSWFBuff(new SWFBuffer( swf ), swf, next);
