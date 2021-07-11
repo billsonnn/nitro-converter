@@ -13,6 +13,8 @@ import { FurnitureDownloader } from './FurnitureDownloader';
 @singleton()
 export class FurnitureConverter extends SWFConverter
 {
+    public assets: Map<string, IAssetData> = new Map();
+
     constructor(
         private readonly _furniDownloader: FurnitureDownloader,
         private readonly _configuration: Configuration,
@@ -44,6 +46,8 @@ export class FurnitureConverter extends SWFConverter
                 const assetData = await this.mapXML2JSON(habboAssetSwf, 'furniture');
 
                 await this.fromHabboAsset(habboAssetSwf, directory.path, 'furniture', assetData, spriteBundle);
+
+                this.assets.set(assetData.name, assetData);
             });
 
             spinner.succeed(`Furniture finished in ${ Date.now() - now }ms`);
