@@ -13,6 +13,8 @@ import { FurnitureDataDownloader } from './FurnitureDataDownloader';
 @singleton()
 export class FurnitureDataConverter extends Converter
 {
+    public furnitureData: IFurnitureData = null;
+
     constructor(
         private readonly _furnitureDataDownloader: FurnitureDataDownloader,
         private readonly _configuration: Configuration,
@@ -47,7 +49,13 @@ export class FurnitureDataConverter extends Converter
 
                         const furnitureData = await this.mapXML2JSON(xml);
 
+                        this.furnitureData = furnitureData;
+
                         furnitureDataString = JSON.stringify(furnitureData);
+                    }
+                    else
+                    {
+                        this.furnitureData = JSON.parse(furnitureDataString);
                     }
 
                     const path = directory.path + '/FurnitureData.json';

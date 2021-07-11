@@ -84,6 +84,10 @@ export class AssetMapper extends Mapper
 
             if(paletteXML.id !== undefined) palette.id = paletteXML.id;
             if(paletteXML.source !== undefined) palette.source = paletteXML.source;
+            if(paletteXML.master !== undefined) palette.master = paletteXML.master;
+            if(paletteXML.tags !== undefined) palette.tags = paletteXML.tags;
+            if(paletteXML.breed !== undefined) palette.breed = paletteXML.breed;
+            if(paletteXML.colorTag !== undefined) palette.colorTag = paletteXML.colorTag;
             if(paletteXML.color1 !== undefined) palette.color1 = paletteXML.color1;
             if(paletteXML.color2 !== undefined) palette.color2 = paletteXML.color2;
 

@@ -3,9 +3,9 @@ import { IAsset } from './IAsset';
 import { IAssetAlias } from './IAssetAlias';
 import { IAssetDimension } from './IAssetDimension';
 import { IAssetPalette } from './IAssetPalette';
+import { ISoundSample } from './ISoundSample';
 import { ISpritesheetData } from './spritesheet';
 import { IAssetVisualizationData } from './visualization';
-import {ISoundSample} from "./ISoundSample";
 
 export interface IAssetData {
     type?: string;

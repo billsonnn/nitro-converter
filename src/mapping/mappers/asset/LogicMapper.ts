@@ -1,7 +1,6 @@
-import {IAssetData} from '../../json';
-import {LogicXML} from '../../xml';
-import {Mapper} from './Mapper';
-import {ISoundSample} from "../../json/asset/ISoundSample";
+import { IAssetData } from '../../json';
+import { LogicXML } from '../../xml';
+import { Mapper } from './Mapper';
 
 export class LogicMapper extends Mapper
 {

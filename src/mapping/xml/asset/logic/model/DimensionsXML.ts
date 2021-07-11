@@ -12,7 +12,7 @@ export class DimensionsXML
         {
             if(attributes.x !== undefined) this._x = parseInt(attributes.x);
             if(attributes.y !== undefined) this._y = parseInt(attributes.y);
-            if(attributes.z !== undefined) this._z = parseInt(attributes.z);
+            if(attributes.z !== undefined) this._z = parseFloat(attributes.z);
         }
     }
 
