@@ -5,6 +5,7 @@
 The converter currently supports the following files:
 
 - furnidata.xml
+- figuredata.xml
 - figuremap.xml
 - effectmap.xml
 - external_texts.txt
@@ -40,6 +41,7 @@ You may set any of the urls to a local path on your system or a remote url. A lo
 | convert.productdata | Either `0` to skip or `1` to run |
 | convert.externaltexts | Either `0` to skip or `1` to run |
 | convert.figure | Either `0` to skip or `1` to run |
+| convert.figuredata | Either `0` to skip or `1` to run |
 | convert.effect | Either `0` to skip or `1` to run |
 | convert.furniture | Either `0` to skip or `1` to run |
 | convert.pet | Either `0` to skip or `1` to run |
@@ -50,6 +52,6 @@ To run the converter open a new terminal / console window in the main converter 
 
 **Make sure you run ``npm i`` before first use.**
 
-Type `npm run start:dev` and the converter will start running, only errors will be outputted in the console.
+Type `npm start` and the converter will start running, only errors will be outputted in the console.
 
 The converter will skip any assets that already exist but will always reconvert your XMLs / copy your JSONS to the ``gamedata`` folder to ensure you always have the latest copy.

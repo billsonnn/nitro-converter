@@ -5,6 +5,7 @@ import { IConverter } from './common/converters/IConverter';
 import { EffectConverter } from './converters/effect/EffectConverter';
 import { ExternalTextsConverter } from './converters/externaltexts/ExternalTextsConverter';
 import { FigureConverter } from './converters/figure/FigureConverter';
+import { FigureDataConverter } from './converters/figuredata/FigureDataConverter';
 import { FurnitureConverter } from './converters/furniture/FurnitureConverter';
 import { PetConverter } from './converters/pet/PetConverter';
 import { ProductDataConverter } from './converters/productdata/ProductDataConverter';
@@ -12,6 +13,7 @@ import { ProductDataConverter } from './converters/productdata/ProductDataConver
 (async () =>
 {
     checkNodeVersion();
+
     const config = container.resolve(Configuration);
     await config.init();
 
@@ -21,7 +23,8 @@ import { ProductDataConverter } from './converters/productdata/ProductDataConver
         FigureConverter,
         EffectConverter,
         FurnitureConverter,
-        PetConverter
+        PetConverter,
+        FigureDataConverter
     ];
 
     for(const converterClass of converters)
