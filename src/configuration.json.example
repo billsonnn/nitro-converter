@@ -3,6 +3,7 @@
   "flash.client.url": "",
   "furnidata.load.url": "",
   "productdata.load.url": "",
+  "figuredata.load.url": "https://www.habbo.com/gamedata/figuredata/1",
   "figuremap.load.url": "${flash.client.url}figuremap.xml",
   "effectmap.load.url": "${flash.client.url}effectmap.xml",
   "dynamic.download.pet.url": "${flash.client.url}%className%.swf",
@@ -17,5 +18,6 @@
   "convert.figure": "1",
   "convert.effect": "1",
   "convert.furniture": "1",
-  "convert.pet": "1"
+  "convert.pet": "1",
+  "convert.figuredata": "1"
 }
