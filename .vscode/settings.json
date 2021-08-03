@@ -6,6 +6,7 @@
     "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
     "editor.codeActionsOnSave": {
         "source.fixAll": true,
+        "source.fixAll.sortJSON": false,
         "source.organizeImports": true,
     },
     "emmet.showExpandedAbbreviation": "never",

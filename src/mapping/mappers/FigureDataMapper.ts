@@ -1,5 +1,7 @@
+import { IFigureDataHiddenLayer } from '../json';
 import { IFigureDataPalette } from '../json/figuredata/IFigureDataPalette';
 import { IFigureDataSet } from '../json/figuredata/IFigureDataSet';
+import { FigureDataHiddenLayerXML } from '../xml';
 import { FigureDataColorXML } from '../xml/figuredata/FigureDataColorXML';
 import { FigureDataPaletteXML } from '../xml/figuredata/FigureDataPaletteXML';
 import { FigureDataXML } from '../xml/figuredata/FigureDataXML';
@@ -131,6 +133,7 @@ export class FigureDataMapper extends Mapper
             if(setXML.colorable !== undefined) setType.colorable = setXML.colorable;
             if(setXML.selectable !== undefined) setType.selectable = setXML.selectable;
             if(setXML.preselectable !== undefined) setType.preselectable = setXML.preselectable;
+            if(setXML.sellable !== undefined) setType.sellable = setXML.sellable;
 
             if(setXML.parts !== undefined)
             {
@@ -139,6 +142,16 @@ export class FigureDataMapper extends Mapper
                     setType.parts = [];
 
                     FigureDataMapper.mapFigureDataParts(setXML.parts, setType.parts);
+                }
+            }
+
+            if(setXML.hiddenLayers !== undefined)
+            {
+                if(setXML.hiddenLayers.length)
+                {
+                    setType.hiddenLayers = [];
+
+                    FigureDataMapper.mapFigureDataHiddenLayers(setXML.hiddenLayers, setType.hiddenLayers);
                 }
             }
 
@@ -161,6 +174,20 @@ export class FigureDataMapper extends Mapper
             if(partXML.colorIndex !== undefined) part.colorindex = partXML.colorIndex;
 
             output.push(part);
+        }
+    }
+
+    private static mapFigureDataHiddenLayers(xml: FigureDataHiddenLayerXML[], output: IFigureDataHiddenLayer[]): void
+    {
+        if(!xml || !xml.length || !output) return;
+
+        for(const hiddenLayerXML of xml)
+        {
+            const hiddenLayer: IFigureDataHiddenLayer = {};
+
+            if(hiddenLayerXML.partType !== undefined) hiddenLayer.partType = hiddenLayerXML.partType;
+
+            output.push(hiddenLayer);
         }
     }
 }
