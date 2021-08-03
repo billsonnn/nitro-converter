@@ -2,7 +2,7 @@ export interface IFigureDataColor
 {
   id?: number;
   index?: number;
-  club?: boolean;
+  club?: number;
   selectable?: boolean;
   hexCode?: string;
 }

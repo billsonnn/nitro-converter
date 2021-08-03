@@ -97,6 +97,7 @@ export class FigureDataConverter extends Converter
         const output: IFigureData = {};
 
         FigureDataMapper.mapXML(xml, output);
+
         return output;
     }
 }

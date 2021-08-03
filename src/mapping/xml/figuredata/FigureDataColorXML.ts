@@ -2,7 +2,7 @@ export class FigureDataColorXML
 {
     private _id: number;
     private _index: number;
-    private _club: boolean;
+    private _club: number;
     private _selectable: boolean;
     private _hexCode: string;
 
@@ -12,7 +12,7 @@ export class FigureDataColorXML
 
         this._id = ((attributes && parseInt(attributes.id)) || 0);
         this._index = ((attributes && parseInt(attributes.index)) || 0);
-        this._club = ((attributes && parseInt(attributes.club) === 1) || false);
+        this._club = ((attributes && parseInt(attributes.club)) || 0);
         this._selectable = ((attributes && parseInt(attributes.selectable) === 1) || false);
 
         this._hexCode = ((xml && xml._) || '');
@@ -28,7 +28,7 @@ export class FigureDataColorXML
         return this._index;
     }
 
-    public get club(): boolean
+    public get club(): number
     {
         return this._club;
     }
