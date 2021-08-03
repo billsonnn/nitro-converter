@@ -16,8 +16,8 @@
   "convert.productdata": "1",
   "convert.externaltexts": "1",
   "convert.figure": "1",
+  "convert.figuredata": "1",
   "convert.effect": "1",
   "convert.furniture": "1",
-  "convert.pet": "1",
-  "convert.figuredata": "1"
+  "convert.pet": "1"
 }

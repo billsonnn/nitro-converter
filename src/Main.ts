@@ -13,6 +13,7 @@ import { ProductDataConverter } from './converters/productdata/ProductDataConver
 (async () =>
 {
     checkNodeVersion();
+
     const config = container.resolve(Configuration);
     await config.init();
 
