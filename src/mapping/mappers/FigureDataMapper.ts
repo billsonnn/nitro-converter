@@ -39,9 +39,9 @@ export class FigureDataMapper extends Mapper
         {
             if(xml.sets.length)
             {
-                output.sets = [];
+                output.setTypes = [];
 
-                FigureDataMapper.mapFigureDataSetTypes(xml.sets, output.sets);
+                FigureDataMapper.mapFigureDataSetTypes(xml.sets, output.setTypes);
             }
         }
     }

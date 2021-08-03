@@ -4,5 +4,5 @@ import { IFigureDataSetType } from './IFigureDataSetType';
 export interface IFigureData
 {
     palettes?: IFigureDataPalette[];
-    sets?: IFigureDataSetType[];
+    setTypes?: IFigureDataSetType[];
 }
