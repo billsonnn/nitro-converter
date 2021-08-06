@@ -23,6 +23,10 @@ export class ProductDataDownloader
 
         if(!url || !url.length) return null;
 
+        const logDownloads = this._configuration.getBoolean('misc.log_download_urls');
+
+        if(logDownloads) console.log(`<Downloader> Downloading product data from ${url}`);
+
         const content = await FileUtilities.readFileAsString(url);
 
         if(!content || !content.length) return null;
