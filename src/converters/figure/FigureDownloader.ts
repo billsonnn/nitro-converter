@@ -65,6 +65,10 @@ export class FigureDownloader
 
         if(!url || !url.length) return null;
 
+        const logDownloads = this._configuration.getBoolean('misc.log_download_urls');
+
+        if(logDownloads) console.log(`<Downloader> Downloading figure data from ${url}`);
+
         const content = await FileUtilities.readFileAsString(url);
 
         if(!content || !content.length) return null;
@@ -79,6 +83,10 @@ export class FigureDownloader
         if(!url || !url.length) return;
 
         url = url.replace('%className%', className);
+
+        const logDownloads = this._configuration.getBoolean('misc.log_download_urls');
+
+        if(logDownloads) console.log(`<Downloader> Downloading figure from ${url}`);
 
         const buffer = await FileUtilities.readFileAsBuffer(url);
 

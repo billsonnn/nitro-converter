@@ -6,7 +6,8 @@ import { FileUtilities } from '../../utils/FileUtilities';
 export class FurnitureDataDownloader
 {
     constructor(private readonly _configuration: Configuration)
-    {}
+    {
+    }
 
     public async download(callback: (content: string) => Promise<void>): Promise<void>
     {
@@ -22,6 +23,10 @@ export class FurnitureDataDownloader
         const url = this._configuration.getValue('furnidata.load.url');
 
         if(!url || !url.length) return null;
+
+        const logDownloads = this._configuration.getBoolean('misc.log_download_urls');
+
+        if(logDownloads) console.log(`<Downloader> Downloading furniture data from ${url}`);
 
         const content = await FileUtilities.readFileAsString(url);
 

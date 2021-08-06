@@ -63,6 +63,10 @@ export class EffectDownloader
 
         if(!url || !url.length) return null;
 
+        const logDownloads = this._configuration.getBoolean('misc.log_download_urls');
+
+        if(logDownloads) console.log(`<Downloader> Downloading effect map from ${url}`);
+
         const content = await FileUtilities.readFileAsString(url);
 
         if(!content || !content.length) return null;
@@ -77,6 +81,10 @@ export class EffectDownloader
         if(!url || !url.length) return;
 
         url = url.replace('%className%', className);
+
+        const logDownloads = this._configuration.getBoolean('misc.log_download_urls');
+
+        if(logDownloads) console.log(`<Downloader> Downloading effect from ${url}`);
 
         const buffer = await FileUtilities.readFileAsBuffer(url);
 
