@@ -19,6 +19,6 @@
   "convert.figuredata": "1",
   "convert.effect": "1",
   "convert.furniture": "1",
-  "convert.pet": "1"
+  "convert.pet": "1",
   "misc.log_download_urls": "0"
 }
