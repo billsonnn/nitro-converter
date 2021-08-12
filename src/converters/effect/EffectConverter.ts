@@ -36,9 +36,18 @@ export class EffectConverter extends SWFConverter
         {
             await this._effectDownloader.download(directory, async (habboAssetSwf: HabboAssetSWF, className: string) =>
             {
-                spinner.text = 'Parsing Effect: ' + habboAssetSwf.getDocumentClass();
+                if(!habboAssetSwf)
+                {
+                    spinner.text = 'Couldnt convert effect: ' + className;
+                }
+                else
+                {
+                    spinner.text = 'Parsing Effect: ' + habboAssetSwf.getDocumentClass();
+                }
 
                 spinner.render();
+
+                if(!habboAssetSwf) return;
 
                 const spriteBundle = await this._bundleProvider.generateSpriteSheet(habboAssetSwf);
                 const assetData = await this.mapXML2JSON(habboAssetSwf, className);

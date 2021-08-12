@@ -13,7 +13,7 @@ export class PetDownloader
         private readonly _logger: Logger)
     {}
 
-    public async download(directory: File, callback: (habboAssetSwf: HabboAssetSWF) => Promise<void>): Promise<void>
+    public async download(directory: File, callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
     {
         const petTypes = await this.parsePetTypes();
 
@@ -62,7 +62,7 @@ export class PetDownloader
         return petTypes;
     }
 
-    public async extractPet(className: string, callback: (habboAssetSwf: HabboAssetSWF) => Promise<void>): Promise<void>
+    public async extractPet(className: string, callback: (habboAssetSwf: HabboAssetSWF, className: string) => Promise<void>): Promise<void>
     {
         let url = this._configuration.getValue('dynamic.download.pet.url');
 
@@ -78,6 +78,6 @@ export class PetDownloader
 
         await newHabboAssetSWF.setupAsync();
 
-        await callback(newHabboAssetSWF);
+        await callback(newHabboAssetSWF, className);
     }
 }

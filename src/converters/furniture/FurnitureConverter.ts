@@ -36,11 +36,20 @@ export class FurnitureConverter extends SWFConverter
 
         try
         {
-            await this._furniDownloader.download(directory, async (habboAssetSwf: HabboAssetSWF) =>
+            await this._furniDownloader.download(directory, async (habboAssetSwf: HabboAssetSWF, className: string) =>
             {
-                spinner.text = (`Parsing Furniture: ${ habboAssetSwf.getDocumentClass() } (${ (this._furniDownloader.totalFinished + 1) } / ${ this._furniDownloader.totalItems })`);
+                if(!habboAssetSwf)
+                {
+                    spinner.text = 'Couldnt convert furni: ' + className;
+                }
+                else
+                {
+                    spinner.text = (`Parsing Furniture: ${ habboAssetSwf.getDocumentClass() } (${ (this._furniDownloader.totalFinished + 1) } / ${ this._furniDownloader.totalItems })`);
+                }
 
                 spinner.render();
+
+                if(!habboAssetSwf) return;
 
                 const spriteBundle = await this._bundleProvider.generateSpriteSheet(habboAssetSwf);
                 const assetData = await this.mapXML2JSON(habboAssetSwf, 'furniture');

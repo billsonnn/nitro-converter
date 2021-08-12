@@ -21,6 +21,9 @@ export class HabboAssetSWF
     async setupAsync()
     {
         const swf = await readSwfAsync(this._data);
+
+        if(!swf) return;
+
         for(const tag of swf.tags)
         {
 

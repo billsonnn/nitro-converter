@@ -294,6 +294,8 @@ function readSWFTags(buff, swf)
  */
 function readSWFBuff(buff, compressed_buff, next)
 {
+    if(!buff) return next(null, null);
+
     buff.seek(3);// start
 
     if(buff.length < 9)
@@ -359,28 +361,26 @@ function uncompress(swf, next)
             {
                 uncompressed_buff = concatSWFHeader(zlib.unzipSync(compressed_buff), swf);
 
-                if(!Buffer.isBuffer(uncompressed_buff))
-                {
-                    console.log('invalid_buffer');
+                if(!Buffer.isBuffer(uncompressed_buff)) return null;
 
-                    return null;
-                }
                 return readSWFBuff(new SWFBuffer(uncompressed_buff), swf);
-            }
-
-            if(!Buffer.isBuffer(compressed_buff))
-            {
-                console.log('invalid_buffer');
-
-                return null;
             }
 
             zlib.inflate(compressed_buff, function(err, buf)
             {
-                readSWFBuff(new SWFBuffer(buf), swf, next);
+                if(!Buffer.isBuffer(compressed_buff))
+                {
+                    readSWFBuff(null, swf, next);
+                }
+                else
+                {
+                    readSWFBuff(new SWFBuffer(buf), swf, next);
+                }
             });
             break;
         case 0x46 : // uncompressed
+            if(!Buffer.isBuffer(swf)) return null;
+
             return readSWFBuff(new SWFBuffer( swf ), swf, next);
         case 0x5a : // LZMA compressed
             var lzmaProperties = compressed_buff.slice(4, 9);
@@ -420,6 +420,8 @@ function uncompress(swf, next)
 
             lzma.decompress(lzmaProperties, input_stream, output_stream, -1);
             uncompressed_buff = Buffer.concat([swf.slice(0, 8), output_stream.getBuffer()]);
+
+            if(!Buffer.isBuffer(uncompressed_buff)) return null;
 
             return readSWFBuff(new SWFBuffer(uncompressed_buff), swf, next);
         default :

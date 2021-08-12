@@ -36,9 +36,18 @@ export class FigureConverter extends SWFConverter
         {
             await this._figureDownloader.download(directory, async (habboAssetSwf: HabboAssetSWF, className: string) =>
             {
-                spinner.text = 'Parsing Figure: ' + habboAssetSwf.getDocumentClass();
+                if(!habboAssetSwf)
+                {
+                    spinner.text = 'Couldnt convert figure: ' + className;
+                }
+                else
+                {
+                    spinner.text = 'Parsing Figure: ' + habboAssetSwf.getDocumentClass();
+                }
 
                 spinner.render();
+
+                if(!habboAssetSwf) return;
 
                 const spriteBundle = await this._bundleProvider.generateSpriteSheet(habboAssetSwf);
                 const assetData = await this.mapXML2JSON(habboAssetSwf, className);

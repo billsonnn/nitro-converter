@@ -34,11 +34,20 @@ export class PetConverter extends SWFConverter
 
         try
         {
-            await this._petDownloader.download(directory, async (habboAssetSwf: HabboAssetSWF) =>
+            await this._petDownloader.download(directory, async (habboAssetSwf: HabboAssetSWF, className: string) =>
             {
-                spinner.text = 'Parsing Pet: ' + habboAssetSwf.getDocumentClass();
+                if(!habboAssetSwf)
+                {
+                    spinner.text = 'Couldnt convert pet: ' + className;
+                }
+                else
+                {
+                    spinner.text = 'Parsing Pet: ' + habboAssetSwf.getDocumentClass();
+                }
 
                 spinner.render();
+
+                if(!habboAssetSwf) return;
 
                 const spriteBundle = await this._bundleProvider.generateSpriteSheet(habboAssetSwf);
                 const assetData = await this.mapXML2JSON(habboAssetSwf, 'pet');
