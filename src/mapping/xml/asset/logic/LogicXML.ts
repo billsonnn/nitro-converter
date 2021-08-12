@@ -2,7 +2,9 @@ import { ActionXML } from './ActionXML';
 import { CreditsXML } from './CreditsXML';
 import { MaskXML } from './MaskXML';
 import { ModelXML } from './model/ModelXML';
-import {SoundSampleXML} from "./SoundSampleXML";
+import { ParticleSystemXML } from './ParticleSystemXML';
+import { PlanetSystemXML } from './PlanetSystemXML';
+import { SoundSampleXML } from './SoundSampleXML';
 
 export class LogicXML
 {
@@ -12,6 +14,8 @@ export class LogicXML
     private readonly _mask: MaskXML;
     private readonly _credits: CreditsXML;
     private readonly _soundSample: SoundSampleXML;
+    private readonly _planetSystem: PlanetSystemXML;
+    private readonly _particleSystem: ParticleSystemXML;
 
     constructor(xml: any)
     {
@@ -46,6 +50,16 @@ export class LogicXML
         {
             if(xml.sound[0] !== undefined) this._soundSample = new SoundSampleXML(xml.sound[0].sample);
         }
+
+        if(xml.planetsystem !== undefined)
+        {
+            if(xml.planetsystem[0] !== undefined) this._planetSystem = new PlanetSystemXML(xml.planetsystem[0]);
+        }
+
+        if(xml.particlesystems !== undefined)
+        {
+            if(xml.particlesystems[0] !== undefined) this._particleSystem = new ParticleSystemXML(xml.particlesystems[0]);
+        }
     }
 
     public get type(): string
@@ -58,23 +72,33 @@ export class LogicXML
         return this._model;
     }
 
-    public get action(): ActionXML | undefined
+    public get action(): ActionXML
     {
         return this._action;
     }
 
-    public get mask(): MaskXML | undefined
+    public get mask(): MaskXML
     {
         return this._mask;
     }
 
-    public get credits(): CreditsXML | undefined
+    public get credits(): CreditsXML
     {
         return this._credits;
     }
 
-    public get soundSample(): SoundSampleXML | undefined
+    public get soundSample(): SoundSampleXML
     {
         return this._soundSample;
+    }
+
+    public get planetSystem(): PlanetSystemXML
+    {
+        return this._planetSystem;
+    }
+
+    public get particleSystem(): ParticleSystemXML
+    {
+        return this._particleSystem;
     }
 }

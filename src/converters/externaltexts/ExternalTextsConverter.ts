@@ -19,7 +19,7 @@ export class ExternalTextsConverter extends Converter
         super();
     }
 
-    public async convertAsync(): Promise<void>
+    public async convertAsync(args: string[] = []): Promise<void>
     {
         if(!this._configuration.getBoolean('convert.externaltexts')) return;
 

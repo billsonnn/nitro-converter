@@ -1,4 +1,4 @@
 export interface IConverter
 {
-    convertAsync(): Promise<void>;
+    convertAsync(args?: string[]): Promise<void>;
 }

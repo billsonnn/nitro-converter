@@ -4,5 +4,6 @@ export * from './IAssetAlias';
 export * from './IAssetData';
 export * from './IAssetDimension';
 export * from './IAssetPalette';
+export * from './IPlanetSystem';
 export * from './spritesheet';
 export * from './visualization';

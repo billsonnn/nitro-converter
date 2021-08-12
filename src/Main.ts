@@ -27,11 +27,13 @@ import { ProductDataConverter } from './converters/productdata/ProductDataConver
         FigureDataConverter
     ];
 
+    const [ arg1, arg2, ...rest ] = process.argv;
+
     for(const converterClass of converters)
     {
         const converter = (container.resolve<any>(converterClass) as IConverter);
 
-        await converter.convertAsync();
+        await converter.convertAsync(rest);
     }
 })();
 

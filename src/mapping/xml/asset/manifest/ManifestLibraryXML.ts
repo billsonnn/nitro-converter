@@ -51,6 +51,16 @@ export class ManifestLibraryXML
         }
     }
 
+    public get name(): string
+    {
+        return this._name;
+    }
+
+    public get version(): string
+    {
+        return this._version;
+    }
+
     public get assets(): ManifestLibraryAssetXML[]
     {
         return this._assets;

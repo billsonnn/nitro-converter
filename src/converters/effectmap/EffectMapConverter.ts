@@ -21,7 +21,7 @@ export class EffectMapConverter extends Converter
         super();
     }
 
-    public async convertAsync(): Promise<void>
+    public async convertAsync(args: string[] = []): Promise<void>
     {
         return new Promise((resolve, reject) =>
         {

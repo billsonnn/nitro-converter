@@ -121,7 +121,7 @@ export class FurnitureDownloader
 
         if(!url || !url.length) return;
 
-        url = url.replace('%revision%', revision.toString());
+        //url = url.replace('%revision%', revision.toString());
         url = url.replace('%className%', className);
 
         const logDownloads = this._configuration.getBoolean('misc.log_download_urls');

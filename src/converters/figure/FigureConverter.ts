@@ -22,7 +22,7 @@ export class FigureConverter extends SWFConverter
         super();
     }
 
-    public async convertAsync(): Promise<void>
+    public async convertAsync(args: string[] = []): Promise<void>
     {
         if(!this._configuration.getBoolean('convert.figure')) return;
 
