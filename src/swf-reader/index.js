@@ -5,13 +5,13 @@
  * MIT LICENCE
  *
  */
-import { fs } from 'fs';
-import { lzma } from 'lzma-purejs';
-import { Stream } from 'stream';
-import { zlib } from 'zlib';
-import { SWFBuffer } from './lib/swf-buffer';
-import { SWFTags } from './lib/swf-tags';
+const fs = require('fs');
+const zlib = require('zlib');
+const lzma = require('lzma-purejs');
+const Stream = require('stream');
+const SWFTags = require('./lib/swf-tags');
 const SWFReader = exports;
+import { SWFBuffer } from './lib/SWFBuffer';
 
 function readSWFTags(buff, swf)
 {
