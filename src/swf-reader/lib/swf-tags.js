@@ -5,11 +5,12 @@
  * @param {Mixed} value
  */
 
-function define(name, value) {
-  Object.defineProperty(exports, name, {
-    value       : value,
-    enumerable  : true
-  });
+function define(name, value)
+{
+    Object.defineProperty(exports, name, {
+        value       : value,
+        enumerable  : true
+    });
 }
 
 /* SWF Tags Type */
