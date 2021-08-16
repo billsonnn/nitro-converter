@@ -368,7 +368,7 @@ function uncompress(swf, next)
 
             zlib.inflate(compressed_buff, function(err, buf)
             {
-                if(!Buffer.isBuffer(compressed_buff))
+                if(!Buffer.isBuffer(buf))
                 {
                     readSWFBuff(null, swf, next);
                 }
