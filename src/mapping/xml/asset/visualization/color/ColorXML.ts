@@ -14,7 +14,7 @@ export class ColorXML
             if(attributes.id !== undefined) this._id = parseInt(attributes.id);
         }
 
-        if(xml.colorLayer !== undefined)
+        if((xml.colorLayer !== undefined) && Array.isArray(xml.colorLayer))
         {
             this._layers = [];
 

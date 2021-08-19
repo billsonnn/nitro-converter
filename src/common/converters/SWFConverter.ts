@@ -1,7 +1,7 @@
 import { wrap } from 'bytebuffer';
-import { writeFile } from 'fs/promises';
 import { parseStringPromise } from 'xml2js';
 import { IAssetData } from '../../mapping/json';
+import { AnimationMapper, AssetMapper, IndexMapper, LogicMapper, ManifestMapper, VisualizationMapper } from '../../mapping/mappers';
 import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
 import { DefineBinaryDataTag } from '../../swf/tags/DefineBinaryDataTag';
 import { NitroBundle } from '../../utils/NitroBundle';
@@ -10,24 +10,27 @@ import { Converter } from './Converter';
 
 export class SWFConverter extends Converter
 {
-    protected async fromHabboAsset(habboAssetSWF: HabboAssetSWF, outputFolder: string, type: string, assetData: IAssetData, spriteBundle: SpriteBundle): Promise<void>
+    private static removeComments(data: string): string
+    {
+        return data.replace(/<!--.*?-->/sg, '');
+    }
+
+    public static createNitroBundle(className: string, assetData: IAssetData, spriteBundle: SpriteBundle): NitroBundle
     {
         if(spriteBundle && (spriteBundle.spritesheet !== undefined)) assetData.spritesheet = spriteBundle.spritesheet;
 
-        const name = habboAssetSWF.getDocumentClass();
-        const path = outputFolder + '/' + name + '.nitro';
         const nitroBundle = new NitroBundle();
 
-        nitroBundle.addFile((name + '.json'), Buffer.from(JSON.stringify(assetData)));
+        nitroBundle.addFile((className + '.json'), Buffer.from(JSON.stringify(assetData)));
 
         if(spriteBundle && (spriteBundle.imageData !== undefined)) nitroBundle.addFile(spriteBundle.imageData.name, spriteBundle.imageData.buffer);
 
-        await writeFile(path, await nitroBundle.toBufferAsync());
+        return nitroBundle;
     }
 
-    private static getBinaryData(habboAssetSWF: HabboAssetSWF, type: string, documentNameTwice: boolean): DefineBinaryDataTag
+    public static getBinaryData(habboAssetSWF: HabboAssetSWF, type: string, documentNameTwice: boolean, snakeCase: boolean = false): DefineBinaryDataTag
     {
-        let binaryName  = habboAssetSWF.getFullClassName(type, documentNameTwice);
+        let binaryName  = habboAssetSWF.getFullClassName(type, documentNameTwice, snakeCase);
         let tag         = habboAssetSWF.getBinaryTagByName(binaryName);
 
         if(!tag)
@@ -39,64 +42,61 @@ export class SWFConverter extends Converter
         return tag;
     }
 
-    protected static async getManifestXML(habboAssetSWF: HabboAssetSWF): Promise<any>
+    public static async getManifestXML(habboAssetSWF: HabboAssetSWF, snakeCase: boolean = false): Promise<any>
     {
-        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'manifest', false);
+        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'manifest', false, snakeCase);
 
         if(!binaryData) return null;
 
-        return await parseStringPromise(binaryData.binaryData);
+        return await parseStringPromise(this.removeComments(binaryData.binaryData));
     }
 
-    protected static async getIndexXML(habboAssetSWF: HabboAssetSWF): Promise<any>
+    public static async getIndexXML(habboAssetSWF: HabboAssetSWF, snakeCase: boolean = false): Promise<any>
     {
-        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'index', false);
+        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'index', false, snakeCase);
 
         if(!binaryData) return null;
 
-        //Will fix some malformed comments exception.
-        const removedComments: string = binaryData.binaryData.replace(/<!--.*?-->/sg, '');
-
-        return await parseStringPromise(removedComments);
+        return await parseStringPromise(this.removeComments(binaryData.binaryData));
     }
 
-    protected static async getAssetsXML(habboAssetSWF: HabboAssetSWF): Promise<any>
+    public static async getAssetsXML(habboAssetSWF: HabboAssetSWF, snakeCase: boolean = false): Promise<any>
     {
-        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'assets', true);
+        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'assets', true, snakeCase);
 
         if(!binaryData) return null;
 
-        return await parseStringPromise(binaryData.binaryData);
+        return await parseStringPromise(this.removeComments(binaryData.binaryData));
     }
 
-    protected static async getLogicXML(habboAssetSWF: HabboAssetSWF): Promise<any>
+    public static async getLogicXML(habboAssetSWF: HabboAssetSWF, snakeCase: boolean = false): Promise<any>
     {
-        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'logic', true);
+        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'logic', true, snakeCase);
 
         if(!binaryData) return null;
 
-        return await parseStringPromise(binaryData.binaryData);
+        return await parseStringPromise(this.removeComments(binaryData.binaryData));
     }
 
-    protected static async getVisualizationXML(habboAssetSWF: HabboAssetSWF): Promise<any>
+    public static async getVisualizationXML(habboAssetSWF: HabboAssetSWF, snakeCase: boolean = false): Promise<any>
     {
-        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'visualization', true);
+        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'visualization', true, snakeCase);
 
         if(!binaryData) return null;
 
-        return await parseStringPromise(binaryData.binaryData);
+        return await parseStringPromise(this.removeComments(binaryData.binaryData));
     }
 
-    protected static async getAnimationXML(habboAssetSWF: HabboAssetSWF): Promise<any>
+    public static async getAnimationXML(habboAssetSWF: HabboAssetSWF, snakeCase: boolean = false): Promise<any>
     {
-        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'animation', false);
+        const binaryData = SWFConverter.getBinaryData(habboAssetSWF, 'animation', false, snakeCase);
 
         if(!binaryData) return null;
 
-        return await parseStringPromise(binaryData.binaryData);
+        return await parseStringPromise(this.removeComments(binaryData.binaryData));
     }
 
-    protected static getPalette(habboAssetSWF: HabboAssetSWF, paletteName: string): [ number, number, number ][]
+    public static getPalette(habboAssetSWF: HabboAssetSWF, paletteName: string): [ number, number, number ][]
     {
         const binaryData = SWFConverter.getBinaryData(habboAssetSWF, paletteName, false);
 
@@ -130,5 +130,66 @@ export class SWFConverter extends Converter
         }
 
         return paletteColors;
+    }
+
+    public static async mapXML2JSON(habboAssetSWF: HabboAssetSWF, assetType: string, snakeCase: boolean = false): Promise<IAssetData>
+    {
+        if(!habboAssetSWF) return null;
+
+        const output: IAssetData = {};
+
+        output.type = assetType;
+
+        const indexXML = await this.getIndexXML(habboAssetSWF, snakeCase);
+
+        if(indexXML) IndexMapper.mapXML(indexXML, output);
+
+        const manifestXML = await this.getManifestXML(habboAssetSWF, snakeCase);
+
+        if(manifestXML) ManifestMapper.mapXML(manifestXML, output);
+
+        const assetXML = await this.getAssetsXML(habboAssetSWF, snakeCase);
+
+        if(assetXML)
+        {
+            AssetMapper.mapXML(assetXML, output);
+
+            if(output.palettes !== undefined)
+            {
+                for(const paletteId in output.palettes)
+                {
+                    const palette = output.palettes[paletteId];
+
+                    const paletteColors = this.getPalette(habboAssetSWF, palette.source);
+
+                    if(!paletteColors)
+                    {
+                        delete output.palettes[paletteId];
+
+                        continue;
+                    }
+
+                    const rgbs: [ number, number, number ][] = [];
+
+                    for(const rgb of paletteColors) rgbs.push([ rgb[0], rgb[1], rgb[2] ]);
+
+                    palette.rgb = rgbs;
+                }
+            }
+        }
+
+        const animationXML = await this.getAnimationXML(habboAssetSWF, snakeCase);
+
+        if(animationXML) AnimationMapper.mapXML(animationXML, output);
+
+        const logicXML = await this.getLogicXML(habboAssetSWF, snakeCase);
+
+        if(logicXML) LogicMapper.mapXML(logicXML, output);
+
+        const visualizationXML = await this.getVisualizationXML(habboAssetSWF, snakeCase);
+
+        if(visualizationXML) VisualizationMapper.mapXML(visualizationXML, output);
+
+        return output;
     }
 }

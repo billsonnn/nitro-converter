@@ -23,19 +23,13 @@ export class FrameXML
             if(attributes.randomY !== undefined) this._randomY = parseInt(attributes.randomY);
         }
 
-        if(xml.offsets !== undefined)
+        if((xml.offsets !== undefined) && Array.isArray(xml.offsets))
         {
-            if(Array.isArray(xml.offsets))
-            {
-                this._offsets = [];
+            this._offsets = [];
 
-                for(const offsetParent of xml.offsets)
-                {
-                    if(Array.isArray(offsetParent.offset))
-                    {
-                        for(const offset of offsetParent.offset) this._offsets.push(new FrameOffsetXML(offset));
-                    }
-                }
+            for(const offsetParent of xml.offsets)
+            {
+                if(Array.isArray(offsetParent.offset)) for(const offset of offsetParent.offset) this._offsets.push(new FrameOffsetXML(offset));
             }
         }
     }

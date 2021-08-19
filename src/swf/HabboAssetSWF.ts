@@ -180,24 +180,29 @@ export class HabboAssetSWF
         return streamTag;
     }
 
-    public getFullClassName(type: string, documentNameTwice: boolean): string
+    public getFullClassName(type: string, documentNameTwice: boolean, snakeCase: boolean = false): string
     {
-        return this.getFullClassNameSnake(type, documentNameTwice, false);
+        return this.getFullClassNameSnake(type, documentNameTwice, snakeCase);
     }
 
-    public getFullClassNameSnake(type: string, documentNameTwice: boolean, snakeCase: boolean): string
+    public getFullClassNameSnake(type: string, documentNameTwice: boolean, snakeCase: boolean = false): string
     {
-        let result: string = this.getDocumentClass() + '_';
+        let result: string = this.getDocumentClass();
+
         if(documentNameTwice)
         {
             if(snakeCase)
             {
-                //result += CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, this.swf.getDocumentClass()) + "_";
+                result = (result + (result.replace(/(?:^|\.?)([A-Z])/g, (x,y) => ('_' + y.toLowerCase().replace(/^_/, '')))) + '_');
             }
             else
             {
-                result += this.getDocumentClass() + '_';
+                result += '_' + this.getDocumentClass() + '_';
             }
+        }
+        else
+        {
+            result += '_';
         }
 
         return result + type;

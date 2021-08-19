@@ -85,11 +85,15 @@ export class VisualizationMapper extends Mapper
 
             if(visualizationDataXML.postures !== undefined)
             {
+                visualizationData.postures = {};
+
+                if(visualizationDataXML.defaultPosture !== undefined) visualizationData.postures.defaultPosture = visualizationDataXML.defaultPosture;
+
                 if(visualizationDataXML.postures.length)
                 {
-                    visualizationData.postures = {};
+                    visualizationData.postures.postures = [];
 
-                    VisualizationMapper.mapVisualizationPostureXML(visualizationDataXML.postures, visualizationData.postures);
+                    VisualizationMapper.mapVisualizationPostureXML(visualizationDataXML.postures, visualizationData.postures.postures);
                 }
             }
 
@@ -97,7 +101,7 @@ export class VisualizationMapper extends Mapper
             {
                 if(visualizationDataXML.gestures.length)
                 {
-                    visualizationData.gestures = {};
+                    visualizationData.gestures = [];
 
                     VisualizationMapper.mapVisualizationGestureXML(visualizationDataXML.gestures, visualizationData.gestures);
                 }
@@ -321,7 +325,7 @@ export class VisualizationMapper extends Mapper
         }
     }
 
-    private static mapVisualizationPostureXML(xml: PostureXML[], output: { [index: string]: IAssetPosture }): void
+    private static mapVisualizationPostureXML(xml: PostureXML[], output: IAssetPosture[]): void
     {
         if(!xml || !xml.length || !output) return;
 
@@ -332,11 +336,11 @@ export class VisualizationMapper extends Mapper
             if(postureXML.id !== undefined) posture.id = postureXML.id;
             if(postureXML.animationId !== undefined) posture.animationId = postureXML.animationId;
 
-            output[postureXML.id] = posture;
+            output.push(posture);
         }
     }
 
-    private static mapVisualizationGestureXML(xml: GestureXML[], output: { [index: string]: IAssetGesture }): void
+    private static mapVisualizationGestureXML(xml: GestureXML[], output: IAssetGesture[]): void
     {
         if(!xml || !xml.length || !output) return;
 
@@ -347,7 +351,7 @@ export class VisualizationMapper extends Mapper
             if(gestureXML.id !== undefined) gesture.id = gestureXML.id;
             if(gestureXML.animationId !== undefined) gesture.animationId = gestureXML.animationId;
 
-            output[gestureXML.id] = gesture;
+            output.push(gesture);
         }
     }
 }

@@ -18,35 +18,23 @@ export class ManifestLibraryXML
             if(attributes.version !== undefined) this._version = attributes.version;
         }
 
-        if(xml.assets !== undefined)
+        if((xml.assets !== undefined) && Array.isArray(xml.assets))
         {
-            if(Array.isArray(xml.assets))
-            {
-                this._assets = [];
+            this._assets = [];
 
-                for(const assetParent of xml.assets)
-                {
-                    if(Array.isArray(assetParent.asset))
-                    {
-                        for(const asset of assetParent.asset) this._assets.push(new ManifestLibraryAssetXML(asset));
-                    }
-                }
+            for(const assetParent of xml.assets)
+            {
+                if(Array.isArray(assetParent.asset)) for(const asset of assetParent.asset) this._assets.push(new ManifestLibraryAssetXML(asset));
             }
         }
 
-        if(xml.aliases !== undefined)
+        if((xml.aliases !== undefined) && Array.isArray(xml.aliases))
         {
-            if(Array.isArray(xml.aliases))
-            {
-                this._aliases = [];
+            this._aliases = [];
 
-                for(const aliasParent of xml.aliases)
-                {
-                    if(Array.isArray(aliasParent.alias))
-                    {
-                        for(const alias of aliasParent.alias) this._aliases.push(new ManifestLibraryAliasXML(alias));
-                    }
-                }
+            for(const aliasParent of xml.aliases)
+            {
+                if(Array.isArray(aliasParent.alias)) for(const alias of aliasParent.alias) this._aliases.push(new ManifestLibraryAliasXML(alias));
             }
         }
     }

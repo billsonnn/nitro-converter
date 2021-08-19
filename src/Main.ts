@@ -2,13 +2,17 @@ import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { Configuration } from './common/config/Configuration';
 import { IConverter } from './common/converters/IConverter';
-import { EffectConverter } from './converters/effect/EffectConverter';
-import { ExternalTextsConverter } from './converters/externaltexts/ExternalTextsConverter';
-import { FigureConverter } from './converters/figure/FigureConverter';
-import { FigureDataConverter } from './converters/figuredata/FigureDataConverter';
-import { FurnitureConverter } from './converters/furniture/FurnitureConverter';
-import { PetConverter } from './converters/pet/PetConverter';
-import { ProductDataConverter } from './converters/productdata/ProductDataConverter';
+import { EffectConverter } from './converters/EffectConverter';
+import { EffectMapConverter } from './converters/EffectMapConverter';
+import { ExternalTextsConverter } from './converters/ExternalTextsConverter';
+import { FigureConverter } from './converters/FigureConverter';
+import { FigureDataConverter } from './converters/FigureDataConverter';
+import { FigureMapConverter } from './converters/FigureMapConverter';
+import { FurnitureConverter } from './converters/FurnitureConverter';
+import { FurnitureDataConverter } from './converters/FurnitureDataConverter';
+import { OldAssetConverter } from './converters/OldAssetConverter';
+import { PetConverter } from './converters/PetConverter';
+import { ProductDataConverter } from './converters/ProductDataConverter';
 
 (async () =>
 {
@@ -18,13 +22,17 @@ import { ProductDataConverter } from './converters/productdata/ProductDataConver
     await config.init();
 
     const converters = [
+        FurnitureDataConverter,
+        FigureDataConverter,
         ProductDataConverter,
         ExternalTextsConverter,
+        EffectMapConverter,
+        FigureMapConverter,
+        FurnitureConverter,
         FigureConverter,
         EffectConverter,
-        FurnitureConverter,
         PetConverter,
-        FigureDataConverter
+        OldAssetConverter
     ];
 
     const [ arg1, arg2, ...rest ] = process.argv;

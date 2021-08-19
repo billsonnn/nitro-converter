@@ -22,14 +22,11 @@ export class AnimationXML
             if(attributes.randomStart !== undefined) this._randomStart = (attributes.randomStart === '1');
         }
 
-        if(xml.animationLayer !== undefined)
+        if((xml.animationLayer !== undefined) && Array.isArray(xml.animationLayer))
         {
-            if(Array.isArray(xml.animationLayer))
-            {
-                this._layers = [];
+            this._layers = [];
 
-                for(const animationLayer of xml.animationLayer) this._layers.push(new AnimationLayerXML(animationLayer));
-            }
+            for(const animationLayer of xml.animationLayer) this._layers.push(new AnimationLayerXML(animationLayer));
         }
     }
 
