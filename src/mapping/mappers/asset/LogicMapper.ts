@@ -128,6 +128,11 @@ export class LogicMapper extends Mapper
 
         for(const particleSystemXML of xml)
         {
+            if(particleSystemXML.size !== undefined)
+            {
+                if([ 32 ].indexOf(particleSystemXML.size) >= 0) continue;
+            }
+
             const particleObject: IParticleSystem = {};
 
             if(particleSystemXML.size !== undefined) particleObject.size = particleSystemXML.size;

@@ -189,6 +189,26 @@ export class VisualizationMapper extends Mapper
         }
     }
 
+    private static requestNextInsertId(requestId: number, output: { [index: string]: IAssetVisualAnimation }): string
+    {
+        let id = requestId.toString();
+
+        if(!output[id]) return id;
+
+        let i = 1;
+
+        while(i < 6)
+        {
+            id += '_' + i;
+
+            if(!output[id]) return id;
+
+            i++;
+        }
+
+        return null;
+    }
+
     private static mapVisualizationAnimationXML(xml: AnimationXML[], output: { [index: string]: IAssetVisualAnimation }): void
     {
         if(!xml || !xml.length || !output) return;
@@ -212,7 +232,11 @@ export class VisualizationMapper extends Mapper
                 }
             }
 
-            output[animationXML.id.toString()] = animation;
+            const id = this.requestNextInsertId(animationXML.id, output);
+
+            if(!id) continue;
+
+            output[id] = animation;
         }
     }
 

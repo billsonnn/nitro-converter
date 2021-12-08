@@ -65,8 +65,8 @@ export class BundleProvider
     {
         const files = await packAsync(imageBundle.images, {
             textureName: (convertCase ? documentClass.substring(1) : documentClass),
-            width: 3072,
-            height: 2048,
+            width: 10240,
+            height: 4320,
             fixedSize: false,
             allowRotation: false,
             detectIdentical: true,
