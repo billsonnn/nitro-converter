@@ -5,7 +5,7 @@ export class SoundSampleXML
 
     constructor(xml: any)
     {
-        const attributes = xml[0].$;
+        const attributes = xml.$;
 
         if(attributes !== undefined)
         {

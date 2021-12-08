@@ -1,8 +1,9 @@
 import { ActionXML } from './ActionXML';
 import { CreditsXML } from './CreditsXML';
+import { CustomVarsXML } from './CustomVarsXML';
 import { MaskXML } from './MaskXML';
-import { ModelXML } from './model/ModelXML';
-import { ParticleSystemXML } from './ParticleSystemXML';
+import { ModelXML } from './model';
+import { ParticleSystemXML } from './particlesystem';
 import { PlanetSystemXML } from './PlanetSystemXML';
 import { SoundSampleXML } from './SoundSampleXML';
 
@@ -16,6 +17,7 @@ export class LogicXML
     private readonly _soundSample: SoundSampleXML;
     private readonly _planetSystem: PlanetSystemXML;
     private readonly _particleSystem: ParticleSystemXML;
+    private readonly _customVars: CustomVarsXML;
 
     constructor(xml: any)
     {
@@ -48,7 +50,7 @@ export class LogicXML
 
         if(xml.sound !== undefined)
         {
-            if(xml.sound[0] !== undefined) this._soundSample = new SoundSampleXML(xml.sound[0].sample);
+            if(xml.sound[0] !== undefined) this._soundSample = new SoundSampleXML(xml.sound[0].sample[0]);
         }
 
         if(xml.planetsystem !== undefined)
@@ -59,6 +61,11 @@ export class LogicXML
         if(xml.particlesystems !== undefined)
         {
             if(xml.particlesystems[0] !== undefined) this._particleSystem = new ParticleSystemXML(xml.particlesystems[0]);
+        }
+
+        if(xml.customvars !== undefined)
+        {
+            if(xml.customvars[0] !== undefined) this._customVars = new CustomVarsXML(xml.customvars[0]);
         }
     }
 
@@ -100,5 +107,10 @@ export class LogicXML
     public get particleSystem(): ParticleSystemXML
     {
         return this._particleSystem;
+    }
+
+    public get customVars(): CustomVarsXML
+    {
+        return this._customVars;
     }
 }

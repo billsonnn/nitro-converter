@@ -1,8 +1,7 @@
 import { existsSync, lstatSync, mkdirSync, readdirSync, RmOptions, rmSync } from 'fs';
 
-export default class File
+export class File
 {
-
     private readonly _path: string;
 
     constructor(path: string)
@@ -32,13 +31,13 @@ export default class File
         return this.exists() && lstatSync(this._path).isDirectory();
     }
 
-    get path(): string
-    {
-        return this._path;
-    }
-
     public rmdir(options: RmOptions): void
     {
         return rmSync(this._path, options);
+    }
+
+    public get path(): string
+    {
+        return this._path;
     }
 }

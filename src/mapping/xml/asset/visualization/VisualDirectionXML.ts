@@ -14,14 +14,11 @@ export class VisualDirectionXML
             if(attributes.id !== undefined) this._id = parseInt(attributes.id);
         }
 
-        if(xml.layer !== undefined)
+        if((xml.layer !== undefined) && Array.isArray(xml.layer))
         {
-            if(Array.isArray(xml.layer))
-            {
-                this._layers = [];
+            this._layers = [];
 
-                for(const layer of xml.layer) this._layers.push(new LayerXML(layer));
-            }
+            for(const layer of xml.layer) this._layers.push(new LayerXML(layer));
         }
     }
 

@@ -1,5 +1,4 @@
-import { IAssetData, IPlanetSystem } from '../../json';
-import { IParticleSystem, IParticleSystemEmitter, IParticleSystemParticle, IParticleSystemSimulation } from '../../json/asset/particlesystem';
+import { IAssetData, IAssetLogicData, IAssetLogicPlanetSystem, IParticleSystem, IParticleSystemEmitter, IParticleSystemParticle, IParticleSystemSimulation } from '../../json';
 import { LogicXML, ParticleSystemEmitterXML, ParticleSystemObjectXML, ParticleSystemParticleXML, ParticleSystemSimulationXML, PlanetSystemObjectXML } from '../../xml';
 import { Mapper } from './Mapper';
 
@@ -9,18 +8,22 @@ export class LogicMapper extends Mapper
     {
         if(!logic || !output) return;
 
-        LogicMapper.mapLogicXML(new LogicXML(logic.objectData), output);
+        output.logic = {};
+
+        LogicMapper.mapLogicXML(new LogicXML(logic.objectData), output.logic);
     }
 
-    private static mapLogicXML(xml: LogicXML, output: IAssetData): void
+    private static mapLogicXML(xml: LogicXML, output: IAssetLogicData): void
     {
         if(!xml || !output) return;
 
         if(xml.model !== undefined)
         {
+            output.model = {};
+
             if(xml.model.dimensions !== undefined)
             {
-                output.dimensions = {
+                output.model.dimensions = {
                     x: xml.model.dimensions.x,
                     y: xml.model.dimensions.y,
                     z: xml.model.dimensions.z
@@ -40,23 +43,21 @@ export class LogicMapper extends Mapper
                     for(const direction of xml.model.directions) directions.push(parseInt(direction.id.toString()));
                 }
 
-                output.directions = directions;
+                output.model.directions = directions;
             }
         }
 
         if(xml.action !== undefined)
         {
+            output.action = {};
+
             if(xml.action.link !== undefined)
             {
-                if(!output.action) output.action = {};
-
                 output.action.link = xml.action.link;
             }
 
             if(xml.action.startState !== undefined)
             {
-                if(!output.action) output.action = {};
-
                 output.action.startState = xml.action.startState;
             }
         }
@@ -75,32 +76,38 @@ export class LogicMapper extends Mapper
 
         if(xml.planetSystem !== undefined)
         {
-            if(!output.planetSystems)
-            {
-                output.planetSystems = [];
-            }
+            output.planetSystems = [];
 
             if(xml.planetSystem.objects !== undefined) LogicMapper.mapPlanetSystemXML(xml.planetSystem.objects, output.planetSystems);
         }
 
         if(xml.particleSystem !== undefined)
         {
-            if(!output.particleSystems)
-            {
-                output.particleSystems = [];
-            }
+            output.particleSystems = [];
 
             if(xml.particleSystem.objects !== undefined) LogicMapper.mapParticleSystemXML(xml.particleSystem.objects, output.particleSystems);
         }
+
+        if(xml.customVars !== undefined)
+        {
+            output.customVars = {};
+
+            if(xml.customVars.variables !== undefined)
+            {
+                output.customVars.variables = [];
+
+                for(const customVar of xml.customVars.variables) output.customVars.variables.push(customVar);
+            }
+        }
     }
 
-    private static mapPlanetSystemXML(xml: PlanetSystemObjectXML[], output: IPlanetSystem[]): void
+    private static mapPlanetSystemXML(xml: PlanetSystemObjectXML[], output: IAssetLogicPlanetSystem[]): void
     {
         if(!xml || !xml.length || !output) return;
 
         for(const planetSystemObjectXML of xml)
         {
-            const planetObject: IPlanetSystem = {};
+            const planetObject: IAssetLogicPlanetSystem = {};
 
             if(planetSystemObjectXML.id !== undefined) planetObject.id = planetSystemObjectXML.id;
             if(planetSystemObjectXML.name !== undefined) planetObject.name = planetSystemObjectXML.name;
@@ -121,6 +128,11 @@ export class LogicMapper extends Mapper
 
         for(const particleSystemXML of xml)
         {
+            if(particleSystemXML.size !== undefined)
+            {
+                if([ 32 ].indexOf(particleSystemXML.size) >= 0) continue;
+            }
+
             const particleObject: IParticleSystem = {};
 
             if(particleSystemXML.size !== undefined) particleObject.size = particleSystemXML.size;

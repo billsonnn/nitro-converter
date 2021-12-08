@@ -1,19 +1,21 @@
 import { packAsync } from 'free-tex-packer-core';
-import { singleton } from 'tsyringe';
 import { HabboAssetSWF } from '../../swf/HabboAssetSWF';
 import { ImageBundle } from './ImageBundle';
 import { SpriteBundle } from './SpriteBundle';
 
-@singleton()
 export class BundleProvider
 {
     public static imageSource: Map<string, string> = new Map();
 
-    public async generateSpriteSheet(habboAssetSWF: HabboAssetSWF): Promise<SpriteBundle>
+    public static async generateSpriteSheet(habboAssetSWF: HabboAssetSWF, convertCase: boolean = false): Promise<SpriteBundle>
     {
         const tagList = habboAssetSWF.symbolTags();
         const names: string[] = [];
         const tags: number[] = [];
+
+        let documentClass = habboAssetSWF.getDocumentClass();
+
+        if(convertCase) documentClass = (documentClass.replace(/(?:^|\.?)([A-Z])/g, (x,y) => ('_' + y.toLowerCase().replace(/^_/, ''))));
 
         for(const tag of tagList)
         {
@@ -39,7 +41,7 @@ export class BundleProvider
 
                     if(imageTag.className.indexOf('_32_') >= 0) continue;
 
-                    BundleProvider.imageSource.set(names[i].substring(habboAssetSWF.getDocumentClass().length + 1), imageTag.className.substring(habboAssetSWF.getDocumentClass().length + 1));
+                    BundleProvider.imageSource.set(names[i].substring(documentClass.length + 1), imageTag.className.substring(documentClass.length + 1));
                 }
             }
 
@@ -47,20 +49,24 @@ export class BundleProvider
 
             if(imageTag.className.indexOf('_32_') >= 0) continue;
 
-            imageBundle.addImage(imageTag.className, imageTag.imgData);
+            let className = imageTag.className;
+
+            if(convertCase) className = ((className.replace(/(?:^|\.?)([A-Z])/g, (x,y) => ('_' + y.toLowerCase().replace(/^_/, '')))).substring(1));
+
+            imageBundle.addImage(className, imageTag.imgData);
         }
 
         if(!imageBundle.images.length) return null;
 
-        return await this.packImages(habboAssetSWF.getDocumentClass(), imageBundle);
+        return await this.packImages(documentClass, imageBundle, convertCase);
     }
 
-    async packImages(documentClass: string, imageBundle: ImageBundle): Promise<SpriteBundle>
+    private static async packImages(documentClass: string, imageBundle: ImageBundle, convertCase: boolean = false): Promise<SpriteBundle>
     {
         const files = await packAsync(imageBundle.images, {
-            textureName: documentClass,
-            width: 3072,
-            height: 2048,
+            textureName: (convertCase ? documentClass.substring(1) : documentClass),
+            width: 10240,
+            height: 4320,
             fixedSize: false,
             allowRotation: false,
             detectIdentical: true,
@@ -86,6 +92,8 @@ export class BundleProvider
                     name: item.name,
                     buffer: item.buffer
                 };
+
+                if(convertCase) bundle.imageData.name = (documentClass.replace(/(?:^|\.?)([A-Z])/g, (x,y) => ('_' + y.toLowerCase().replace(/^_/, '')))).substring(1);
             }
         }
 

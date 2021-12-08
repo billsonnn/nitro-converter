@@ -23,14 +23,11 @@ export class AnimationLayerXML
             if(attributes.randomStart !== undefined) this._randomStart = parseInt(attributes.randomStart);
         }
 
-        if(xml.frameSequence !== undefined)
+        if((xml.frameSequence !== undefined) && Array.isArray(xml.frameSequence))
         {
-            if(Array.isArray(xml.frameSequence))
-            {
-                this._frameSequences = [];
+            this._frameSequences = [];
 
-                for(const frameSequence of xml.frameSequence) this._frameSequences.push(new FrameSequenceXML(frameSequence));
-            }
+            for(const frameSequence of xml.frameSequence) this._frameSequences.push(new FrameSequenceXML(frameSequence));
         }
     }
 

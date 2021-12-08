@@ -1,4 +1,4 @@
-import { PlanetSystemObjectXML } from './PlanetSystemObjectXML';
+import { PlanetSystemObjectXML } from './particlesystem/PlanetSystemObjectXML';
 
 export class PlanetSystemXML
 {
@@ -6,14 +6,11 @@ export class PlanetSystemXML
 
     constructor(xml: any)
     {
-        if(xml.object !== undefined)
+        if((xml.object !== undefined) && Array.isArray(xml.object))
         {
-            if(Array.isArray(xml.object))
-            {
-                this._objects = [];
+            this._objects = [];
 
-                for(const object of xml.object) this._objects.push(new PlanetSystemObjectXML(object));
-            }
+            for(const object of xml.object) this._objects.push(new PlanetSystemObjectXML(object));
         }
     }
 

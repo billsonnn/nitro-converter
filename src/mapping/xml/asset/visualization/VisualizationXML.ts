@@ -14,20 +14,13 @@ export class VisualizationXML
             if(attributes.type !== undefined) this._type = attributes.type;
         }
 
-        if(xml.graphics !== undefined)
+        if((xml.graphics !== undefined) && Array.isArray(xml.graphics))
         {
-            if(Array.isArray(xml.graphics))
+            this._visualizations = [];
+
+            for(const graphic of xml.graphics)
             {
-                this._visualizations = [];
-
-                for(const graphic of xml.graphics)
-                {
-                    if(Array.isArray(graphic.visualization))
-                    {
-                        for(const visualization of graphic.visualization) this._visualizations.push(new VisualizationDataXML(visualization));
-
-                    }
-                }
+                if(Array.isArray(graphic.visualization)) for(const visualization of graphic.visualization) this._visualizations.push(new VisualizationDataXML(visualization));
             }
         }
     }

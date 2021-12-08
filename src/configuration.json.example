@@ -12,13 +12,10 @@
   "flash.dynamic.download.url": "",
   "dynamic.download.furniture.url": "${flash.dynamic.download.url}%revision%/%className%.swf",
   "external.variables.url": "https://www.habbo.com/gamedata/external_variables/1",
-  "external.texts.url": "${external.texts.txt}",
-  "convert.productdata": "1",
-  "convert.externaltexts": "1",
-  "convert.figure": "1",
-  "convert.figuredata": "1",
-  "convert.effect": "1",
-  "convert.furniture": "1",
-  "convert.pet": "1",
+  "external.texts.url": "",
+  "convert.figure": "0",
+  "convert.effect": "0",
+  "convert.furniture": "0",
+  "convert.pet": "0",
   "misc.log_download_urls": "0"
 }

@@ -17,14 +17,11 @@ export class FrameSequenceXML
             if(attributes.random !== undefined) this._random = parseInt(attributes.random);
         }
 
-        if(xml.frame !== undefined)
+        if((xml.frame !== undefined) && Array.isArray(xml.frame))
         {
-            if(Array.isArray(xml.frame))
-            {
-                this._frames = [];
+            this._frames = [];
 
-                for(const frame of xml.frame) this._frames.push(new FrameXML(frame));
-            }
+            for(const frame of xml.frame) this._frames.push(new FrameXML(frame));
         }
     }
 
