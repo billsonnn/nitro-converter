@@ -10,14 +10,11 @@ import { FigureDataConverter } from './converters/FigureDataConverter';
 import { FigureMapConverter } from './converters/FigureMapConverter';
 import { FurnitureConverter } from './converters/FurnitureConverter';
 import { FurnitureDataConverter } from './converters/FurnitureDataConverter';
-import { OldAssetConverter } from './converters/OldAssetConverter';
 import { PetConverter } from './converters/PetConverter';
 import { ProductDataConverter } from './converters/ProductDataConverter';
 
 (async () =>
 {
-    checkNodeVersion();
-
     const config = container.resolve(Configuration);
     await config.init();
 
@@ -31,26 +28,15 @@ import { ProductDataConverter } from './converters/ProductDataConverter';
         FurnitureConverter,
         FigureConverter,
         EffectConverter,
-        PetConverter,
-        OldAssetConverter
+        PetConverter
     ];
-
-    const [ arg1, arg2, ...rest ] = process.argv;
 
     for(const converterClass of converters)
     {
         const converter = (container.resolve<any>(converterClass) as IConverter);
 
-        await converter.convertAsync(rest);
+        await converter.convertAsync();
     }
-})();
 
-function checkNodeVersion()
-{
-    const version = process.version.replace('v', '');
-    const major = version.split('.')[0];
-    if(parseInt(major) < 14)
-    {
-        throw new Error('Invalid node version: ' + version + ' please use >= 14');
-    }
-}
+    process.kill(process.pid, 'SIGTERM');
+})();

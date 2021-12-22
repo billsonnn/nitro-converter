@@ -1,44 +1,32 @@
 import { writeFile } from 'fs/promises';
-import * as ora from 'ora';
+import ora from 'ora';
 import { singleton } from 'tsyringe';
-import { Configuration } from '../common/config/Configuration';
-import { Converter } from '../common/converters/Converter';
-import { IExternalTexts } from '../mapping/json';
-import { FileUtilities } from '../utils/FileUtilities';
+import { Configuration, FileUtilities, IConverter, IExternalTexts } from '../common';
 
 @singleton()
-export class ExternalTextsConverter extends Converter
+export class ExternalTextsConverter implements IConverter
 {
     public externalTexts: IExternalTexts = null;
 
     constructor(
         private readonly _configuration: Configuration)
-    {
-        super();
-    }
+    {}
 
-    public async convertAsync(args: string[] = []): Promise<void>
+    public async convertAsync(): Promise<void>
     {
         const now = Date.now();
         const spinner = ora('Preparing ExternalTexts').start();
         const url = this._configuration.getValue('external.texts.url');
         const content = await FileUtilities.readFileAsString(url);
 
-        if(!content.startsWith('{'))
-        {
-            this.externalTexts = await this.mapText2JSON(content);
-        }
-        else
-        {
-            this.externalTexts = JSON.parse(content);
-        }
+        this.externalTexts = ((!content.startsWith('{')) ? await this.mapText2JSON(content) : JSON.parse(content));
 
-        const directory = FileUtilities.getDirectory(this._configuration.getValue('output.folder'), 'gamedata');
+        const directory = await FileUtilities.getDirectory('./assets/gamedata');
         const path = directory.path + '/ExternalTexts.json';
 
         await writeFile(path, JSON.stringify(this.externalTexts), 'utf8');
 
-        spinner.succeed(`ExternalTexts finished in ${ Date.now() - now }ms`);
+        spinner.succeed(`ExternalTexts: Finished in ${ Date.now() - now }ms`);
     }
 
     private async mapText2JSON(text: string): Promise<IExternalTexts>
@@ -47,13 +35,13 @@ export class ExternalTextsConverter extends Converter
 
         const output: IExternalTexts = {};
 
-        const parts = text.split(/\n\r{1,}|\n{1,}|\r{1,}/mg);
+        const parts = text.split(/\r?\n/);
 
         for(const part of parts)
         {
-            const [ key, value ] = part.split('=');
+            const [ key, ...value ] = part.split('=');
 
-            output[key] = value;
+            output[key] = value.join();
         }
 
         return output;

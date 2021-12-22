@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 import * as configuration from '../../configuration.json';
-import { FileUtilities } from '../../utils/FileUtilities';
+import { FileUtilities } from '../utils';
 
 @singleton()
 export class Configuration
@@ -101,6 +101,7 @@ export class Configuration
 
     public interpolate(value: string, regex: RegExp = null): string
     {
+        if(!value || (typeof value === 'object')) return value;
         if(!regex) regex = new RegExp(/\${(.*?)}/g);
 
         const pieces = value.match(regex);

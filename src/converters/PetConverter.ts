@@ -1,26 +1,17 @@
 import { writeFile } from 'fs/promises';
-import * as ora from 'ora';
+import ora from 'ora';
 import { singleton } from 'tsyringe';
-import { BundleProvider } from '../common/bundle/BundleProvider';
-import { Configuration } from '../common/config/Configuration';
-import { Converter } from '../common/converters/Converter';
-import { SWFConverter } from '../common/converters/SWFConverter';
-import { SWFDownloader } from '../common/SWFDownloader';
-import { File } from '../utils/File';
-import { FileUtilities } from '../utils/FileUtilities';
-import { Logger } from '../utils/Logger';
+import { Configuration, File, FileUtilities, IConverter } from '../common';
+import { GeneratePetBundle, SWFDownloader } from '../swf';
 
 @singleton()
-export class PetConverter extends Converter
+export class PetConverter implements IConverter
 {
     constructor(
-        private readonly _configuration: Configuration,
-        private readonly _logger: Logger)
-    {
-        super();
-    }
+        private readonly _configuration: Configuration)
+    {}
 
-    public async convertAsync(args: string[] = []): Promise<void>
+    public async convertAsync(): Promise<void>
     {
         if(!this._configuration.getBoolean('convert.pet')) return;
 
@@ -28,56 +19,54 @@ export class PetConverter extends Converter
         const spinner = ora('Preparing Pets').start();
         const baseUrl = this._configuration.getValue('dynamic.download.pet.url');
         const classNames = this.getPetTypes();
-        const directory = FileUtilities.getDirectory(this._configuration.getValue('output.folder'), 'pet');
+        const directory = await FileUtilities.getDirectory('./assets/bundled/pet');
 
-        for(const className of classNames)
+        if(classNames)
         {
-            try
+            const totalClassNames = classNames.length;
+
+            for(let i = 0; i < totalClassNames; i++)
             {
-                const path = new File(directory.path + '/' + className + '.nitro');
+                const className = classNames[i];
 
-                if(path.exists()) continue;
-
-                const habboAssetSWF = await SWFDownloader.download(baseUrl, className, -1);
-
-                if(!habboAssetSWF)
+                try
                 {
-                    spinner.text = 'Couldnt convert pet: ' + className;
+                    const path = new File(directory.path + '/' + className + '.nitro');
 
+                    if(path.exists()) continue;
+
+                    spinner.text = `Converting: ${ className } (${ (i + 1) } / ${ totalClassNames })`;
                     spinner.render();
+
+                    const habboAssetSWF = await SWFDownloader.download(baseUrl, className, -1);
+
+                    if(!habboAssetSWF)
+                    {
+                        console.log();
+                        console.error(`Invalid SWF: ${ className }`);
+
+                        continue;
+                    }
+
+                    const nitroBundle = await GeneratePetBundle(habboAssetSWF);
+
+                    await writeFile(path.path, await nitroBundle.toBufferAsync());
+
+                    spinner.text = 'Converted: ' + className;
+                    spinner.render();
+                }
+
+                catch (error)
+                {
+                    console.log();
+                    console.error(`Error Converting: ${ className } - ${ error.message }`);
 
                     continue;
                 }
-                else
-                {
-                    spinner.text = 'Converting: ' + className;
-
-                    spinner.render();
-                }
-
-                const spriteBundle = await BundleProvider.generateSpriteSheet(habboAssetSWF);
-                const assetData = await SWFConverter.mapXML2JSON(habboAssetSWF, 'pet');
-                const nitroBundle = SWFConverter.createNitroBundle(habboAssetSWF.getDocumentClass(), assetData, spriteBundle);
-
-                await writeFile(path.path, await nitroBundle.toBufferAsync());
-
-                spinner.text = 'Finished: ' + className;
-
-                spinner.render();
-            }
-
-            catch (error)
-            {
-                spinner.text = `Error converting ${ className }: ${ error.message }`;
-
-                spinner.render();
-
-                continue;
             }
         }
 
-        console.log();
-        spinner.succeed(`Pets finished in ${ Date.now() - now }ms`);
+        spinner.succeed(`Pets: Finished in ${ Date.now() - now }ms`);
     }
 
     private getPetTypes(): string[]

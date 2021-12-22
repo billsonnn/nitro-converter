@@ -1,32 +1,27 @@
-import CustomIterator from '../utils/CustomIterator';
-import { readImagesDefineBitsLossless, readImagesJPEG3or4, readSwfAsync } from '../utils/SwfReader';
-import { CharacterTag } from './tags/CharacterTag';
-import { DefineBinaryDataTag } from './tags/DefineBinaryDataTag';
-import { ImageTag } from './tags/ImageTag';
-import { ITag } from './tags/ITag';
-import { SymbolClassTag } from './tags/SymbolClassTag';
+import { CustomIterator } from '../common';
+import { ReadImagesDefineBitsLossless } from './ReadImagesDefineBitsLossless';
+import { ReadImagesJPEG3or4 } from './ReadImagesJPEG3or4';
+import { ReadSWF } from './ReadSWF';
+import { CharacterTag, DefineBinaryDataTag, ImageTag, ITag, SymbolClassTag } from './tags';
 
 export class HabboAssetSWF
 {
-    private readonly _tags: Array<ITag>;
+    private readonly _tags: Array<ITag> = [];
     private _documentClass: string | null = null;
 
     constructor(
-        private readonly _data: string | Buffer
+        private readonly _data: Buffer
     )
-    {
-        this._tags = new Array<ITag>();
-    }
+    {}
 
-    async setupAsync()
+    public async setupAsync()
     {
-        const swf = await readSwfAsync(this._data);
+        const swf = await ReadSWF(this._data);
 
         if(!swf) return;
 
         for(const tag of swf.tags)
         {
-
             switch(tag.header.code)
             {
                 case 76:
@@ -35,67 +30,29 @@ export class HabboAssetSWF
                 case 87:
                     this._tags.push(new DefineBinaryDataTag(tag.data));
                     break;
-
                 case 6:
                     console.log(tag);
                     break;
-
                 case 21: {
-                    const jpeg3 = await readImagesJPEG3or4(21, tag);
-                    this._tags.push(new ImageTag({
-                        code: 21,
-                        characterID: jpeg3.characterId,
-                        imgType: 'jpeg',
-                        imgData: jpeg3.imageData,
-                        bitmapWidth: jpeg3.bitmapWidth,
-                        bitmapHeight: jpeg3.bitmapHeight
-                    }));
+                    const jpeg3 = await ReadImagesJPEG3or4(21, tag);
+                    this._tags.push(new ImageTag(jpeg3.characterId, 21, 'jpeg', jpeg3.imgData));
                     break;
                 }
-
                 case 35: {
-                    const jpeg3 = await readImagesJPEG3or4(35, tag);
-                    this._tags.push(new ImageTag({
-                        code: jpeg3.code,
-                        characterID: jpeg3.characterId,
-                        imgType: jpeg3.imgType,
-                        imgData: jpeg3.imgData,
-                        bitmapWidth: jpeg3.bitmapWidth,
-                        bitmapHeight: jpeg3.bitmapHeight
-                    }));
+                    const jpeg3 = await ReadImagesJPEG3or4(35, tag);
+                    this._tags.push(new ImageTag(jpeg3.characterId, jpeg3.code, jpeg3.imgType, jpeg3.imgData));
                     break;
                 }
-
                 case 36: {
-                    const pngTagLossLess2: any = await readImagesDefineBitsLossless(tag);
-                    this._tags.push(new ImageTag({
-                        code: pngTagLossLess2.code,
-                        characterID: pngTagLossLess2.characterId,
-                        imgType: pngTagLossLess2.imgType,
-                        imgData: pngTagLossLess2.imgData,
-                        bitmapWidth: pngTagLossLess2.bitmapWidth,
-                        bitmapHeight: pngTagLossLess2.bitmapHeight
-                    }));
+                    const pngTagLossLess2: any = await ReadImagesDefineBitsLossless(tag);
+                    this._tags.push(new ImageTag(pngTagLossLess2.characterId, pngTagLossLess2.code, pngTagLossLess2.imgType, pngTagLossLess2.imgData, pngTagLossLess2.bitmapWidth, pngTagLossLess2.bitmapHeight));
                     break;
                 }
-
                 case 20: {
-                    const pngTagLossless: any = await readImagesDefineBitsLossless(tag);
-                    this._tags.push(new ImageTag({
-                        code: pngTagLossless.code,
-                        characterID: pngTagLossless.characterId,
-                        imgType: pngTagLossless.imgType,
-                        imgData: pngTagLossless.imgData,
-                        bitmapWidth: pngTagLossless.bitmapWidth,
-                        bitmapHeight: pngTagLossless.bitmapHeight
-                    }));
+                    const pngTagLossless: any = await ReadImagesDefineBitsLossless(tag);
+                    this._tags.push(new ImageTag(pngTagLossless.characterId, pngTagLossless.code, pngTagLossless.imgType, pngTagLossless.imgData, pngTagLossless.bitmapWidth, pngTagLossless.bitmapHeight));
                     break;
                 }
-
-                case 90:
-                    console.log(tag);
-                    break;
-
                 default:
                     //console.log(tag.header.code);
                     break;
@@ -172,8 +129,7 @@ export class HabboAssetSWF
 
     public getBinaryTagByName(name: string): DefineBinaryDataTag | null
     {
-        const streamTag = this.binaryTags()
-            .filter(tag => tag.className === name)[0];
+        const streamTag = this.binaryTags().filter(tag => tag.className === name)[0];
 
         if(streamTag === undefined) return null;
 

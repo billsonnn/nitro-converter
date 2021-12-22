@@ -1,21 +1,16 @@
 import { writeFile } from 'fs/promises';
-import * as ora from 'ora';
+import ora from 'ora';
 import { singleton } from 'tsyringe';
-import { Configuration } from '../common/config/Configuration';
-import { Converter } from '../common/converters/Converter';
-import { IProductData } from '../mapping/json';
-import { FileUtilities } from '../utils/FileUtilities';
+import { Configuration, FileUtilities, IConverter, IProductData } from '../common';
 
 @singleton()
-export class ProductDataConverter extends Converter
+export class ProductDataConverter implements IConverter
 {
     public productData: IProductData = null;
 
     constructor(
         private readonly _configuration: Configuration)
-    {
-        super();
-    }
+    {}
 
     public async convertAsync(args: string[] = []): Promise<void>
     {
@@ -24,23 +19,14 @@ export class ProductDataConverter extends Converter
         const url = this._configuration.getValue('productdata.load.url');
         const content = await FileUtilities.readFileAsString(url);
 
-        if(!content.startsWith('{'))
-        {
-            const productData = await this.mapText2JSON(content);
+        this.productData = ((!content.startsWith('{')) ? await this.mapText2JSON(content) : JSON.parse(content));
 
-            this.productData = productData;
-        }
-        else
-        {
-            this.productData = JSON.parse(content);
-        }
-
-        const directory = FileUtilities.getDirectory(this._configuration.getValue('output.folder'), 'gamedata');
+        const directory = await FileUtilities.getDirectory('./assets/gamedata');
         const path = directory.path + '/ProductData.json';
 
         await writeFile(path, JSON.stringify(this.productData), 'utf8');
 
-        spinner.succeed(`ProductData finished in ${ Date.now() - now }ms`);
+        spinner.succeed(`ProductData: Finished in ${ Date.now() - now }ms`);
     }
 
     private async mapText2JSON(text: string): Promise<IProductData>
