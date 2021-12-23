@@ -51,7 +51,7 @@ Thumbs.db
 *.as
 *.bin
 .env
-assets/
+/assets
 
 # Nitro
 /src/configuration.json
