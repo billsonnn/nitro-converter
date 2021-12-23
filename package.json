@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "start": "node dist/Main.js",
+    "start:bundle": "yarn start --bundle",
+    "start:extract": "yarn start --extract",
+    "start:convert-swf": "yarn start --convert-swf",
     "start:dev": "ts-node-dev --respawn --transpile-only src/Main.ts"
   },
   "author": "",
