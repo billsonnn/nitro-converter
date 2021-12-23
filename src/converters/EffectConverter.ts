@@ -1,4 +1,3 @@
-import { writeFile } from 'fs/promises';
 import ora from 'ora';
 import { singleton } from 'tsyringe';
 import { Configuration, File, FileUtilities, IConverter } from '../common';
@@ -21,10 +20,9 @@ export class EffectConverter implements IConverter
 
         const now = Date.now();
         const spinner = ora('Preparing Effects').start();
-        const baseUrl = this._configuration.getValue('dynamic.download.effect.url');
+        const downloadBase = this._configuration.getValue('dynamic.download.effect.url');
+        const saveDirectory = await FileUtilities.getDirectory('./assets/bundled/effect');
         const effectMap = this._effectMapConverter.effectMap;
-        const directory = await FileUtilities.getDirectory('./assets/bundled/effect');
-
         const classNames: string[] = [];
 
         if(effectMap.effects !== undefined)
@@ -51,14 +49,15 @@ export class EffectConverter implements IConverter
 
                 try
                 {
-                    const path = new File(directory.path + '/' + className + '.nitro');
+                    const saveFile = new File(saveDirectory.path + '/' + className + '.nitro');
 
-                    if(path.exists()) continue;
+                    if(saveFile.exists()) continue;
 
                     spinner.text = `Converting: ${ className } (${ (i + 1) } / ${ totalClassNames })`;
                     spinner.render();
 
-                    const habboAssetSWF = await SWFDownloader.download(baseUrl, className, -1);
+                    const downloadUrl = SWFDownloader.getDownloadUrl(downloadBase, className, -1);
+                    const habboAssetSWF = await SWFDownloader.downloadFromUrl(downloadUrl);
 
                     if(!habboAssetSWF)
                     {
@@ -70,9 +69,9 @@ export class EffectConverter implements IConverter
 
                     const nitroBundle = await GenerateEffectBundle(habboAssetSWF, className, this.effectTypes.get(className));
 
-                    await writeFile(path.path, await nitroBundle.toBufferAsync());
+                    await saveFile.writeData(await nitroBundle.toBufferAsync());
 
-                    spinner.text = 'Converted: ' + className;
+                    spinner.text = `Converted: ${ className }`;
                     spinner.render();
                 }
 
