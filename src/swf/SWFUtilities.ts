@@ -134,7 +134,7 @@ export class SWFUtilities
 
         const output: IAssetData = {};
 
-        output.type = assetType;
+        if(assetType) output.type = assetType;
 
         const indexXML = await this.getIndexXML(habboAssetSWF, snakeCase);
 

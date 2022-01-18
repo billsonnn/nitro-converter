@@ -40,4 +40,9 @@ export class FigureDataConverter implements IConverter
 
         return output;
     }
+
+    public get converterType(): string
+    {
+        return 'FigureData';
+    }
 }

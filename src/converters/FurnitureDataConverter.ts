@@ -41,13 +41,12 @@ export class FurnitureDataConverter implements IConverter
         return output;
     }
 
-    public getClassNamesAndRevisions(floorOnly: boolean = false, wallOnly: boolean = false)
+    public async getClassNamesAndRevisions(floorOnly: boolean = false, wallOnly: boolean = false): Promise<{ [index: string]: string }>
     {
         if(!this.furnitureData) return null;
 
         const both = (!floorOnly && !wallOnly);
-        const classNames: string[] = [];
-        const revisions: number[] = [];
+        const entries: { [index: string]: string } = {};
 
         if((both || floorOnly) && this.furnitureData.roomitemtypes)
         {
@@ -58,10 +57,7 @@ export class FurnitureDataConverter implements IConverter
                     const className = furniType.classname.split('*')[0];
                     const revision = furniType.revision;
 
-                    if(classNames.indexOf(className) >= 0) continue;
-
-                    classNames.push(className);
-                    revisions.push(revision);
+                    entries[className] = revision.toString();
                 }
             }
         }
@@ -75,14 +71,16 @@ export class FurnitureDataConverter implements IConverter
                     const className = furniType.classname.split('*')[0];
                     const revision = furniType.revision;
 
-                    if(classNames.indexOf(className) >= 0) continue;
-
-                    classNames.push(className);
-                    revisions.push(revision);
+                    entries[className] = revision.toString();
                 }
             }
         }
 
-        return { classNames, revisions };
+        return entries;
+    }
+
+    public get converterType(): string
+    {
+        return 'FurnitureData';
     }
 }

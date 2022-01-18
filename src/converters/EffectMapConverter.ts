@@ -7,7 +7,7 @@ import { Configuration, EffectMapMapper, FileUtilities, IConverter, IEffectMap }
 @singleton()
 export class EffectMapConverter implements IConverter
 {
-    public effectMap: IEffectMap = null;
+    private _effectMap: IEffectMap = null;
 
     constructor(
         private readonly _configuration: Configuration)
@@ -20,12 +20,12 @@ export class EffectMapConverter implements IConverter
         const url = this._configuration.getValue('effectmap.load.url');
         const content = await FileUtilities.readFileAsString(url);
 
-        this.effectMap = ((!content.startsWith('{')) ? await this.mapXML2JSON(await parseStringPromise(content.replace(/&/g,'&amp;'))) : JSON.parse(content));
+        this._effectMap = ((!content.startsWith('{')) ? await this.mapXML2JSON(await parseStringPromise(content.replace(/&/g,'&amp;'))) : JSON.parse(content));
 
         const directory = await FileUtilities.getDirectory('./assets/gamedata');
         const path = directory.path + '/EffectMap.json';
 
-        await writeFile(path, JSON.stringify(this.effectMap), 'utf8');
+        await writeFile(path, JSON.stringify(this._effectMap), 'utf8');
 
         spinner.succeed(`EffectMap: Finished in ${ Date.now() - now }ms`);
     }
@@ -39,5 +39,17 @@ export class EffectMapConverter implements IConverter
         EffectMapMapper.mapXML(xml, output);
 
         return output;
+    }
+
+    public async getClassNamesAndRevisions(): Promise<{ [index: string]: string }>
+    {
+        const entries: { [index: string]: string } = {};
+
+        if(this._effectMap.effects)
+        {
+            for(const library of this._effectMap.effects) entries[library.lib] = '-1';
+        }
+
+        return entries;
     }
 }

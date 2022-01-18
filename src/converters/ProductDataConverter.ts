@@ -69,4 +69,9 @@ export class ProductDataConverter implements IConverter
 
         return output;
     }
+
+    public get converterType(): string
+    {
+        return 'ProductData';
+    }
 }

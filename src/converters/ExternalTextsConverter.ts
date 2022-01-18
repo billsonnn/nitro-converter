@@ -46,4 +46,9 @@ export class ExternalTextsConverter implements IConverter
 
         return output;
     }
+
+    public get converterType(): string
+    {
+        return 'ExternalTexts';
+    }
 }

@@ -1,18 +1,28 @@
 {
-  "name": "nitro-converter",
+  "name": "@nitrots/nitro-converter",
+  "description": "Serverside javascript library for bundling .nitro assets",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.krews.org/nitro/nitro-converter.git"
+  },
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://git.krews.org/nitro/nitro-converter/issues"
+  },
+  "homepage": "https://git.krews.org/nitro/nitro-converter",
   "scripts": {
     "build": "tsc",
     "start": "node dist/Main.js",
     "start:bundle": "yarn start --bundle",
     "start:extract": "yarn start --extract",
     "start:convert-swf": "yarn start --convert-swf",
-    "start:dev": "ts-node-dev --respawn --transpile-only src/Main.ts"
+    "start:dev": "ts-node-dev --respawn --transpile-only src/Main.ts",
+    "postinstall": "node ./post-install.js"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "bytebuffer": "^5.0.1",
     "concat-frames": "^1.0.3",

@@ -1,12 +1,130 @@
 import ora from 'ora';
 import { singleton } from 'tsyringe';
-import { File, FileUtilities, NitroBundle } from '../common';
-import { GenerateFurnitureBundle, SWFDownloader } from '../swf';
+import { Configuration, File, FileUtilities, NitroBundle } from '../common';
+import { GenerateNitroBundleFromSwf, SWFDownloader } from '../swf';
+import { EffectMapConverter } from './EffectMapConverter';
+import { FigureMapConverter } from './FigureMapConverter';
+import { FurnitureDataConverter } from './FurnitureDataConverter';
 
 @singleton()
 export class ConverterUtilities
 {
     private static BUNDLE_TYPES: string[] = [ 'furniture', 'figure', 'effect', 'pet', 'generic' ];
+    private static DOWNLOAD_SWF_TYPES: string[] = [ 'furniture', 'figure', 'effect', 'pet' ];
+
+    constructor(
+        private readonly _furnitureDataConverter: FurnitureDataConverter,
+        private readonly _figureMapConverter: FigureMapConverter,
+        private readonly _effectMapConverter: EffectMapConverter,
+        private readonly _configuration: Configuration)
+    {}
+
+    public async downloadSwfTypes(): Promise<void>
+    {
+        const floorOnly = (this._configuration.getBoolean('convert.furniture.floor.only') || false);
+        const wallOnly = (this._configuration.getBoolean('convert.furniture.wall.only') || false);
+
+        for(const downloadType of ConverterUtilities.DOWNLOAD_SWF_TYPES)
+        {
+            if(!this._configuration.getBoolean(`convert.${ downloadType }`)) continue;
+
+            const now = Date.now();
+            const spinner = ora(`Preparing ${ downloadType }`).start();
+            const downloadBase = this.getDownloadBaseUrl(downloadType);
+            const saveDirectory = await FileUtilities.getDirectory(`./assets/bundled/${ downloadType }`);
+            const classNamesWithRevisions = await this.getClassNamesWithRevision(downloadType, floorOnly, wallOnly);
+            const classNames = Object.keys(classNamesWithRevisions);
+
+            if(classNames && classNames.length)
+            {
+                const totalClassNames = classNames.length;
+
+                for(let i = 0; i < totalClassNames; i++)
+                {
+                    const className = classNames[i];
+                    const revision = (classNamesWithRevisions[className] || '-1');
+
+                    try
+                    {
+                        const saveFile = new File(`${ saveDirectory.path }/${ className }.nitro`);
+
+                        if(saveFile.exists()) continue;
+
+                        spinner.text = `Converting: ${ className } (${ (i + 1) } / ${ totalClassNames })`;
+                        spinner.render();
+
+                        const downloadUrl = SWFDownloader.getDownloadUrl(downloadBase, className, revision);
+                        const habboAssetSwf = await SWFDownloader.downloadFromUrl(downloadUrl);
+
+                        if(!habboAssetSwf)
+                        {
+                            console.log();
+                            console.error(`Invalid SWF: ${ className }`);
+
+                            continue;
+                        }
+
+                        const nitroBundle = await GenerateNitroBundleFromSwf(habboAssetSwf);
+
+                        await saveFile.writeData(await nitroBundle.toBufferAsync());
+
+                        spinner.text = `Converted: ${ className }`;
+                        spinner.render();
+                    }
+
+                    catch (error)
+                    {
+                        console.log();
+                        console.error(`Error Converting: ${ className } - ${ error.message }`);
+
+                        continue;
+                    }
+                }
+            }
+
+            spinner.succeed(`Finished ${ downloadType } in ${ Date.now() - now }ms`);
+        }
+    }
+
+    public getDownloadBaseUrl(type: string): string
+    {
+        switch(type)
+        {
+            case 'furniture':
+                return this._configuration.getValue('dynamic.download.furniture.url');
+            case 'figure':
+                return this._configuration.getValue('dynamic.download.figure.url');
+            case 'effect':
+                return this._configuration.getValue('dynamic.download.effect.url');
+            case 'pet':
+                return this._configuration.getValue('dynamic.download.pet.url');
+        }
+
+        return null;
+    }
+
+    public async getClassNamesWithRevision(type: string, floorOnly: boolean = false, wallOnly: boolean = false): Promise<{ [index: string ]: string }>
+    {
+        switch(type)
+        {
+            case 'furniture':
+                return await this._furnitureDataConverter.getClassNamesAndRevisions(floorOnly, wallOnly);
+            case 'figure':
+                return await this._figureMapConverter.getClassNamesAndRevisions();
+            case 'effect':
+                return await this._effectMapConverter.getClassNamesAndRevisions();
+            case 'pet': {
+                const entries: { [index: string]: string } = {};
+                const classNames = this._configuration.getValue('pet.configuration').split(',');
+
+                for(const className of classNames) entries[className] = '-1';
+
+                return entries;
+            }
+        }
+
+        return null;
+    }
 
     public async extractNitroFromFolder(): Promise<void>
     {
@@ -94,14 +212,7 @@ export class ConverterUtilities
                         continue;
                     }
 
-                    let nitroBundle: NitroBundle = null;
-
-                    switch(type)
-                    {
-                        case 'furniture':
-                            nitroBundle = await GenerateFurnitureBundle(habboAssetSwf);
-                            break;
-                    }
+                    const nitroBundle = await GenerateNitroBundleFromSwf(habboAssetSwf);
 
                     if(!nitroBundle)
                     {

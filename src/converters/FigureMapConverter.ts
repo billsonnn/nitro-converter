@@ -7,7 +7,7 @@ import { Configuration, FigureMapMapper, FileUtilities, IConverter, IFigureMap }
 @singleton()
 export class FigureMapConverter implements IConverter
 {
-    public figureMap: IFigureMap = null;
+    private _figureMap: IFigureMap = null;
 
     constructor(
         private readonly _configuration: Configuration)
@@ -20,12 +20,12 @@ export class FigureMapConverter implements IConverter
         const url = this._configuration.getValue('figuremap.load.url');
         const content = await FileUtilities.readFileAsString(url);
 
-        this.figureMap = ((!content.startsWith('{')) ? await this.mapXML2JSON(await parseStringPromise(content.replace(/&/g,'&amp;'))) : JSON.parse(content));
+        this._figureMap = ((!content.startsWith('{')) ? await this.mapXML2JSON(await parseStringPromise(content.replace(/&/g,'&amp;'))) : JSON.parse(content));
 
         const directory = await FileUtilities.getDirectory('./assets/gamedata');
         const path = directory.path + '/FigureMap.json';
 
-        await writeFile(path, JSON.stringify(this.figureMap), 'utf8');
+        await writeFile(path, JSON.stringify(this._figureMap), 'utf8');
 
         spinner.succeed(`FigureMap: Finished in ${ Date.now() - now }ms`);
     }
@@ -39,5 +39,24 @@ export class FigureMapConverter implements IConverter
         FigureMapMapper.mapXML(xml, output);
 
         return output;
+    }
+
+    public async getClassNamesAndRevisions(): Promise<{ [index: string]: string }>
+    {
+        const entries: { [index: string]: string } = {};
+
+        if(this._figureMap.libraries)
+        {
+            for(const library of this._figureMap.libraries)
+            {
+                const className = library.id.split('*')[0];
+
+                if(className === 'hh_human_fx' || className === 'hh_pets') continue;
+
+                entries[className] = '-1';
+            }
+        }
+
+        return entries;
     }
 }
