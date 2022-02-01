@@ -29,7 +29,7 @@ export const ReadImagesJPEG3or4 = async (code: number, tag: Partial<ISWFTag>) =>
 
     bufferStream
         .pipe(new decoder())
-        .pipe(concatFrames((data: any) =>
+        .pipe(concatFrames.default((data: any) =>
         {
             const _ref2 = SlicedToArray.slicedToArray(data, 1);
             const frame = _ref2[0];

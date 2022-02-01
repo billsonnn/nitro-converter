@@ -20,24 +20,19 @@
     "start:bundle": "yarn start --bundle",
     "start:extract": "yarn start --extract",
     "start:convert-swf": "yarn start --convert-swf",
-    "start:dev": "ts-node-dev --respawn --transpile-only src/Main.ts",
-    "postinstall": "node ./post-install.js"
+    "start:dev": "ts-node-dev --respawn --transpile-only src/Main.ts"
   },
   "dependencies": {
     "bytebuffer": "^5.0.1",
     "concat-frames": "^1.0.3",
     "free-tex-packer-core": "^0.3.2",
-    "jimp": "^0.16.1",
     "jpg-stream": "^1.1.2",
-    "lodash": "^4.17.20",
     "lzma-purejs": "^0.9.3",
     "node-fetch": "^2.6.1",
-    "node-gzip": "^1.1.2",
     "ora": "^5.3.0",
     "pako": "^2.0.4",
     "png-stream": "^1.0.5",
     "reflect-metadata": "^0.1.13",
-    "shelljs": "^0.8.4",
     "stream-to-array": "^2.3.0",
     "tsyringe": "^4.4.0",
     "xml2js": "^0.4.23"
@@ -47,7 +42,6 @@
     "@types/node": "^14.14.28",
     "@types/node-fetch": "^2.5.8",
     "@types/pako": "^1.0.2",
-    "@types/shelljs": "^0.8.10",
     "@types/stream-to-array": "^2.3.0",
     "@types/xml2js": "^0.4.8",
     "@typescript-eslint/eslint-plugin": "^4.15.1",
