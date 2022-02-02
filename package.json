@@ -16,11 +16,11 @@
   "homepage": "https://git.krews.org/nitro/nitro-converter",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/Main.js",
+    "start:dev": "ts-node-dev --respawn --transpile-only src/Main.ts",
+    "start": "yarn start:dev",
     "start:bundle": "yarn start --bundle",
     "start:extract": "yarn start --extract",
-    "start:convert-swf": "yarn start --convert-swf",
-    "start:dev": "ts-node-dev --respawn --transpile-only src/Main.ts"
+    "start:convert-swf": "yarn start --convert-swf"
   },
   "dependencies": {
     "bytebuffer": "^5.0.1",
