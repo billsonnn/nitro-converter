@@ -3,11 +3,11 @@ import { UncompressSWF } from './UncompressSWF';
 
 export const ReadSWF = async (buffer: Buffer) =>
 {
-    if(Buffer.isBuffer(buffer)) return UncompressSWF(buffer);
+    if(Buffer.isBuffer(buffer)) return await UncompressSWF(buffer);
 
     buffer = await readFile(buffer);
 
     if(!buffer) return null;
 
-    return UncompressSWF(buffer);
+    return await UncompressSWF(buffer);
 };
