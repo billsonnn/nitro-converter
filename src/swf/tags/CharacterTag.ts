@@ -1,7 +1,11 @@
 export abstract class CharacterTag
 {
     private _className: string = '';
-    private _characterId: number = -1;
+
+    constructor(
+        protected _characterId: number = 1
+    )
+    {}
 
     public get className(): string
     {

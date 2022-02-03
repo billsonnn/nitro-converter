@@ -1,50 +1,33 @@
 import { writeFile } from 'fs/promises';
-import * as ora from 'ora';
+import ora from 'ora';
 import { singleton } from 'tsyringe';
 import { parseStringPromise } from 'xml2js';
-import { Configuration } from '../common/config/Configuration';
-import { Converter } from '../common/converters/Converter';
-import { IFigureMap } from '../mapping/json';
-import { FigureMapMapper } from '../mapping/mappers';
-import { FileUtilities } from '../utils/FileUtilities';
-import { Logger } from '../utils/Logger';
+import { Configuration, FigureMapMapper, FileUtilities, IConverter, IFigureMap } from '../common';
 
 @singleton()
-export class FigureMapConverter extends Converter
+export class FigureMapConverter implements IConverter
 {
-    public figureMap: IFigureMap = null;
+    private _figureMap: IFigureMap = null;
 
     constructor(
-        private readonly _configuration: Configuration,
-        private readonly _logger: Logger)
-    {
-        super();
-    }
+        private readonly _configuration: Configuration)
+    {}
 
-    public async convertAsync(args: string[] = []): Promise<void>
+    public async convertAsync(): Promise<void>
     {
         const now = Date.now();
         const spinner = ora('Preparing FigureMap').start();
         const url = this._configuration.getValue('figuremap.load.url');
         const content = await FileUtilities.readFileAsString(url);
 
-        if(!content.startsWith('{'))
-        {
-            const xml = await parseStringPromise(content.replace(/&/g,'&amp;'));
+        this._figureMap = ((!content.startsWith('{')) ? await this.mapXML2JSON(await parseStringPromise(content.replace(/&/g,'&amp;'))) : JSON.parse(content));
 
-            this.figureMap = await this.mapXML2JSON(xml);
-        }
-        else
-        {
-            this.figureMap = JSON.parse(content);
-        }
-
-        const directory = FileUtilities.getDirectory(this._configuration.getValue('output.folder'), 'gamedata');
+        const directory = await FileUtilities.getDirectory('./assets/gamedata');
         const path = directory.path + '/FigureMap.json';
 
-        await writeFile(path, JSON.stringify(this.figureMap), 'utf8');
+        await writeFile(path, JSON.stringify(this._figureMap), 'utf8');
 
-        spinner.succeed(`FigureMap finished in ${ Date.now() - now }ms`);
+        spinner.succeed(`FigureMap: Finished in ${ Date.now() - now }ms`);
     }
 
     private async mapXML2JSON(xml: any): Promise<IFigureMap>
@@ -56,5 +39,24 @@ export class FigureMapConverter extends Converter
         FigureMapMapper.mapXML(xml, output);
 
         return output;
+    }
+
+    public async getClassNamesAndRevisions(): Promise<{ [index: string]: string }>
+    {
+        const entries: { [index: string]: string } = {};
+
+        if(this._figureMap.libraries)
+        {
+            for(const library of this._figureMap.libraries)
+            {
+                const className = library.id.split('*')[0];
+
+                if(className === 'hh_human_fx' || className === 'hh_pets') continue;
+
+                entries[className] = '-1';
+            }
+        }
+
+        return entries;
     }
 }

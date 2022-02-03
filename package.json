@@ -1,25 +1,36 @@
 {
-  "name": "nitro-converter",
+  "name": "@nitrots/nitro-converter",
+  "description": "Serverside javascript library for bundling .nitro assets",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "ts-node-transpile-only src/Main.ts",
-    "start:dev": "ts-node-dev --respawn --transpile-only src/Main.ts"
+  "publishConfig": {
+    "access": "public"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://git.krews.org/nitro/nitro-converter.git"
+  },
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://git.krews.org/nitro/nitro-converter/issues"
+  },
+  "homepage": "https://git.krews.org/nitro/nitro-converter",
+  "scripts": {
+    "build": "tsc",
+    "start:dev": "ts-node-dev --respawn --transpile-only src/Main.ts",
+    "start": "yarn start:dev",
+    "start:bundle": "yarn start --bundle",
+    "start:extract": "yarn start --extract",
+    "start:convert-swf": "yarn start --convert-swf"
+  },
   "dependencies": {
     "bytebuffer": "^5.0.1",
     "concat-frames": "^1.0.3",
     "free-tex-packer-core": "^0.3.2",
-    "jimp": "^0.16.1",
     "jpg-stream": "^1.1.2",
-    "lodash": "^4.17.20",
     "lzma-purejs": "^0.9.3",
     "node-fetch": "^2.6.1",
-    "node-gzip": "^1.1.2",
     "ora": "^5.3.0",
+    "pako": "^2.0.4",
     "png-stream": "^1.0.5",
     "reflect-metadata": "^0.1.13",
     "stream-to-array": "^2.3.0",
@@ -30,6 +41,8 @@
     "@types/bytebuffer": "^5.0.42",
     "@types/node": "^14.14.28",
     "@types/node-fetch": "^2.5.8",
+    "@types/pako": "^1.0.2",
+    "@types/stream-to-array": "^2.3.0",
     "@types/xml2js": "^0.4.8",
     "@typescript-eslint/eslint-plugin": "^4.15.1",
     "@typescript-eslint/parser": "^4.15.1",

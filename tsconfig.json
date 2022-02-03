@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "declaration": true,
+        "declaration": false,
         "noImplicitAny": false,
         "noUnusedLocals": false,
         "removeComments": true,
@@ -12,12 +12,13 @@
         "target": "es6",
         "sourceMap": false,
         "allowJs": true,
+        "esModuleInterop": true,
         "baseUrl": "./src",
         "outDir": "./dist"
     },
     "include": [
-        "src/configuration.json",
-        "src/**/*"
+        "src/**/*",
+        "node_modules/wrappy/swf"
     ],
     "exclude": [
         "node_modules",

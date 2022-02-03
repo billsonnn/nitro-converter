@@ -1,4 +1,4 @@
-import { ISpritesheetData } from '../../mapping/json';
+import { ISpritesheetData } from '../mapping';
 
 export class SpriteBundle
 {

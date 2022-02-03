@@ -50,6 +50,8 @@ Thumbs.db
 *.zip
 *.as
 *.bin
+.env
+/assets
 
 # Nitro
 /src/configuration.json
