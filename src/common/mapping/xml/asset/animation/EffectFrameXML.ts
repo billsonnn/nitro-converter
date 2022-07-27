@@ -3,7 +3,7 @@ import { EffectFramePartXML } from './EffectFramePartXML';
 export class EffectFrameXML
 {
     private readonly _repeats: number;
-    private readonly _fxs: EffectFramePartXML[]
+    private readonly _fxs: EffectFramePartXML[];
     private readonly _bodyParts: EffectFramePartXML[];
 
     constructor(xml: any)

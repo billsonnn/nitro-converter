@@ -11,7 +11,7 @@ export class VisualizationDataXML
     private readonly _layerCount: number;
     private readonly _angle: number;
 
-    private readonly _layers: LayerXML[]
+    private readonly _layers: LayerXML[];
     private readonly _directions: VisualDirectionXML[];
     private readonly _colors: ColorXML[];
     private readonly _animations: AnimationXML[];
