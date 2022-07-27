@@ -64,7 +64,7 @@ export class FurnitureDataMapper extends Mapper
             furnitureType.name               = typeXML.name;
             furnitureType.description        = typeXML.description;
             furnitureType.adurl              = typeXML.adurl;
-            furnitureType.offerid            = typeXML.id;
+            furnitureType.offerid            = typeXML.offerid;
             furnitureType.buyout             = typeXML.buyout;
             furnitureType.rentofferid        = typeXML.rentofferid;
             furnitureType.rentbuyout         = typeXML.rentbuyout;
