@@ -26,7 +26,7 @@ export class FileUtilities
             const data = await fetch.default(url);
             const arrayBuffer = await data.arrayBuffer();
 
-            if(data.headers.get('Content-Type') !== 'application/x-shockwave-flash') return;
+            if(data.headers.get('Content-Type') !== 'application/x-shockwave-flash' && data.headers.get('Content-Type') !== 'application/octet-stream') return;
 
             if(arrayBuffer) content = Buffer.from(arrayBuffer);
         }
