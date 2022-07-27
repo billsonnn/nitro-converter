@@ -1,5 +1,4 @@
 import { singleton } from 'tsyringe';
-import * as configuration from '../../configuration.json';
 import { FileUtilities } from '../utils';
 
 @singleton()
@@ -12,7 +11,7 @@ export class Configuration
         this._config = new Map<string, string>();
     }
 
-    public async init(): Promise<void>
+    public async init(configuration: Object): Promise<void>
     {
         this.parseConfiguration(configuration);
 
@@ -41,20 +40,20 @@ export class Configuration
 
     private parseConfiguration(content: Object): boolean
     {
-        if(!content) return false;
+        if (!content) return false;
 
         try
         {
             const regex = new RegExp(/\${(.*?)}/g);
 
-            for(const key of Object.keys(configuration))
+            for (const key of Object.keys(content))
             {
-                if(this._config.get(key))
+                if (this._config.get(key))
                 {
-                    if(!configuration[key].length) continue;
+                    if (!content[key].length) continue;
                 }
 
-                this._config.set(key, this.interpolate(configuration[key], regex));
+                this._config.set(key, this.interpolate(content[key], regex));
             }
 
             return true;
@@ -71,18 +70,18 @@ export class Configuration
 
     private parseExternalVariables(content: string): boolean
     {
-        if(!content || (content === '')) return false;
+        if (!content || (content === '')) return false;
 
         try
         {
             const regex = new RegExp(/\${(.*?)}/g);
             const lines: string[] = content.split('\n');
 
-            for(const line of lines)
+            for (const line of lines)
             {
-                const [ key, value ] = line.split('=');
+                const [key, value] = line.split('=');
 
-                if(key.startsWith('landing.view')) continue;
+                if (key.startsWith('landing.view')) continue;
 
                 this._config.set(key, this.interpolate((value || ''), regex));
             }
@@ -101,18 +100,18 @@ export class Configuration
 
     public interpolate(value: string, regex: RegExp = null): string
     {
-        if(!value || (typeof value === 'object')) return value;
-        if(!regex) regex = new RegExp(/\${(.*?)}/g);
+        if (!value || (typeof value === 'object')) return value;
+        if (!regex) regex = new RegExp(/\${(.*?)}/g);
 
         const pieces = value.match(regex);
 
-        if(pieces && pieces.length)
+        if (pieces && pieces.length)
         {
-            for(const piece of pieces)
+            for (const piece of pieces)
             {
                 const existing = this._config.get(this.removeInterpolateKey(piece));
 
-                if(existing) (value = value.replace(piece, existing));
+                if (existing) (value = value.replace(piece, existing));
             }
         }
 
@@ -126,7 +125,7 @@ export class Configuration
 
     public getValue(key: string, value: string = ''): string
     {
-        if(this._config.has(key)) return this._config.get(key);
+        if (this._config.has(key)) return this._config.get(key);
 
         return value;
     }

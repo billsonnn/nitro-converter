@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsc",
     "start:dev": "ts-node-dev --respawn --transpile-only src/Main.ts",
-    "start": "yarn build && node ./dist/Main.js",
+    "start": "node ./dist/Main.js",
     "start:bundle": "yarn start --bundle",
     "start:extract": "yarn start --extract",
     "start:convert-swf": "yarn start --convert-swf"

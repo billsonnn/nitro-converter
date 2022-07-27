@@ -54,4 +54,4 @@ Thumbs.db
 /assets
 
 # Nitro
-/src/configuration.json
+configuration.json

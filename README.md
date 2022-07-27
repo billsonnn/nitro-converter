@@ -35,7 +35,7 @@ You may set any of the urls to a local path on your system or a remote url. A lo
 
 ## Running the converter
 
-**Make sure you run `yarn install` before first use.**
+**Make sure you run `yarn install && yarn build` before first use.**
 
 To run the converter open a new terminal / console window in the main converter directory.
 
@@ -43,6 +43,7 @@ The converter has a few different start commands:
 
 | key                    | value                                                      |
 | ---------------------- | ---------------------------------------------------------- |
+| yarn build             | Will run `tsc` and build .js from .ts                      |
 | yarn start             | Will download and convert assets as set in the config      |
 | yarn start:bundle      | Will bundle decompressed `.nitro` assets (json / png)      |
 | yarn start:extract     | Will extract `.nitro` assets which can be used for editing |
