@@ -4,5 +4,6 @@ export * from './IAssetAlias';
 export * from './IAssetData';
 export * from './IAssetPalette';
 export * from './logic';
+export * from './room-visualization';
 export * from './spritesheet';
 export * from './visualization';

@@ -4,4 +4,5 @@ export * from './IndexMapper';
 export * from './LogicMapper';
 export * from './ManifestMapper';
 export * from './Mapper';
+export * from './RoomVisualizationMapper';
 export * from './VisualizationMapper';

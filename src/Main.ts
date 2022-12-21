@@ -32,11 +32,13 @@ import { ProductDataConverter } from './converters/ProductDataConverter';
         const bundle = (process.argv.indexOf('--bundle') >= 0);
         const extract = (process.argv.indexOf('--extract') >= 0);
         const convertSwf = (process.argv.indexOf('--convert-swf') >= 0);
-        const skip = (bundle || extract || convertSwf);
+        const skip = (bundle || extract || convertSwf || true);
 
         if (skip)
         {
             const extractor = container.resolve(ConverterUtilities);
+
+            await extractor.convertSwfFromFolder();
 
             bundle && await extractor.bundleExtractedFromFolder();
             extract && await extractor.extractNitroFromFolder();
