@@ -1,3 +1,4 @@
+import { PlaneMaskVisualizationDataXML } from './PlaneMaskVisualizationDataXML';
 import { PlaneVisualizationDataXML } from './PlaneVisualizationDataXML';
 
 export class RoomVisualizationXML
@@ -5,6 +6,7 @@ export class RoomVisualizationXML
     private readonly _wallData: PlaneVisualizationDataXML;
     private readonly _floorData: PlaneVisualizationDataXML;
     private readonly _landscapeData: PlaneVisualizationDataXML;
+    private readonly _maskData: PlaneMaskVisualizationDataXML;
 
     constructor(xml: any)
     {
@@ -24,6 +26,11 @@ export class RoomVisualizationXML
         {
             this._landscapeData = new PlaneVisualizationDataXML(xml.landscapeData[0]);
         }
+
+        if ((xml.maskData !== undefined) && Array.isArray(xml.maskData))
+        {
+            this._maskData = new PlaneMaskVisualizationDataXML(xml.maskData[0]);
+        }
     }
 
     public get wallData(): PlaneVisualizationDataXML
@@ -39,5 +46,10 @@ export class RoomVisualizationXML
     public get landscapeData(): PlaneVisualizationDataXML
     {
         return this._landscapeData;
+    }
+
+    public get maskData(): PlaneMaskVisualizationDataXML
+    {
+        return this._maskData;
     }
 }

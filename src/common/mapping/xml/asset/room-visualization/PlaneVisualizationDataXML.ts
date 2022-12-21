@@ -1,10 +1,10 @@
-import { PlaneMaterialXML } from './PlaneMaterialXML';
-import { PlaneTextureXML } from './PlaneTextureXML';
-import { PlaneVisualizationXML } from './PlaneVisualizationXML';
+import { PlaneMaterialXML } from './material';
+import { PlaneXML } from './PlaneXML';
+import { PlaneTextureXML } from './texture';
 
 export class PlaneVisualizationDataXML
 {
-    private readonly _planes: PlaneVisualizationXML[];
+    private readonly _planes: PlaneXML[];
     private readonly _materials: PlaneMaterialXML[];
     private readonly _textures: PlaneTextureXML[];
 
@@ -18,7 +18,7 @@ export class PlaneVisualizationDataXML
 
             for (const wallParent of xml.walls)
             {
-                if (Array.isArray(wallParent.wall)) for (const wall of wallParent.wall) this._planes.push(new PlaneVisualizationXML(wall));
+                if (Array.isArray(wallParent.wall)) for (const wall of wallParent.wall) this._planes.push(new PlaneXML(wall));
             }
         }
 
@@ -28,7 +28,7 @@ export class PlaneVisualizationDataXML
 
             for (const floorParent of xml.floors)
             {
-                if (Array.isArray(floorParent.floor)) for (const floor of floorParent.floor) this._planes.push(new PlaneVisualizationXML(floor));
+                if (Array.isArray(floorParent.floor)) for (const floor of floorParent.floor) this._planes.push(new PlaneXML(floor));
             }
         }
 
@@ -38,7 +38,7 @@ export class PlaneVisualizationDataXML
 
             for (const landscapeParent of xml.landscapes)
             {
-                if (Array.isArray(landscapeParent.landscape)) for (const landscape of landscapeParent.landscape) this._planes.push(new PlaneVisualizationXML(landscape));
+                if (Array.isArray(landscapeParent.landscape)) for (const landscape of landscapeParent.landscape) this._planes.push(new PlaneXML(landscape));
             }
         }
 
@@ -63,7 +63,7 @@ export class PlaneVisualizationDataXML
         }
     }
 
-    public get planes(): PlaneVisualizationXML[]
+    public get planes(): PlaneXML[]
     {
         return this._planes;
     }

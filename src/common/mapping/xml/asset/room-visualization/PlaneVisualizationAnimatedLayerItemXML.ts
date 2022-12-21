@@ -1,4 +1,4 @@
-export class PlaneAnimationLayerItemXML
+export class PlaneVisualizationAnimatedLayerItemXML
 {
     private readonly _id: number;
     private readonly _assetId: string;

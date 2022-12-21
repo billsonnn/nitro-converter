@@ -1,4 +1,4 @@
-export class PlaneLayerXML
+export class PlaneVisualizationLayerXML
 {
     private readonly _materialId: string;
     private readonly _color: number;

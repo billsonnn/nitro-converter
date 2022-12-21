@@ -12,9 +12,11 @@ export const GenerateSpriteSheet = async (habboAssetSWF: HabboAssetSWF, convertC
 
     let documentClass = habboAssetSWF.getDocumentClass();
 
-    if(convertCase) documentClass = (documentClass.replace(/(?:^|\.?)([A-Z])/g, (x,y) => ('_' + y.toLowerCase().replace(/^_/, ''))));
+    if (documentClass === 'HabboRoomContent') documentClass = 'room';
 
-    for(const tag of tagList)
+    if (convertCase) documentClass = (documentClass.replace(/(?:^|\.?)([A-Z])/g, (x, y) => ('_' + y.toLowerCase().replace(/^_/, ''))));
+
+    for (const tag of tagList)
     {
         names.push(...tag.names);
         tags.push(...tag.tags);
@@ -24,36 +26,38 @@ export const GenerateSpriteSheet = async (habboAssetSWF: HabboAssetSWF, convertC
 
     const imageTags = habboAssetSWF.imageTags();
 
-    for(const imageTag of imageTags)
+    for (const imageTag of imageTags)
     {
-        if(tags.includes(imageTag.characterId))
+        if (tags.includes(imageTag.characterId))
         {
-            for(let i = 0; i < tags.length; i++)
+            for (let i = 0; i < tags.length; i++)
             {
-                if(tags[i] != imageTag.characterId) continue;
+                if (tags[i] != imageTag.characterId) continue;
 
-                if(names[i] == imageTag.className) continue;
+                if (names[i] == imageTag.className) continue;
 
-                if(imageTag.className.startsWith('sh_')) continue;
+                if (imageTag.className.startsWith('sh_')) continue;
 
-                if(imageTag.className.indexOf('_32_') >= 0) continue;
+                if (imageTag.className.indexOf('_32_') >= 0) continue;
 
                 IMAGE_SOURCES.set(names[i].substring(documentClass.length + 1), imageTag.className.substring(documentClass.length + 1));
             }
         }
 
-        if(imageTag.className.startsWith('sh_')) continue;
+        if (imageTag.className.startsWith('sh_')) continue;
 
-        if(imageTag.className.indexOf('_32_') >= 0) continue;
+        if (imageTag.className.indexOf('_32_') >= 0) continue;
 
         let className = imageTag.className;
 
-        if(convertCase) className = ((className.replace(/(?:^|\.?)([A-Z])/g, (x,y) => ('_' + y.toLowerCase().replace(/^_/, '')))).substring(1));
+        if (convertCase) className = ((className.replace(/(?:^|\.?)([A-Z])/g, (x, y) => ('_' + y.toLowerCase().replace(/^_/, '')))).substring(1));
+
+        if (className.startsWith('HabboRoomContent')) className = className.replace('HabboRoomContent', 'room');
 
         imageBundle.addImage(className, imageTag.imgData);
     }
 
-    if(!imageBundle.images.length) return null;
+    if (!imageBundle.images.length) return null;
 
     return await PackImages(documentClass, imageBundle, convertCase);
 };
