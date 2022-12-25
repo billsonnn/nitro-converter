@@ -6,6 +6,7 @@ export class PlaneVisualizationXML
     private readonly _size: number;
     private readonly _horizontalAngle: number;
     private readonly _verticalAngle: number;
+    private readonly _allLayers: (PlaneVisualizationLayerXML | PlaneVisualizationAnimatedLayerXML)[];
     private readonly _layers: PlaneVisualizationLayerXML[];
     private readonly _animatedLayers: PlaneVisualizationAnimatedLayerXML[];
 
@@ -20,7 +21,25 @@ export class PlaneVisualizationXML
             if (attributes.verticalAngle !== undefined) this._verticalAngle = parseFloat(attributes.verticalAngle);
         }
 
-        if ((xml.visualizationLayer !== undefined) && Array.isArray(xml.visualizationLayer))
+        if ((xml.$$ !== undefined) && Array.isArray(xml.$$))
+        {
+            this._allLayers = [];
+
+            for (const layer of xml.$$)
+            {
+                switch (layer['#name'])
+                {
+                    case 'visualizationLayer':
+                        this._allLayers.push(new PlaneVisualizationLayerXML(layer));
+                        break;
+                    case 'animationLayer':
+                        this._allLayers.push(new PlaneVisualizationAnimatedLayerXML(layer));
+                        break;
+                }
+            }
+        }
+
+        /* if ((xml.visualizationLayer !== undefined) && Array.isArray(xml.visualizationLayer))
         {
             this._layers = [];
 
@@ -32,7 +51,7 @@ export class PlaneVisualizationXML
             this._animatedLayers = [];
 
             for (const layer of xml.animationLayer) this._animatedLayers.push(new PlaneVisualizationAnimatedLayerXML(layer));
-        }
+        } */
     }
 
     public get size(): number
@@ -48,6 +67,11 @@ export class PlaneVisualizationXML
     public get verticalAngle(): number
     {
         return this._verticalAngle;
+    }
+
+    public get allLayers(): (PlaneVisualizationLayerXML | PlaneVisualizationAnimatedLayerXML)[]
+    {
+        return this._allLayers;
     }
 
     public get layers(): PlaneVisualizationLayerXML[]

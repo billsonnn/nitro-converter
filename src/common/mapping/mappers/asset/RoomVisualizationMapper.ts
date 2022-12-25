@@ -155,6 +155,8 @@ export class RoomVisualizationMapper extends Mapper
 
         for (const planeVisualizationXML of xml)
         {
+            if (planeVisualizationXML.size === 32) continue;
+
             const visualization: IAssetPlaneVisualization = {};
 
             if (planeVisualizationXML.size !== undefined) visualization.size = planeVisualizationXML.size;
@@ -162,23 +164,24 @@ export class RoomVisualizationMapper extends Mapper
             if (planeVisualizationXML.horizontalAngle !== undefined) visualization.horizontalAngle = planeVisualizationXML.horizontalAngle;
             if (planeVisualizationXML.verticalAngle !== undefined) visualization.verticalAngle = planeVisualizationXML.verticalAngle;
 
-            if (planeVisualizationXML.layers !== undefined)
+            if (planeVisualizationXML.allLayers !== undefined)
             {
-                if (planeVisualizationXML.layers.length)
+                if (planeVisualizationXML.allLayers.length)
                 {
-                    visualization.layers = [];
+                    visualization.allLayers = [];
 
-                    RoomVisualizationMapper.mapPlaneVisualizationLayers(planeVisualizationXML.layers, visualization.layers);
-                }
-            }
+                    for (const layer of planeVisualizationXML.allLayers)
+                    {
+                        if (layer instanceof PlaneVisualizationLayerXML)
+                        {
+                            RoomVisualizationMapper.mapPlaneVisualizationLayers([layer], visualization.allLayers);
+                        }
 
-            if (planeVisualizationXML.animatedLayers !== undefined)
-            {
-                if (planeVisualizationXML.animatedLayers.length)
-                {
-                    visualization.animatedLayers = [];
-
-                    RoomVisualizationMapper.mapPlaneVisualizationAnimatedLayers(planeVisualizationXML.animatedLayers, visualization.animatedLayers);
+                        else if (layer instanceof PlaneVisualizationAnimatedLayerXML)
+                        {
+                            RoomVisualizationMapper.mapPlaneVisualizationAnimatedLayers([layer], visualization.allLayers);
+                        }
+                    }
                 }
             }
 
@@ -186,7 +189,7 @@ export class RoomVisualizationMapper extends Mapper
         }
     }
 
-    private static mapPlaneVisualizationLayers(xml: PlaneVisualizationLayerXML[], output: IAssetPlaneVisualizationLayer[]): void
+    private static mapPlaneVisualizationLayers(xml: PlaneVisualizationLayerXML[], output: (IAssetPlaneVisualizationLayer | IAssetPlaneVisualizationAnimatedLayer)[]): void
     {
         if (!xml || !output) return;
 
@@ -203,7 +206,7 @@ export class RoomVisualizationMapper extends Mapper
         }
     }
 
-    private static mapPlaneVisualizationAnimatedLayers(xml: PlaneVisualizationAnimatedLayerXML[], output: IAssetPlaneVisualizationAnimatedLayer[]): void
+    private static mapPlaneVisualizationAnimatedLayers(xml: PlaneVisualizationAnimatedLayerXML[], output: (IAssetPlaneVisualizationLayer | IAssetPlaneVisualizationAnimatedLayer)[]): void
     {
         if (!xml || !output) return;
 
@@ -252,6 +255,8 @@ export class RoomVisualizationMapper extends Mapper
 
         for (const planeMaterialXML of xml)
         {
+            if (planeMaterialXML.id.startsWith('floor_32_') || planeMaterialXML.id.startsWith('wall_32_') || planeMaterialXML.id.startsWith('landscape_32_')) continue;
+
             const planeMaterial: IAssetPlaneMaterial = {};
 
             if (planeMaterialXML.id !== undefined) planeMaterial.id = planeMaterialXML.id;
@@ -353,6 +358,8 @@ export class RoomVisualizationMapper extends Mapper
 
         for (const planeTextureXML of xml)
         {
+            if (planeTextureXML.id.startsWith('floor_32_') || planeTextureXML.id.startsWith('wall_32_') || planeTextureXML.id.startsWith('landscape_32_')) continue;
+
             const planeTexture: IAssetPlaneTexture = {};
 
             if (planeTextureXML.id !== undefined) planeTexture.id = planeTextureXML.id;
@@ -409,6 +416,8 @@ export class RoomVisualizationMapper extends Mapper
 
                     for (const planeMaskVisualizationXML of planeMaskXML.visualizations)
                     {
+                        if (planeMaskVisualizationXML.size === 32) continue;
+
                         const planeMaskVisualization: IAssetPlaneMaskVisualization = {};
 
                         if (planeMaskVisualizationXML.size !== undefined) planeMaskVisualization.size = planeMaskVisualizationXML.size;

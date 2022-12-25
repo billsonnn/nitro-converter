@@ -101,7 +101,10 @@ export class SWFUtilities
 
         if (!binaryData) return null;
 
-        return await parseStringPromise(this.removeComments(binaryData.binaryData));
+        return await parseStringPromise(this.removeComments(binaryData.binaryData), {
+            explicitChildren: true,
+            preserveChildrenOrder: true
+        });
     }
 
     public static async getAnimationXML(habboAssetSWF: HabboAssetSWF, snakeCase: boolean = false): Promise<any>
