@@ -1,5 +1,4 @@
 import { wrap } from 'bytebuffer';
-import { writeFile } from 'fs/promises';
 import { parseStringPromise } from 'xml2js';
 import { AnimationMapper, AssetMapper, IAssetData, IndexMapper, LogicMapper, ManifestMapper, NitroBundle, RoomVisualizationMapper, SpriteBundle, VisualizationMapper } from '../common';
 import { HabboAssetSWF } from './HabboAssetSWF';
@@ -15,8 +14,6 @@ export class SWFUtilities
     public static createNitroBundle(className: string, assetData: IAssetData, spriteBundle: SpriteBundle): NitroBundle
     {
         if (spriteBundle && (spriteBundle.spritesheet !== undefined)) assetData.spritesheet = spriteBundle.spritesheet;
-
-        writeFile('room.json', JSON.stringify(assetData), 'utf8');
 
         const nitroBundle = new NitroBundle();
 
